@@ -1,0 +1,11 @@
+package.json
+README.md
+src/components/Shell.jsx
+src/pages/HomePage.jsx
+src/styles.css
+scripts/source-regression-test.mjs
+scripts/design-regression-test.mjs
+RELEASE_NOTES_v0.3.0.md
+TECHNICAL_ANALYSIS_v0.3.0.md
+TEST_RESULT_v0.3.0.md
+DEPLOYMENT_CHECKLIST_v0.3.0.md

@@ -1,0 +1,15 @@
+API_INTEGRATION.md
+CHANGED_FILES_v0.2.0.txt
+DEPLOYMENT_CHECKLIST_v0.2.0.md
+FILE_CHECKSUMS.sha256
+MANIFEST.json
+README.md
+RELEASE_NOTES_v0.2.0.md
+TECHNICAL_ANALYSIS_v0.2.0.md
+TEST_RESULT_v0.2.0.md
+package.json
+scripts/source-regression-test.mjs
+src/components/Shell.jsx
+src/pages/HomePage.jsx
+src/store/StoreContext.jsx
+src/styles.css

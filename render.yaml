@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: luke-shop-customer-web
+    runtime: static
+    buildCommand: npm install --no-audit --no-fund && npm run build
+    staticPublishPath: ./dist

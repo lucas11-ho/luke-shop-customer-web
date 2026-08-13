@@ -1,0 +1,7 @@
+src/components/Shell.jsx
+src/components/ProductCard.jsx
+src/pages/HomePage.jsx
+src/styles.css
+scripts/source-regression-test.mjs
+scripts/design-regression-test.mjs
+package.json

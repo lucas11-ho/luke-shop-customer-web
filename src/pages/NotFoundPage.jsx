@@ -1,0 +1,1 @@
+import React from 'react';import{go}from'../app/router.js';export function NotFoundPage(){return <section className="section"><div className="empty"><div className="empty-icon">404</div><h1>Page not found</h1><button className="btn btn-primary" onClick={()=>go('/')}>Go home</button></div></section>;}
