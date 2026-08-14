@@ -1,59 +1,23 @@
-# LUKE_SHOP_CUSTOMER_WEB — current release v0.5.0
+# LUKE_SHOP_CUSTOMER_WEB — current release v0.6.0
 
-**Storefront Renderer v3 + Responsive Design Contract** · 2026-08-14
+**Customer Account, Address & Session Management** · 2026-08-14
 
-See `RELEASE_NOTES_v0.5.0.md` and `DEPLOYMENT_CHECKLIST_v0.5.0.md`.
+Requires Luke Shop Backend v0.11.0 with migration 012 for the new account/session fields.
 
-# Luke Shop Customer Web v0.3.1
+See `RELEASE_NOTES_v0.6.0.md`, `TECHNICAL_ANALYSIS_v0.6.0.md` and `DEPLOYMENT_CHECKLIST_v0.6.0.md`.
 
-## v0.3.1 Commercial Storefront Polish
+## Current account controls
 
-- Tenant campaign-media hero treatment.
-- Adaptive category rail/grid for sparse and rich catalogs.
-- Discount, stock state, and clearer product-card affordances.
-- Search visibility follows the published Customer Experience feature flag.
-- Backend v0.8.0 remains unchanged.
+Customers can update their display name, manage saved delivery addresses, choose a default address, change their password, inspect active sessions, revoke sessions and use saved addresses during checkout while the order still stores an immutable shipping-address snapshot.
 
-Shared multi-tenant Customer Web renderer for **Luke Shop Backend v0.7.1+**.
+Storefront Renderer v3, tenant routing, signed draft preview and published Experience Engine behavior remain intact.
 
-## v0.3.0 Professional Commercial Storefront
+## Payment safety
 
-- Editorial, conversion-focused storefront hierarchy.
-- Premium responsive header, hero, category, product and account surfaces.
-- Tenant-published colors and branding remain the source of storefront identity.
-- Dynamic `/t/{tenantSlug}` and `/s/{storeSlug}` routing remains unchanged.
+Customer Web does not collect or store raw card numbers, CVV/CVC values or provider secrets. Payment-method configuration remains backend/provider controlled.
 
+A self-service forgot-password email/SMS delivery flow is not represented as complete because this source does not include an external notification/identity-delivery provider for reset tokens.
 
+## Verification
 
-## Dynamic storefront routing
-- Primary tenant: `/t/{tenantSlug}`
-- Optional non-primary store: `/t/{tenantSlug}/s/{storeSlug}`
-- Signed draft preview: `/preview/{token}`
-- VERIFIED custom hostname: resolved through Backend
-- Optional hosted subdomain: resolved through Backend when `STOREFRONT_HOST_SUFFIX` is configured
-
-The root `/` no longer silently loads `demo`. For local testing use `http://localhost:4174/t/demo`.
-
-## Local environment
-```env
-VITE_LUKE_SHOP_API_BASE_URL=http://localhost:4100
-VITE_LUKE_SHOP_TENANT_SLUG=
-VITE_LUKE_SHOP_STORE_ID=
-VITE_LUKE_SHOP_ALLOW_ENV_TENANT_FALLBACK=false
-VITE_APP_ENV=development
-```
-
-The env tenant fallback exists only for controlled compatibility/testing and is disabled by default.
-
-## Hosting requirement
-The static host must rewrite `/t/*` and `/preview/*` to `index.html` so the SPA can resolve tenant context before hash-based in-store navigation begins. Custom domains should point at the same Customer Web deployment.
-
-## Local development
-```powershell
-npm install --no-audit --no-fund
-npm run verify
-npm run build
-npm run dev
-```
-
-Open `http://localhost:4174/t/demo`, not bare `http://localhost:4174`.
+The shipped `npm run verify` command performs source/regression checks only. No local dev/build workflow is included in this release package.

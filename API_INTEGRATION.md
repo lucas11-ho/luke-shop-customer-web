@@ -1,46 +1,37 @@
-# API Integration — Customer Web v0.2.1
+# API Integration — Customer Web v0.6.0
 
-Backend requirement: Luke Shop Backend v0.7.1+.
+Required backend: Luke Shop Backend v0.11.0.
 
-## Bootstrap resolution
-Before normal commerce calls, Customer Web resolves storefront context from the browser pathname/hostname:
-- `GET /v1/storefront/resolve?tenant_slug={slug}`
-- `GET /v1/storefront/resolve?tenant_slug={slug}&store_slug={store}`
-- `GET /v1/storefront/resolve?hostname={hostname}`
-- `GET /v1/storefront/preview/{signedToken}` for authorized draft preview
+## Storefront bootstrap
 
-The returned tenant/store becomes runtime context. Normal requests then send backend-resolved `x-tenant-slug` and optional `x-store-id`.
+Customer Web resolves tenant/store context through `/v1/storefront/resolve` or a signed `/v1/storefront/preview/:token`. Normal commerce requests then use the backend-resolved tenant/store context.
 
 ## Public storefront
-- `GET /v1/storefront/categories`
-- `GET /v1/storefront/products`
-- `GET /v1/storefront/products/:slug`
-- `GET /v1/storefront/payment-methods`
-- `GET /v1/storefront/delivery-methods`
 
-## Customer auth/account
-- `POST /v1/customer/auth/register`
-- `POST /v1/customer/auth/login`
-- `POST /v1/customer/auth/refresh`
-- `POST /v1/customer/auth/logout`
-- `GET /v1/customer/me`
+- categories/products/product detail
+- promotions
+- customer-safe payment methods
+- customer-safe delivery methods
+- Store Designer v3 published rendering
 
-Sessions are stored in `sessionStorage` and include the resolved tenant slug. A session from tenant A is not reused after switching to tenant B.
+## Customer account
 
-## Cart/checkout/orders
-- `GET /v1/customer/cart`
-- `POST /v1/customer/cart/items`
-- `PATCH /v1/customer/cart/items/:itemId`
-- `DELETE /v1/customer/cart/items/:itemId`
-- `POST /v1/customer/checkout`
-- `GET /v1/customer/orders`
-- `GET /v1/customer/orders/:orderRef`
-- `POST /v1/customer/orders/:orderRef/cancel`
-- `POST /v1/customer/orders/:orderRef/payment/retry`
+- register/login/refresh/logout
+- `GET/PATCH /v1/customer/me`
+- saved address list/create/edit/delete/default
+- password change
+- session list/revoke/revoke-others
 
-## Luke CS boundary
-- `POST /v1/customer/support/context`
+## Commerce
 
-The launcher dispatches `luke-shop:support-context`. It never places the signed support context in a URL.
+- cart list/add/update/remove
+- checkout
+- order list/detail/cancel
+- payment retry
+- order payment/fulfillment reads
 
-Public storefront rendering consumes only PUBLISHED experience returned by Backend. Signed preview is a separate short-lived route and Customer Web never calls merchant Customer Experience mutation APIs.
+Checkout can reuse a saved address, but the backend receives a shipping-address snapshot so later profile edits do not rewrite historical orders.
+
+## Security boundaries
+
+Customer Web does not collect raw card numbers or CVV/CVC values. A forgot-password delivery workflow is not claimed because this source does not include an external email/SMS reset-token delivery provider.

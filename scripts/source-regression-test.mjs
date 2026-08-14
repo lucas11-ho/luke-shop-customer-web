@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-const read=p=>fs.readFileSync(p,'utf8');
+const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');
 const pkg=JSON.parse(read('package.json'));
 const api=read('src/api/client.js');
 const routeContext=read('src/store/route-context.js');
@@ -18,7 +18,7 @@ const styles=read('src/styles.css');
 const env=read('.env.example');
 const files=fs.readdirSync('src/pages').join(' ');
 let n=0;const ok=(name,cond)=>{if(!cond)throw new Error(`FAIL ${name}`);n++;console.log(`PASS ${name}`);};
-ok('release is v0.5.0',pkg.version==='0.5.0');
+ok('release is v0.5.0',['0.5.0','0.6.0'].includes(pkg.version));
 ok('Node 24+ required',pkg.engines?.node==='>=24');
 ok('React 19 pinned',pkg.dependencies?.react==='19.1.1');
 ok('Vite 7 pinned',pkg.devDependencies?.vite==='7.1.2');
@@ -100,7 +100,11 @@ ok('support integration uses event boundary',support.includes('luke-shop:support
 ok('support does not embed support context in URL',!support.includes('searchParams')&&!support.includes('location.href'));
 ok('support placement is backend controlled',support.includes('customerService?.placement?.[placement]'));
 ok('support context binds resolved store when present',support.includes('getStorefrontRuntimeContext().storeId'));
-ok('profile is read-only rather than inventing update API',profile.includes('Profile editing')&&!profile.includes("method:'PATCH'"));
+ok('profile editing uses backend customer me API',profile.includes('/v1/customer/me')&&profile.includes("method:'PATCH'"));
+ok('profile exposes saved address management',profile.includes('/v1/customer/me/addresses')&&profile.includes("method:'DELETE'"));
+ok('profile exposes password and session security',profile.includes('/change-password')&&profile.includes('/sessions/revoke-others'));
+ok('profile no longer contains future-placeholder account copy',!profile.includes('will be added when the backend exposes'));
+ok('checkout consumes saved customer addresses',checkout.includes('/v1/customer/me/addresses')&&checkout.includes('Choose from saved addresses'));
 ok('profile refresh uses customer me',auth.includes('/v1/customer/me'));
 ok('app keeps hash router for static in-store navigation',app.includes('useRoute'));
 ok('tenant selection lives in real pathname, not hash route',routeContext.includes('loc.pathname'));
@@ -121,4 +125,4 @@ ok('renderer consumes layout tokens',store.includes('dataset.headerLayout')&&sto
 ok('live scheduled promotion endpoint is consumed',home.includes('/v1/storefront/promotions'));
 ok('promotion UI remains human-readable',home.includes('ActivePromotionRail')&&!home.includes('JSON.stringify'));
 ok('customer web has no raw JSON data viewer',!read('src/pages/OrderDetailPage.jsx').includes('<pre>')&&!styles.includes('.json-editor'));
-console.log(`${n}/${n} Luke Shop Customer Web v0.5.0 source regression checks passed`);
+console.log(`${n}/${n} Luke Shop Customer Web v0.6.0 source regression checks passed`);

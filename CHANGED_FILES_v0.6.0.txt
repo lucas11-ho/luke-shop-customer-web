@@ -1,0 +1,19 @@
+Luke Shop luke-shop-customer-web v0.6.0 — Changed Files from v0.5.0
+
+Status	Path
+MODIFIED	API_INTEGRATION.md
+NEW	CHANGED_FILES_v0.6.0.txt
+NEW	DEPLOYMENT_CHECKLIST_v0.6.0.md
+MODIFIED	FILE_CHECKSUMS.sha256
+MODIFIED	MANIFEST.json
+MODIFIED	README.md
+NEW	RELEASE_NOTES_v0.6.0.md
+NEW	TECHNICAL_ANALYSIS_v0.6.0.md
+NEW	TEST_RESULT_v0.6.0.md
+MODIFIED	package.json
+MODIFIED	scripts/source-regression-test.mjs
+MODIFIED	scripts/v0.5.0-renderer-v3-regression-test.mjs
+NEW	scripts/v0.6.0-account-address-regression-test.mjs
+MODIFIED	src/pages/CheckoutPage.jsx
+MODIFIED	src/pages/ProfilePage.jsx
+MODIFIED	src/styles.css

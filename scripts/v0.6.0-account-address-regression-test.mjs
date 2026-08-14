@@ -1,0 +1,16 @@
+import fs from'node:fs';import assert from'node:assert/strict';
+const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');const pkg=JSON.parse(read('package.json'));const profile=read('src/pages/ProfilePage.jsx');const checkout=read('src/pages/CheckoutPage.jsx');const css=read('src/styles.css');
+const tests=[];const test=(n,f)=>tests.push([n,f]);
+test('release is v0.6.0',()=>assert.equal(pkg.version,'0.6.0'));
+test('profile update uses authenticated customer self route',()=>{assert.match(profile,/\/v1\/customer\/me/);assert.match(profile,/method:'PATCH'/)});
+test('saved address CRUD is exposed',()=>{for(const x of ['/v1/customer/me/addresses',"method:'POST'","method:'PATCH'","method:'DELETE'"])assert.ok(profile.includes(x),`missing ${x}`)});
+test('default saved address can be selected',()=>{assert.match(profile,/is_default/);assert.match(profile,/Make default|default/i)});
+test('password change requires current password and confirmation',()=>{assert.match(profile,/change-password/);assert.match(profile,/current_password/);assert.match(profile,/confirm/)});
+test('customer can inspect and revoke active sessions',()=>{assert.match(profile,/\/v1\/customer\/me\/sessions/);assert.match(profile,/revoke-others/);assert.match(profile,/request_ip/)});
+test('checkout loads saved customer addresses',()=>assert.match(checkout,/\/v1\/customer\/me\/addresses/));
+test('checkout supports saved address selection and manual fallback',()=>{assert.match(checkout,/saved.*address/is);assert.match(checkout,/manual/i);assert.match(checkout,/is_default/)});
+test('checkout still sends a shipping address snapshot',()=>{assert.match(checkout,/shipping_address/);assert.match(checkout,/address_line_1/)});
+test('customer account styles exist',()=>{for(const x of ['account-overview','address-card','session-row','checkout-address-option'])assert.ok(css.includes(x),`missing ${x}`)});
+test('legacy profile/address future placeholder is removed',()=>{assert.doesNotMatch(profile,/will be added|coming soon|not yet available/i)});
+test('customer web does not collect raw card number or CVV',()=>{assert.doesNotMatch(profile,/card_number|cvv|cvc/i);assert.doesNotMatch(checkout,/card_number|cvv|cvc/i)});
+let passed=0;for(const[n,f]of tests){try{f();passed++;console.log(`PASS ${n}`)}catch(e){console.error(`FAIL ${n}`);throw e}}console.log(`${passed}/${tests.length} Luke Shop Customer Web v0.6.0 Account & Address Management checks passed`);
