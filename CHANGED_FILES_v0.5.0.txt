@@ -1,0 +1,20 @@
+Luke Shop Store Designer v3 — luke-shop-customer-web 0.5.0
+Baseline diff only; generated release inventory is not counted as its own change.
+
+NEW	DEPLOYMENT_CHECKLIST_v0.5.0.md
+MODIFIED	FILE_CHECKSUMS.sha256
+MODIFIED	MANIFEST.json
+MODIFIED	README.md
+NEW	RELEASE_NOTES_v0.5.0.md
+MODIFIED	START-HERE-WINDOWS.bat
+NEW	TECHNICAL_ANALYSIS_v0.5.0.md
+NEW	TEST_RESULT_v0.5.0.md
+MODIFIED	VERIFY-SOURCE-WINDOWS.bat
+MODIFIED	package.json
+MODIFIED	scripts/design-regression-test.mjs
+MODIFIED	scripts/source-regression-test.mjs
+NEW	scripts/v0.5.0-renderer-v3-regression-test.mjs
+MODIFIED	src/components/ProductCard.jsx
+MODIFIED	src/pages/HomePage.jsx
+MODIFIED	src/store/StoreContext.jsx
+MODIFIED	src/styles.css

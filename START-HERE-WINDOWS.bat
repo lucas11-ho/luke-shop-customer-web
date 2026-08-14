@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 echo =============================================================
-echo Luke Shop Customer Web v0.1.0 - Storefront and Account Foundation
+echo Luke Shop Customer Web v0.5.0 - Storefront Renderer v3
 echo =============================================================
 where node >nul 2>&1 || (echo ERROR: Node.js is required.& pause & exit /b 1)
 for /f "tokens=*" %%i in ('node -p "process.versions.node"') do set NODEVER=%%i

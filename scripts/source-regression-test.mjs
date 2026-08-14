@@ -18,7 +18,7 @@ const styles=read('src/styles.css');
 const env=read('.env.example');
 const files=fs.readdirSync('src/pages').join(' ');
 let n=0;const ok=(name,cond)=>{if(!cond)throw new Error(`FAIL ${name}`);n++;console.log(`PASS ${name}`);};
-ok('release is v0.4.0',pkg.version==='0.4.0');
+ok('release is v0.5.0',pkg.version==='0.5.0');
 ok('Node 24+ required',pkg.engines?.node==='>=24');
 ok('React 19 pinned',pkg.dependencies?.react==='19.1.1');
 ok('Vite 7 pinned',pkg.devDependencies?.vite==='7.1.2');
@@ -121,4 +121,4 @@ ok('renderer consumes layout tokens',store.includes('dataset.headerLayout')&&sto
 ok('live scheduled promotion endpoint is consumed',home.includes('/v1/storefront/promotions'));
 ok('promotion UI remains human-readable',home.includes('ActivePromotionRail')&&!home.includes('JSON.stringify'));
 ok('customer web has no raw JSON data viewer',!read('src/pages/OrderDetailPage.jsx').includes('<pre>')&&!styles.includes('.json-editor'));
-console.log(`${n}/${n} Luke Shop Customer Web v0.4.0 source regression checks passed`);
+console.log(`${n}/${n} Luke Shop Customer Web v0.5.0 source regression checks passed`);

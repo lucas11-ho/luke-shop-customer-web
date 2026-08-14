@@ -1,8 +1,8 @@
-# LUKE_SHOP_CUSTOMER_WEB — current release v0.4.0
+# LUKE_SHOP_CUSTOMER_WEB — current release v0.5.0
 
-**Experience Renderer v2 + Scheduled Promotion UI** · 2026-08-13
+**Storefront Renderer v3 + Responsive Design Contract** · 2026-08-14
 
-See `RELEASE_NOTES_v0.4.0.md` and `DEPLOYMENT_CHECKLIST_v0.4.0.md`.
+See `RELEASE_NOTES_v0.5.0.md` and `DEPLOYMENT_CHECKLIST_v0.5.0.md`.
 
 # Luke Shop Customer Web v0.3.1
 

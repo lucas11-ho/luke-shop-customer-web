@@ -1,7 +1,7 @@
 {
   "name": "luke-shop-customer-web",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": ">=24"
@@ -12,8 +12,9 @@
     "preview": "vite preview --host 0.0.0.0 --port 4174",
     "check": "node scripts/check-source.mjs",
     "test:source": "node scripts/source-regression-test.mjs",
-    "verify": "npm run check && npm run test:source && npm run test:design",
-    "test:design": "node scripts/design-regression-test.mjs"
+    "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3",
+    "test:design": "node scripts/design-regression-test.mjs",
+    "test:renderer-v3": "node scripts/v0.5.0-renderer-v3-regression-test.mjs"
   },
   "dependencies": {
     "react": "19.1.1",
