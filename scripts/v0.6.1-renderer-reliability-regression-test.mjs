@@ -1,0 +1,10 @@
+import fs from'node:fs';import assert from'node:assert/strict';
+const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');const pkg=JSON.parse(read('package.json'));const store=read('src/store/StoreContext.jsx');const support=read('src/components/SupportLauncher.jsx');const card=read('src/components/ProductCard.jsx');const shell=read('src/components/Shell.jsx');const safe=read('src/components/SafeMedia.jsx');const css=read('src/styles.css');
+const tests=[];const test=(n,f)=>tests.push([n,f]);
+test('release is v0.6.1',()=>assert.equal(pkg.version,'0.6.1'));
+test('button case setting reaches the real storefront renderer',()=>{assert.match(store,/dataset\.buttonCase=typography\.button_case/);assert.match(css,/data-button-case="uppercase"/)});
+test('support feature toggle gates the actual Luke CS launcher',()=>{assert.match(support,/experience\?\.features\?\.support!==false/);assert.match(support,/customerService\?\.enabled/)});
+test('stock status feature toggle controls product-card stock text',()=>{assert.match(card,/stockEnabled=experience\?\.features\?\.stock_status!==false/);assert.match(card,/stockEnabled&&<span className=\{`stock-note/)});
+test('Store Designer live messages still update the same Customer Web renderer',()=>{assert.match(store,/luke-store-designer:config/);assert.match(store,/applyTheme\(next\)/)});
+test('broken storefront images use safe visual fallbacks',()=>{assert.match(safe,/setFailed\(true\)/);assert.match(card,/SafeImage/);assert.match(shell,/SafeImage/)});
+let passed=0;for(const[n,f]of tests){try{f();passed++;console.log(`PASS ${n}`)}catch(e){console.error(`FAIL ${n}`);throw e}}console.log(`${passed}/${tests.length} Luke Shop Customer Web v0.6.1 Renderer Reliability checks passed`);

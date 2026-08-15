@@ -1,10 +1,19 @@
-# LUKE_SHOP_CUSTOMER_WEB — current release v0.6.0
+# LUKE_SHOP_CUSTOMER_WEB — current release v0.6.1
 
-**Customer Account, Address & Session Management** · 2026-08-14
+**Storefront Renderer Reliability & Media Fallbacks** · 2026-08-15
 
-Requires Luke Shop Backend v0.11.0 with migration 012 for the new account/session fields.
+Requires Luke Shop Backend v0.11.1 with migration 012 for the new account/session fields.
 
-See `RELEASE_NOTES_v0.6.0.md`, `TECHNICAL_ANALYSIS_v0.6.0.md` and `DEPLOYMENT_CHECKLIST_v0.6.0.md`.
+See `RELEASE_NOTES_v0.6.1.md`, `TECHNICAL_ANALYSIS_v0.6.1.md` and `DEPLOYMENT_CHECKLIST_v0.6.1.md`.
+
+
+## v0.6.1 renderer reliability
+
+- Store Designer button-case configuration now reaches actual storefront buttons/navigation.
+- The Customer Experience support toggle gates the real Luke CS launcher instead of being a cosmetic setting.
+- Stock-status visibility gates the actual Product Card stock label.
+- Critical storefront images use safe visual fallbacks when an old/stale media URL can no longer be loaded.
+- Signed preview/live editor messages continue to update the same Customer Web renderer used by shoppers.
 
 ## Current account controls
 

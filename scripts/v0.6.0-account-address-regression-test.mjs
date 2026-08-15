@@ -1,7 +1,7 @@
 import fs from'node:fs';import assert from'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');const pkg=JSON.parse(read('package.json'));const profile=read('src/pages/ProfilePage.jsx');const checkout=read('src/pages/CheckoutPage.jsx');const css=read('src/styles.css');
 const tests=[];const test=(n,f)=>tests.push([n,f]);
-test('release is v0.6.0',()=>assert.equal(pkg.version,'0.6.0'));
+test('release is v0.6.0',()=>assert.ok(['0.6.0','0.6.1'].includes(pkg.version)));
 test('profile update uses authenticated customer self route',()=>{assert.match(profile,/\/v1\/customer\/me/);assert.match(profile,/method:'PATCH'/)});
 test('saved address CRUD is exposed',()=>{for(const x of ['/v1/customer/me/addresses',"method:'POST'","method:'PATCH'","method:'DELETE'"])assert.ok(profile.includes(x),`missing ${x}`)});
 test('default saved address can be selected',()=>{assert.match(profile,/is_default/);assert.match(profile,/Make default|default/i)});
