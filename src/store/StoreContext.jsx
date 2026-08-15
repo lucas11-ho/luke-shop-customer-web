@@ -23,8 +23,17 @@ const DEFAULTS={accent:'#13713d',accent2:'#0f5132',accent3:'#18a56d',bg:'#f8f7f2
 const scaleHeading=v=>v==='compact'?.92:v==='large'?1.12:v==='display'?1.26:1;
 const scaleBody=v=>v==='compact'?.94:v==='large'?1.08:1;
 
-function ensureFont(presetKey){
- const preset=FONT_PRESETS[presetKey]||FONT_PRESETS.SYSTEM_MINIMAL;
+// `typography` is the resolved experience.typography object. When the backend has resolved the
+// preset (heading_stack/body_stack/web_css_url present — see storefront/context.js), that data is
+// authoritative and works for ANY platform-catalog preset, not just the ones baked into this
+// bundle. FONT_PRESETS is kept only as a fallback for the rare case those fields are absent (e.g.
+// a live in-editor preview message that hasn't been enriched, or a very old cached response).
+function ensureFont(typography={}){
+ const presetKey=typography.preset;
+ const resolved=typography.heading_stack||typography.body_stack
+   ?{heading:typography.heading_stack||FONT_PRESETS.SYSTEM_MINIMAL.heading,body:typography.body_stack||FONT_PRESETS.SYSTEM_MINIMAL.body,css:typography.web_css_url||null}
+   :null;
+ const preset=resolved||FONT_PRESETS[presetKey]||FONT_PRESETS.SYSTEM_MINIMAL;
  let link=document.getElementById('luke-store-font');
  if(!preset.css){if(link)link.remove();return preset;}
  if(!link){link=document.createElement('link');link.id='luke-store-font';link.rel='stylesheet';document.head.appendChild(link);}
@@ -42,7 +51,7 @@ function applyTheme(config={}){
  const vars={accent:theme.primary||branding.accent||DEFAULTS.accent,accent2:theme.secondary||DEFAULTS.accent2,accent3:theme.accent||DEFAULTS.accent3,bg:theme.background||DEFAULTS.bg,surface:theme.surface||DEFAULTS.surface,ink:theme.text||DEFAULTS.ink,muted:theme.muted_text||DEFAULTS.muted,success:theme.success||DEFAULTS.success,danger:theme.danger||DEFAULTS.danger};
  for(const[k,v]of Object.entries(vars))root.style.setProperty(`--${k}`,COLOR.test(String(v||''))?v:DEFAULTS[k]);
  const radius=theme.radius==='xl'?'34px':theme.radius==='large'?'26px':theme.radius==='small'?'9px':'16px';root.style.setProperty('--radius',radius);
- const preset=ensureFont(typography.preset);root.style.setProperty('--font-heading',preset.heading);root.style.setProperty('--font-body',preset.body);root.style.setProperty('--heading-scale',String(scaleHeading(typography.heading_scale)));root.style.setProperty('--body-scale',String(scaleBody(typography.body_scale)));root.style.setProperty('--letter-spacing',typography.letter_spacing==='wide'?'.025em':typography.letter_spacing==='tight'?'-.025em':'0em');
+ const preset=ensureFont(typography);root.style.setProperty('--font-heading',preset.heading);root.style.setProperty('--font-body',preset.body);root.style.setProperty('--heading-scale',String(scaleHeading(typography.heading_scale)));root.style.setProperty('--body-scale',String(scaleBody(typography.body_scale)));root.style.setProperty('--letter-spacing',typography.letter_spacing==='wide'?'.025em':typography.letter_spacing==='tight'?'-.025em':'0em');
  const cols=responsive.product_columns||{};root.style.setProperty('--products-desktop',String(cols.desktop||4));root.style.setProperty('--products-tablet',String(cols.tablet||3));root.style.setProperty('--products-mobile',String(cols.mobile||2));
  root.dataset.themePreset=theme.preset||'custom';root.dataset.cardStyle=theme.card_style||'clean';root.dataset.buttonStyle=theme.button_style||'solid';root.dataset.density=theme.density||'comfortable';root.dataset.headerLayout=layout.header||'logo_left';root.dataset.heroLayout=layout.hero||'split';root.dataset.categoryLayout=layout.categories||'cards';root.dataset.productGrid=layout.product_grid||'four';root.dataset.productCard=layout.product_card||'standard';root.dataset.mobileNav=layout.mobile_nav||'standard';root.dataset.typography=typography.preset||'SYSTEM_MINIMAL';root.dataset.heroMediaDesktop=responsive.hero_media_position?.desktop||'right';root.dataset.heroMediaTablet=responsive.hero_media_position?.tablet||'right';root.dataset.heroMediaMobile=responsive.hero_media_position?.mobile||'below';
  const seo=exp.seo||{};document.title=seo.title||branding.store_name||config.store?.name||config.tenant?.name||'Luke Shop';setMeta('description',seo.description||branding.hero_subtitle||'');setMeta('og:title',document.title,true);setMeta('og:description',seo.description||branding.hero_subtitle||'',true);if(seo.social_image_url)setMeta('og:image',seo.social_image_url,true);
