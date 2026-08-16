@@ -332,3 +332,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .security-sessions .session-row{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.security-sessions .session-row:last-child{border-bottom:0}.security-sessions .session-row>div{display:grid;gap:3px}.security-sessions .session-row span,.security-sessions .session-row small{color:var(--muted);font-size:12px}
 @media(max-width:700px){.personal-info-card{grid-template-columns:1fr}.avatar-editor{border-right:0;border-bottom:1px solid var(--line);padding:0 0 20px;flex-direction:row;align-items:center}.address-management-grid{grid-template-columns:1fr}.phone-auth-row{grid-template-columns:1fr}.profile-subpage>.section-head{align-items:flex-start}.profile-subpage>.section-head>.btn{width:100%}}
 @media(max-width:480px){.profile-hero-card{padding:17px}.profile-avatar-large{width:64px;height:64px;border-radius:20px}.profile-menu-item{padding:13px}.profile-menu-icon{width:36px;height:36px}.avatar-editor{align-items:flex-start}}
+
+
+/* Commerce Connector v2 — secure first-party support modal. */
+.support-chat-backdrop{position:fixed;inset:0;z-index:1200;background:rgba(9,15,28,.54);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:flex-end;padding:18px}
+.support-chat-modal{width:min(440px,calc(100vw - 24px));height:min(760px,calc(100dvh - 36px));background:var(--surface,#fff);border:1px solid rgba(127,127,127,.18);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.28)}
+.support-chat-modal>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(127,127,127,.14);background:var(--surface,#fff)}
+.support-chat-modal>header>div{display:flex;min-width:0;flex-direction:column}.support-chat-modal>header strong{font-size:14px}.support-chat-modal>header span{font-size:11px;color:var(--muted,#667085);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.support-chat-close{border:0;background:transparent;font-size:27px;line-height:1;width:36px;height:36px;border-radius:50%;cursor:pointer}.support-chat-close:hover{background:rgba(127,127,127,.1)}
+.support-chat-modal iframe{border:0;width:100%;flex:1;min-height:0;background:#fff}
+@media(max-width:640px){.support-chat-backdrop{padding:0;align-items:stretch}.support-chat-modal{width:100%;height:100dvh;max-height:none;border:0;border-radius:0}}

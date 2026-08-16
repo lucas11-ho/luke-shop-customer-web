@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+const read=(p)=>fs.readFileSync(new URL(`../${p}`,import.meta.url),'utf8');
+let n=0; const ok=(name,cond)=>{if(!cond) throw new Error(`FAIL ${name}`); n+=1;};
+const pkg=JSON.parse(read('package.json'));
+ok('version',pkg.version==='0.9.0');
+const s=read('src/components/SupportLauncher.jsx');
+ok('https chat target',s.includes("/^https:\\/\\//i"));
+ok('context never in iframe URL',s.includes('src={target.url}') && !s.includes("searchParams.set('context'"));
+ok('exact origin postMessage',s.includes("postMessage({type:'LUKE_COMMERCE_CONTEXT'") && s.includes('target.origin'));
+ok('exact frame source check',s.includes("event.source!==frame.current?.contentWindow"));
+ok('refresh handshake',s.includes('LUKE_COMMERCE_CONTEXT_REQUEST'));
+ok('order hint',read('src/pages/OrderDetailPage.jsx').includes('orderRef={order?.order_number||order?.id||null}'));
+ok('customer badge',s.includes('customer_code'));
+console.log(`Customer Commerce Connector v2 regression: ${n}/${n} PASS`);

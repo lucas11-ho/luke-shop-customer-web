@@ -223,7 +223,7 @@ export function OrderDetailPage({ orderRef }) {
               <button className="btn btn-primary btn-small" onClick={() => go('/cart')}>Go to cart</button>
             </div>
           )}
-          <SupportLauncher placement="order_detail" />
+          <SupportLauncher placement="order_detail" orderRef={order?.order_number||order?.id||null} />
         </aside>
       </div>
       <Toast message={toast} type={toast.includes('cancelled') || toast.includes('created') ? 'good' : 'bad'} onClose={() => setToast('')} />

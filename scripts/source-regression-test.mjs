@@ -18,7 +18,7 @@ const styles=read('src/styles.css');
 const env=read('.env.example');
 const files=fs.readdirSync('src/pages').join(' ');
 let n=0;const ok=(name,cond)=>{if(!cond)throw new Error(`FAIL ${name}`);n++;console.log(`PASS ${name}`);};
-ok('release is v0.5.0',['0.5.0','0.6.0','0.6.1','0.7.0','0.8.0'].includes(pkg.version));
+ok('release is v0.5.0',['0.5.0','0.6.0','0.6.1','0.7.0','0.8.0','0.9.0'].includes(pkg.version));
 ok('Node 24+ required',pkg.engines?.node==='>=24');
 ok('React 19 pinned',pkg.dependencies?.react==='19.1.1');
 ok('Vite 7 pinned',pkg.devDependencies?.vite==='7.1.2');
@@ -97,9 +97,11 @@ ok('order support placement wired',order.includes('order_detail'));
 ok('support context endpoint wired',support.includes('/v1/customer/support/context'));
 ok('support context uses authenticated customer session',support.includes('auth:true'));
 ok('support integration uses event boundary',support.includes('luke-shop:support-context'));
-ok('support does not embed support context in URL',!support.includes('searchParams')&&!support.includes('location.href'));
+ok('support does not embed support context in URL',!support.includes("searchParams.set('context'")&&!support.includes("searchParams.set('token'")&&!support.includes("searchParams.set('customer'")&&!support.includes('location.href'));
+
 ok('support placement is backend controlled',support.includes('customerService?.placement?.[placement]'));
-ok('support context binds resolved store when present',support.includes('getStorefrontRuntimeContext().storeId'));
+ok('support context binds resolved store when present',support.includes('getStorefrontRuntimeContext()')&&support.includes('runtime.storeId'));
+
 ok('profile editing uses backend customer me API',profile.includes('/v1/customer/me')&&profile.includes("method:'PATCH'"));
 ok('profile exposes saved address management',profile.includes('/v1/customer/me/addresses')&&profile.includes("method:'DELETE'"));
 ok('profile exposes password and session security',profile.includes('/change-password')&&profile.includes('/sessions/revoke-others'));

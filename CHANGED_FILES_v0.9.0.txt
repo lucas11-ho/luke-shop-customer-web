@@ -1,0 +1,16 @@
+Customer Web v0.9.0
+
+Modified:
+- package.json
+- src/components/SupportLauncher.jsx
+- src/pages/OrderDetailPage.jsx
+- src/styles.css
+- source/historical regression compatibility checks
+- README.md
+
+Added:
+- scripts/v0.9.0-commerce-connector-v2-regression-test.mjs
+- RELEASE_NOTES_v0.9.0.md
+- TECHNICAL_ANALYSIS_v0.9.0.md
+- DEPLOYMENT_CHECKLIST_v0.9.0.md
+- TEST_RESULT_v0.9.0.md
