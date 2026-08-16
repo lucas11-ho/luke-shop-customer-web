@@ -44,7 +44,7 @@ export function createApi({getSession,onSession}){
   let liveSession=getSession?.()||null;
   let refreshPromise=null;
   const current=()=>liveSession||getSession?.()||null;
-  const request=async(path,{method='GET',body,query,auth=false,retry=true,storeId}={})=>{
+  const request=async(path,{method='GET',body,rawBody,contentType,query,auth=false,retry=true,storeId}={})=>{
     const ctx=getStorefrontRuntimeContext();
     if(!ctx.tenantSlug)throw new ApiError('No storefront selected. Open a valid tenant storefront URL.',{code:'STOREFRONT_ROUTE_REQUIRED'});
     const session=current();
@@ -55,9 +55,9 @@ export function createApi({getSession,onSession}){
     if(effectiveStoreId)headers['x-store-id']=effectiveStoreId;
     const sessionMatches=session?.tenantSlug===ctx.tenantSlug;
     if(auth&&sessionMatches&&session?.accessToken)headers.Authorization=`Bearer ${session.accessToken}`;
-    if(body!==undefined)headers['Content-Type']='application/json';
+    let payload;if(rawBody!==undefined){headers['Content-Type']=contentType||'application/octet-stream';payload=rawBody;}else if(body!==undefined){headers['Content-Type']='application/json';payload=JSON.stringify(body);}
     let response;
-    try{response=await fetch(url,{method,headers,body:body===undefined?undefined:JSON.stringify(body)});}catch{throw new ApiError('Unable to reach Luke Shop Backend. Check the API URL and backend status.');}
+    try{response=await fetch(url,{method,headers,body:payload});}catch{throw new ApiError('Unable to reach Luke Shop Backend. Check the API URL and backend status.');}
     if(response.status===401&&auth&&retry&&sessionMatches&&session?.refreshToken&&path!=='/v1/customer/auth/refresh'){
       if(!refreshPromise){
         refreshPromise=(async()=>{
@@ -67,7 +67,7 @@ export function createApi({getSession,onSession}){
           const next={...session,tenantSlug:ctx.tenantSlug,accessToken:t.access_token,refreshToken:t.refresh_token,expiresIn:t.expires_in};liveSession=next;onSession?.(next);return next;
         })().finally(()=>{refreshPromise=null;});
       }
-      try{await refreshPromise;return request(path,{method,body,query,auth,retry:false,storeId});}
+      try{await refreshPromise;return request(path,{method,body,rawBody,contentType,query,auth,retry:false,storeId});}
       catch(error){liveSession=null;onSession?.(null);throw error;}
     }
     return parseResponse(response);

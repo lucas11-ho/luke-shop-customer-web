@@ -1,0 +1,32 @@
+Luke Shop customer release changed files
+
+Added (7):
+A  DEPLOYMENT_CHECKLIST_v0.8.0.md
+A  RELEASE_NOTES_v0.8.0.md
+A  TECHNICAL_ANALYSIS_v0.8.0.md
+A  TEST_RESULT_v0.8.0.md
+A  scripts/v0.8.0-identity-profile-regression-test.mjs
+A  src/components/AuthMethods.jsx
+A  src/pages/ProfilePages.jsx
+
+Modified (18):
+M  API_INTEGRATION.md
+M  BACKEND-INTEGRATION-REQUIREMENTS.md
+M  README.md
+M  package.json
+M  scripts/source-regression-test.mjs
+M  scripts/v0.5.0-renderer-v3-regression-test.mjs
+M  scripts/v0.6.0-account-address-regression-test.mjs
+M  scripts/v0.6.1-renderer-reliability-regression-test.mjs
+M  scripts/v0.7.0-customer-ux-regression-test.mjs
+M  src/api/client.js
+M  src/app/App.jsx
+M  src/auth/AuthContext.jsx
+M  src/components/DeliveryLocation.jsx
+M  src/components/icons.jsx
+M  src/pages/AuthPages.jsx
+M  src/pages/CheckoutPage.jsx
+M  src/pages/ProfilePage.jsx
+M  src/styles.css
+
+Deleted (0):

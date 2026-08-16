@@ -1,12 +1,19 @@
-# LUKE_SHOP_CUSTOMER_WEB — current release v0.7.0
+# LUKE_SHOP_CUSTOMER_WEB — current release v0.8.0
 
-**Professional Commerce UX, Delivery Location & Themed Fulfillment** · 2026-08-16
+**Professional Profile, Multi-login & GPS Address Management** · 2026-08-17
 
-Requires Luke Shop Backend v0.12.0 with migration 013 for delivery-location persistence, live-location sessions, status visual packs and fulfillment ETA fields.
+Requires Luke Shop Backend v0.13.0 with migration 014 for readable customer identity, production-gated login providers, avatar upload, formatted GPS addresses and type-safe fulfillment.
 
-See `RELEASE_NOTES_v0.7.0.md`, `TECHNICAL_ANALYSIS_v0.7.0.md` and `DEPLOYMENT_CHECKLIST_v0.7.0.md`.
+See `RELEASE_NOTES_v0.8.0.md`, `TECHNICAL_ANALYSIS_v0.8.0.md` and `DEPLOYMENT_CHECKLIST_v0.8.0.md`.
 
 
+
+
+## v0.8.0 release focus
+
+Requires Backend v0.13.0 + migration 014. Profile options are split into dedicated pages; email is read-only; customer avatars, readable customer codes, Google/Telegram/Phone login, account linking, GPS reverse-geocoded addresses and security/session management use real Luke APIs.
+
+Coordinated versions: Backend v0.13.0, Merchant Admin v0.11.0, Customer Web v0.8.0, Platform Admin v0.6.0.
 
 ## v0.7.0 customer experience
 

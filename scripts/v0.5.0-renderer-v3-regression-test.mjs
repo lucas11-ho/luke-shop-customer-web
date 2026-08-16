@@ -1,7 +1,7 @@
 import fs from 'node:fs';import assert from 'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');const pkg=JSON.parse(read('package.json'));const store=read('src/store/StoreContext.jsx');const home=read('src/pages/HomePage.jsx');const card=read('src/components/ProductCard.jsx');const shell=read('src/components/Shell.jsx');const css=read('src/styles.css');
 const tests=[];const test=(n,f)=>tests.push([n,f]);
-test('release is v0.5.0',()=>assert.ok(['0.5.0','0.6.0','0.6.1','0.7.0'].includes(pkg.version)));
+test('release is v0.5.0',()=>assert.ok(['0.5.0','0.6.0','0.6.1','0.7.0','0.8.0'].includes(pkg.version)));
 test('signed preview can accept live designer state only in preview mode',()=>{assert.match(store,/config\?\.routing\?\.preview/);assert.match(store,/embed\.enabled/)});
 test('designer postMessage validates parent origin and source window',()=>{assert.match(store,/e\.origin!==embed\.parentOrigin/);assert.match(store,/e\.source!==window\.parent/)});
 test('designer ready signal is target-origin restricted',()=>assert.match(store,/window\.parent\.postMessage\([^\n]+embed\.parentOrigin/));

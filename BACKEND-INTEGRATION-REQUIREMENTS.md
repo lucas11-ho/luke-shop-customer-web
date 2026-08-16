@@ -1,45 +1,40 @@
-# Luke Shop Customer Web v0.7.0 — Integration Status
+# Luke Shop Customer Web v0.8.0 — Integration Status
 
-This release is integrated with Luke Shop Backend v0.12.0. The previous Emergent prototype boundaries for customer GPS, live customer location and `status_visual_pack` are now implemented by the real Luke Shop backend/admin architecture. No mock FastAPI/Mongo backend is used.
+This release is integrated with Luke Shop Backend v0.13.0. It does not use Emergent authentication, FastAPI, MongoDB or fake persistence.
 
-## Implemented in Backend v0.12.0
+## Implemented by the real Luke backend
 
-- `experience.status_visual_pack` canonical enum: `AUTO`, `MODERN`, `FASHION_LUXURY`, `RESTAURANT_MODERN`, `ELECTRONICS_PRO`, `GROCERY_CLEAN`, `DIGITAL_CREATOR`.
-- Saved customer address coordinates: `latitude`, `longitude`, `accuracy_meters`, `location_source`, `location_updated_at`.
-- Immutable checkout order-address location snapshot.
-- Customer order precise-location update endpoint.
-- Explicit opt-in live customer-location sessions with start/ping/stop, expiry, order ownership and terminal-order guards.
-- Separate `estimated_ready_at` and `estimated_delivery_at` fulfillment fields.
-- Customer order details expose product type so food orders render restaurant-specific progress correctly.
-- Customer order list provides item count and delivery estimate where available.
+- Readable tenant customer codes such as `LUK0000001` while preserving internal UUIDs.
+- Merchant-controlled customer ID prefix for future registrations; existing codes are immutable.
+- Runtime customer login options for Email/Password, Google, Telegram and Phone OTP.
+- Auth identity linking so an authenticated member can connect additional login methods without creating duplicate accounts.
+- Avatar upload through the Luke media/storage layer.
+- Read-only profile email; display-name updates remain supported.
+- Saved address coordinates plus human-readable `formatted_address`.
+- Backend reverse-geocoding boundary using a configured Nominatim-compatible provider.
+- Existing precise delivery location/live customer-location APIs from v0.12.0.
+- Type-specific fulfillment groups and server-authoritative allowed transitions.
+
+## Production provider configuration still required
+
+These features intentionally remain unavailable until real provider credentials/services are configured:
+
+- Google: `CUSTOMER_GOOGLE_CLIENT_ID`.
+- Telegram: `CUSTOMER_TELEGRAM_BOT_USERNAME` and `CUSTOMER_TELEGRAM_BOT_TOKEN`.
+- Phone OTP: `CUSTOMER_PHONE_OTP_WEBHOOK_URL`, optional bearer credential, and `CUSTOMER_PHONE_OTP_HASH_SECRET`.
+- Reverse geocoding: `GEOCODING_PROVIDER=NOMINATIM` plus a production-appropriate `GEOCODING_BASE_URL` (managed or self-hosted is recommended rather than assuming a public free endpoint).
 
 ## Still intentionally deferred
 
 ### Courier / driver live location
-A real courier map requires a separate authenticated courier/driver location source and a map-provider decision. Customer Web does **not** invent courier coordinates.
+A real courier/driver GPS source and true courier map remain deferred.
+- True draggable geographic pin until a map SDK/provider is selected.
+- Luke CS Commerce Connector v2 / AI commerce tools; this is the next coordinated release, not part of v0.8.0.
 
-Future contract should provide a read-only courier point for the ordering customer while delivery is active, for example:
+## Privacy/security
 
-```json
-{
-  "latitude": 12.34,
-  "longitude": 56.78,
-  "accuracy_meters": 8,
-  "updated_at": "...",
-  "eta_minutes": 12
-}
-```
-
-### True draggable geographic map pin
-Customer Web v0.7.0 captures the browser's permissioned GPS coordinate and allows the customer to update/reconfirm it. A true drag-to-map-point editor is deferred until a map SDK/provider is chosen, because moving a decorative pin without a projection must never pretend to change latitude/longitude.
-
-### Optional atomic reorder endpoint
-`Order again` works through the existing cart endpoint, so each historical product/variant/modifier is revalidated using current availability, stock and price. An atomic server-side reorder endpoint remains optional for performance only.
-
-## Security / privacy
-
-- Location is opt-in and customer-controlled.
-- Live sharing has explicit start/stop and backend expiry.
-- Live location automatically becomes unavailable after terminal fulfillment/order states.
-- Customer Web never claims GPS is perfectly exact; accuracy is displayed in meters.
-- Semantic order statuses remain backend data; visual packs only control presentation.
+- GPS is customer-controlled and includes accuracy rather than claiming perfect precision.
+- Provider login is verified server-side.
+- Email cannot be edited from Customer Profile.
+- Customer-facing codes are not used as database/security identifiers.
+- No raw payment-card data is collected by Customer Web.

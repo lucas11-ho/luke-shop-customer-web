@@ -1,0 +1,11 @@
+import fs from'node:fs';import assert from'node:assert/strict';const read=p=>fs.readFileSync(new URL(`../${p}`,import.meta.url),'utf8');let pass=0;const test=(n,f)=>{f();pass++;console.log('PASS',n)};
+test('profile routes are separate pages',()=>{const s=read('src/app/App.jsx');for(const r of ['/profile/personal','/profile/addresses','/profile/security'])assert.ok(s.includes(r));});
+test('email is read-only in personal information',()=>{const s=read('src/pages/ProfilePages.jsx');assert.ok(s.includes('Email cannot be changed'));assert.ok(!s.includes("body:{email:"));});
+test('readable customer code is surfaced',()=>assert.ok(read('src/pages/ProfilePages.jsx').includes('customer_code')));
+test('avatar uses real raw-body endpoint',()=>{const s=read('src/pages/ProfilePages.jsx');assert.ok(s.includes('/v1/customer/me/avatar'));assert.ok(s.includes('rawBody:await file.arrayBuffer()'));});
+test('auth supports configured google telegram phone methods',()=>{const s=read('src/pages/AuthPages.jsx');for(const x of ['GoogleAuthButton','TelegramAuthButton','PhoneOtpPanel','/v1/customer/auth/options'])assert.ok(s.includes(x));});
+test('phone selector includes flags and calling codes',()=>{const s=read('src/components/AuthMethods.jsx');assert.ok(s.includes("flag:'🇰🇭'"));assert.ok(s.includes("calling:'+855'"));});
+test('GPS reverse geocode fills readable address',()=>{const s=read('src/components/DeliveryLocation.jsx');assert.ok(s.includes('/v1/customer/location/reverse-geocode'));assert.ok(s.includes('onAddressResolved'));});
+test('checkout keeps formatted address',()=>assert.ok(read('src/pages/CheckoutPage.jsx').includes('formatted_address')));
+test('security supports identity linking and sessions',()=>{const s=read('src/pages/ProfilePages.jsx');assert.ok(s.includes('/v1/customer/me/auth-identities/google'));assert.ok(s.includes('/v1/customer/me/auth-identities/phone/verify'));assert.ok(s.includes('/v1/customer/me/sessions'));});
+console.log(`v0.8.0 identity/profile regression: ${pass}/${pass} PASS`);

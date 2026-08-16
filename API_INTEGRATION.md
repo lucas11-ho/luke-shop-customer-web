@@ -33,3 +33,12 @@ Restaurant order UX prefers `estimated_ready_at`; delivery arrival prefers `esti
 ## Deliberately deferred
 
 Customer Web does not invent courier coordinates or a fake live courier map. A true drag-to-map-point editor is deferred until a map provider/projection is chosen.
+
+## v0.8.0 identity/profile integration
+
+- Customer login methods are discovered at runtime from `GET /v1/customer/auth/options`.
+- Google, Telegram and Phone OTP only appear when Backend reports the provider enabled and ready.
+- Personal information updates only `display_name`; email is intentionally read-only.
+- Avatar upload uses `POST /v1/customer/me/avatar` with raw JPEG/PNG/WEBP bytes.
+- Address GPS capture can call `POST /v1/customer/location/reverse-geocode` to populate human-readable address fields.
+- Login identities and active sessions are managed through authenticated customer self-service routes.
