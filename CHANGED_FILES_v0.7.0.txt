@@ -1,0 +1,48 @@
+customer v0.7.0 changed files
+Base repository: luke-shop-customer-web
+Modified: 22
+Added: 15
+Deleted: 0
+
+[MODIFIED]
+API_INTEGRATION.md
+README.md
+package.json
+scripts/source-regression-test.mjs
+scripts/v0.5.0-renderer-v3-regression-test.mjs
+scripts/v0.6.0-account-address-regression-test.mjs
+scripts/v0.6.1-renderer-reliability-regression-test.mjs
+src/app/App.jsx
+src/components/ProductCard.jsx
+src/components/Shell.jsx
+src/components/SupportLauncher.jsx
+src/components/UI.jsx
+src/pages/CartPage.jsx
+src/pages/CheckoutPage.jsx
+src/pages/ExplorePage.jsx
+src/pages/HomePage.jsx
+src/pages/OrderDetailPage.jsx
+src/pages/OrdersPage.jsx
+src/pages/ProductPage.jsx
+src/pages/ProfilePage.jsx
+src/store/StoreContext.jsx
+src/styles.css
+
+[ADDED]
+BACKEND-INTEGRATION-REQUIREMENTS.md
+DEPLOYMENT_CHECKLIST_v0.7.0.md
+IMPLEMENTATION-SUMMARY_v0.7.0.md
+RELEASE_NOTES_v0.7.0.md
+TECHNICAL_ANALYSIS_v0.7.0.md
+scripts/v0.7.0-customer-ux-regression-test.mjs
+src/cart/reorder.js
+src/components/ComboBuilder.jsx
+src/components/DeliveryLocation.jsx
+src/components/SearchOverlay.jsx
+src/components/Skeleton.jsx
+src/components/StatusVisuals.jsx
+src/components/icons.jsx
+src/delivery/locationPrototype.js
+CHANGED_FILES_v0.7.0.txt
+
+[DELETED]

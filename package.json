@@ -1,7 +1,7 @@
 {
   "name": "luke-shop-customer-web",
   "private": true,
-  "version": "0.6.1",
+  "version": "0.7.0",
   "type": "module",
   "engines": {
     "node": ">=24"
@@ -12,11 +12,12 @@
     "preview": "vite preview --host 0.0.0.0 --port 4174",
     "check": "node scripts/check-source.mjs",
     "test:source": "node scripts/source-regression-test.mjs",
-    "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3 && npm run test:account-v06 && npm run test:renderer-reliability-v061",
+    "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3 && npm run test:account-v06 && npm run test:renderer-reliability-v061 && npm run test:customer-ux-v07",
     "test:design": "node scripts/design-regression-test.mjs",
     "test:renderer-v3": "node scripts/v0.5.0-renderer-v3-regression-test.mjs",
     "test:account-v06": "node scripts/v0.6.0-account-address-regression-test.mjs",
-    "test:renderer-reliability-v061": "node scripts/v0.6.1-renderer-reliability-regression-test.mjs"
+    "test:renderer-reliability-v061": "node scripts/v0.6.1-renderer-reliability-regression-test.mjs",
+    "test:customer-ux-v07": "node scripts/v0.7.0-customer-ux-regression-test.mjs"
   },
   "dependencies": {
     "react": "19.1.1",
@@ -26,5 +27,5 @@
     "@vitejs/plugin-react": "4.7.0",
     "vite": "7.1.2"
   },
-  "description": "Luke Shop Customer Web with storefront renderer and media reliability repair"
+  "description": "Luke Shop Customer Web v0.7.0 \u2014 Professional Commerce UX, Delivery Location & Themed Fulfillment"
 }

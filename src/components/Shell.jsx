@@ -1,3 +1,96 @@
-import React,{useState}from'react';import{go}from'../app/router.js';import{useStore}from'../store/StoreContext.jsx';import{useAuth}from'../auth/AuthContext.jsx';import{useCart}from'../cart/CartContext.jsx';import{SupportLauncher}from'./SupportLauncher.jsx';import{SafeImage}from'./SafeMedia.jsx';
+import React, { useState } from 'react';
+import { go } from '../app/router.js';
+import { useStore } from '../store/StoreContext.jsx';
+import { useAuth } from '../auth/AuthContext.jsx';
+import { useCart } from '../cart/CartContext.jsx';
+import { SupportLauncher } from './SupportLauncher.jsx';
+import { SafeImage } from './SafeMedia.jsx';
+import { SearchOverlay } from './SearchOverlay.jsx';
+import { Icon } from './icons.jsx';
+
 const NAV={home:['/','Home'],explore:['/explore','Shop'],cart:['/cart','Bag'],orders:['/orders','Orders'],profile:['/profile','Account']};
-export function Shell({children,path}){const{effectiveBranding,experience}=useStore();const{session,isAuthenticated,logout}=useAuth();const{itemCount}=useCart();const[menu,setMenu]=useState(false);const brand=effectiveBranding||{};const name=brand.store_name||'Luke Shop';const searchEnabled=experience?.features?.search!==false;const keys=(experience?.navigation||['home','explore','cart','orders','profile']).filter(k=>NAV[k]);const desktop=keys.filter(k=>!['cart','profile'].includes(k));const header=experience?.layout?.header||'logo_left';const mobileNav=experience?.layout?.mobile_nav||'standard';return <div className={`app professional-storefront header-${header} mobile-nav-${mobileNav}`}>{brand.announcement&&<div className="announcement"><span>✦</span>{brand.announcement}</div>}<header className="topbar"><div className="topbar-inner"><button className="brand" onClick={()=>go('/')} aria-label="Home">{brand.logo_url?<SafeImage src={brand.logo_url} alt="" fallback={<span className="brand-mark">{name.slice(0,1).toUpperCase()}</span>}/>:<span className="brand-mark">{name.slice(0,1).toUpperCase()}</span>}<span>{name}</span></button><nav className="desktop-nav">{desktop.map(k=>{const[to,label]=NAV[k];return <button key={k} className={path===to?'active':''} onClick={()=>go(to)}>{label}</button>})}</nav><div className="header-actions">{searchEnabled&&<button className="search-action" onClick={()=>go('/explore')} aria-label="Search products"><span>⌕</span> Search</button>}{keys.includes('cart')&&<button className="icon-btn cart-btn" onClick={()=>go('/cart')} aria-label="Cart"><span>Bag</span>{itemCount>0&&<b className="cart-count">{itemCount}</b>}</button>}{isAuthenticated?<button className="account-button" onClick={()=>setMenu(!menu)}><span className="account-avatar">{(session?.customer?.display_name||'A').slice(0,1).toUpperCase()}</span>{session?.customer?.display_name||'Account'}<span className="chevron">⌄</span></button>:<button className="btn btn-primary btn-small" onClick={()=>go('/login')}>Sign in</button>}{menu&&isAuthenticated&&<div className="account-menu"><div className="menu-caption">Your account</div><button onClick={()=>{go('/profile');setMenu(false);}}>Profile</button><button onClick={()=>{go('/orders');setMenu(false);}}>Orders</button><button onClick={logout}>Sign out</button></div>}</div></div></header><main>{children}</main><SupportLauncher placement="floating"/><nav className="mobile-nav">{keys.map(k=>{const[to,label]=NAV[k];return <button key={k} className={path===to?'active':''} onClick={()=>go(to)}><i>{k==='home'?'⌂':k==='explore'?'⌕':k==='cart'?'▢':k==='orders'?'≡':'○'}</i>{label}{k==='cart'&&itemCount>0&&<span>{itemCount}</span>}</button>})}</nav></div>}
+const NAV_ICON={home:'home',explore:'grid',cart:'bag',orders:'receipt',profile:'user'};
+
+export function Shell({ children, path }) {
+  const { effectiveBranding, experience } = useStore();
+  const { session, isAuthenticated, logout } = useAuth();
+  const { itemCount } = useCart();
+  const [menu, setMenu] = useState(false);
+  const [search, setSearch] = useState(false);
+  const brand = effectiveBranding || {};
+  const name = brand.store_name || 'Luke Shop';
+  const searchEnabled = experience?.features?.search !== false;
+  const keys = (experience?.navigation || ['home', 'explore', 'cart', 'orders', 'profile']).filter(k=>NAV[k]);
+  const desktop = keys.filter((k) => !['cart', 'profile'].includes(k));
+  const header = experience?.layout?.header || 'logo_left';
+  const mobileNav = experience?.layout?.mobile_nav || 'standard';
+
+  return (
+    <div className={`app professional-storefront header-${header} mobile-nav-${mobileNav}`}>
+      {brand.announcement && (
+        <div className="announcement"><Icon name="sparkles" size={13} />{brand.announcement}</div>
+      )}
+      <header className="topbar">
+        <div className="topbar-inner">
+          <button className="brand" onClick={() => go('/')} aria-label={`${name} home`} data-testid="brand-home">
+            {brand.logo_url
+              ? <SafeImage src={brand.logo_url} alt="" fallback={<span className="brand-mark">{name.slice(0, 1).toUpperCase()}</span>} />
+              : <span className="brand-mark">{name.slice(0, 1).toUpperCase()}</span>}
+            <span>{name}</span>
+          </button>
+          <nav className="desktop-nav" aria-label="Primary">
+            {desktop.map((k) => {
+              const [to, label] = NAV[k];
+              return <button key={k} className={path === to ? 'active' : ''} onClick={() => go(to)} data-testid={`nav-${k}`}>{label}</button>;
+            })}
+          </nav>
+          <div className="header-actions">
+            {searchEnabled && (
+              <button className="search-action" onClick={() => setSearch(true)} aria-label="Search products" data-testid="header-search">
+                <Icon name="search" size={16} /> <span className="search-action-label">Search</span>
+              </button>
+            )}
+            {keys.includes('cart') && (
+              <button className="icon-btn cart-btn" onClick={() => go('/cart')} aria-label={`Cart, ${itemCount} items`} data-testid="header-cart">
+                <Icon name="bag" size={18} />
+                {itemCount > 0 && <b className="cart-count">{itemCount}</b>}
+              </button>
+            )}
+            {isAuthenticated
+              ? (
+                <button className="account-button" onClick={() => setMenu(!menu)} aria-haspopup="menu" aria-expanded={menu} data-testid="account-menu-trigger">
+                  <span className="account-avatar">{(session?.customer?.display_name || 'A').slice(0, 1).toUpperCase()}</span>
+                  <span className="account-name">{session?.customer?.display_name || 'Account'}</span>
+                  <Icon name="chevron-down" size={15} className="chevron" />
+                </button>
+              )
+              : <button className="btn btn-primary btn-small" onClick={() => go('/login')} data-testid="header-signin">Sign in</button>}
+            {menu && isAuthenticated && (
+              <div className="account-menu" role="menu">
+                <div className="menu-caption">Your account</div>
+                <button role="menuitem" onClick={() => { go('/profile'); setMenu(false); }}><Icon name="user" size={16} /> Profile</button>
+                <button role="menuitem" onClick={() => { go('/orders'); setMenu(false); }}><Icon name="receipt" size={16} /> Orders</button>
+                <button role="menuitem" onClick={logout}><Icon name="logout" size={16} /> Sign out</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+      <main>{children}</main>
+      <SupportLauncher placement="floating" />
+      {searchEnabled && <SearchOverlay open={search} onClose={() => setSearch(false)} />}
+      <nav className="mobile-nav" aria-label="Primary mobile">
+        {keys.map((k) => {
+          const [to, label] = NAV[k];
+          return (
+            <button key={k} className={path === to ? 'active' : ''} onClick={() => go(to)} data-testid={`mobile-nav-${k}`} aria-current={path === to ? 'page' : undefined}>
+              <Icon name={NAV_ICON[k]} size={21} />
+              <span>{label}</span>
+              {k === 'cart' && itemCount > 0 && <b className="mobile-cart-count">{itemCount}</b>}
+            </button>
+          );
+        })}
+      </nav>
+    </div>
+  );
+}

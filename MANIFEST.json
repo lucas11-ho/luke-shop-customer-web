@@ -1,10 +1,506 @@
 {
-  "product": "LUKE_SHOP_CUSTOMER_WEB",
-  "version": "0.6.0",
-  "release": "Account & Address Management",
-  "date": "2026-08-14",
-  "baseline": "0.5.0",
-  "backend": "0.11.0",
-  "experience_schema": 3,
-  "notes": "Customer profile, saved addresses, password and session controls with checkout address reuse."
+  "release": "v0.7.0",
+  "repository": "luke-shop-customer-web",
+  "generated_at": "2026-08-16T17:12:00+07:00",
+  "file_count": 98,
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "64b73bac3c731b58529f38e47cae84fd02595e82937b082d21df6652e19d57d6",
+      "size": 387
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "b63ce42e2babc54a13558cf679f775191d18649bca9dc04072126ef50987e1a4",
+      "size": 31
+    },
+    {
+      "path": ".nvmrc",
+      "sha256": "68ca3fba3b7e864770cb61aeb306d4bd4354b68ab4dd38450860c5d823e42a53",
+      "size": 3
+    },
+    {
+      "path": "API_INTEGRATION.md",
+      "sha256": "30a7c651c3331ef71a9eb0a7a695e913d320a87ea46554ab334ac8b7fd4ac544",
+      "size": 1763
+    },
+    {
+      "path": "BACKEND-INTEGRATION-REQUIREMENTS.md",
+      "sha256": "ced5a853be084dda884116bd6ff99a3abd5aa558255c284b0aa42312297a2c1b",
+      "size": 2645
+    },
+    {
+      "path": "CHANGED_FILES_v0.2.0.txt",
+      "sha256": "37a2b260b098029c13cc133400b1977203d3696942bc05b42690c7e20a5ea13a",
+      "size": 334
+    },
+    {
+      "path": "CHANGED_FILES_v0.2.1.txt",
+      "sha256": "30a3c0be4adf4fb28da13f5593ec36f7876f4b2258435b90f3a6b893598ad5ff",
+      "size": 400
+    },
+    {
+      "path": "CHANGED_FILES_v0.3.0.txt",
+      "sha256": "3d7addcbc4b3ae2624b42d2b768e1742511e7e964707a1374959d317e473b194",
+      "size": 262
+    },
+    {
+      "path": "CHANGED_FILES_v0.3.1.txt",
+      "sha256": "f31635e77a5e18b112ff5d642acbe0c0914264e2b7b7d465ec7ac04fdbf1ffd3",
+      "size": 177
+    },
+    {
+      "path": "CHANGED_FILES_v0.4.0.txt",
+      "sha256": "111b5c79f3ce6f803233ea0951496c95ad80dfb05b1329002959dbf8c7a04c4c",
+      "size": 173
+    },
+    {
+      "path": "CHANGED_FILES_v0.5.0.txt",
+      "sha256": "ad072a35b41200374ffe723a0e6f76988164c87ad95888e91ee3546289bd9fb5",
+      "size": 699
+    },
+    {
+      "path": "CHANGED_FILES_v0.6.0.txt",
+      "sha256": "75a35a348dd4f77f4936c6372dc4ae006a68fba9ee0b2068c814fac12eeb24a3",
+      "size": 607
+    },
+    {
+      "path": "CHANGED_FILES_v0.6.1.txt",
+      "sha256": "3c8ff349cd10becd241d61748c331caf379513bc3d5ad4a1e93da75562bb5abd",
+      "size": 528
+    },
+    {
+      "path": "CHANGED_FILES_v0.7.0.txt",
+      "sha256": "299ca9fc4a2617e4237b2de19e89836d4799268a21accf7e2c77c0c067203397",
+      "size": 1210
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.2.0.md",
+      "sha256": "9cd086a25ece0055ed40831715a136b1c16971aff60c919780b7e0e2ecbbabdb",
+      "size": 449
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.2.1.md",
+      "sha256": "e0f400e3df18ca3a295728c8c9cf5e3f529851d070e4e112bcd1ac6ff14de815",
+      "size": 473
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.3.0.md",
+      "sha256": "4be4a35ccfd9cfca685614af59d97628ae1c428e8bd39b335c7f151ebeb4e4cd",
+      "size": 514
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.3.1.md",
+      "sha256": "33fd7d1f1f74d1299d48f0056bb98889161499d27e4fd62879541f5ec8b4ac33",
+      "size": 365
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.4.0.md",
+      "sha256": "e9a7f79f10b7c0ea8c5fa14bb66daf02b670e2214e3d87ec4a9736faa08d3f5f",
+      "size": 248
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.5.0.md",
+      "sha256": "82c85d4536491b3262c0d70797c593ff0a4fd1a371dea354ef3050ede008410d",
+      "size": 758
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.6.0.md",
+      "sha256": "7fb7630c5dda5137d38187e30f221c1cc9c8f5d4a2ee38be362d371fe96d32a8",
+      "size": 607
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.6.1.md",
+      "sha256": "720b63924f830b0105ed64a46594d940c2aa23d39e29abc5c1f0c4613246f1a3",
+      "size": 442
+    },
+    {
+      "path": "DEPLOYMENT_CHECKLIST_v0.7.0.md",
+      "sha256": "c27ce99fea2386bf2d00d0dc6021497ccd560e8c845be44184d9302f038749d4",
+      "size": 807
+    },
+    {
+      "path": "HOSTING.md",
+      "sha256": "6bf15e320d759fd933a2a7446bfd407a1701028084f8bb220dcd92bcb7f8e4d1",
+      "size": 690
+    },
+    {
+      "path": "IMPLEMENTATION-SUMMARY_v0.7.0.md",
+      "sha256": "d6f233c334210e68c416fa78bdb2ffa04fdfa2392b4f873a02be8020d3019b9e",
+      "size": 5371
+    },
+    {
+      "path": "README.md",
+      "sha256": "a53835ba3414da98b87b8275b367e78bee271c5f894294c261a845376b626915",
+      "size": 2749
+    },
+    {
+      "path": "RELEASE_NOTES_v0.2.0.md",
+      "sha256": "81c7e6e1842fdea743d57f840ca4427f0ae0ecce0f1e55e4051e6378b72fa710",
+      "size": 642
+    },
+    {
+      "path": "RELEASE_NOTES_v0.2.1.md",
+      "sha256": "219e14d880acc42e6205c5c3c8db4c9760368f96ba11b0ab87ad7e5a3477b35b",
+      "size": 341
+    },
+    {
+      "path": "RELEASE_NOTES_v0.3.0.md",
+      "sha256": "affbd7e195961c7d93c3a4de3df9966a9cb2b528ca0f5602bcafa30ecfe53a19",
+      "size": 704
+    },
+    {
+      "path": "RELEASE_NOTES_v0.3.1.md",
+      "sha256": "06d2c87571df69693c114e401f47c6d5f0587ec1461390caa3b10c6b7291dd10",
+      "size": 566
+    },
+    {
+      "path": "RELEASE_NOTES_v0.4.0.md",
+      "sha256": "5be6a72766e89f1262bddcfebfe525beb47fca9657e82e7c72dcafde5ea53ed0",
+      "size": 447
+    },
+    {
+      "path": "RELEASE_NOTES_v0.5.0.md",
+      "sha256": "0d3bd06ea244dc2e112ad74568c9ef501fe7064c77033e68aef485662c8ccdd2",
+      "size": 993
+    },
+    {
+      "path": "RELEASE_NOTES_v0.6.0.md",
+      "sha256": "7ad546054130c00797e91c4cfdb9f881633661c407d46b7ffeda6561b304c587",
+      "size": 628
+    },
+    {
+      "path": "RELEASE_NOTES_v0.6.1.md",
+      "sha256": "b390a3259166ecdab571ad235c1f3c677a0f12a576e91830e5e457843731ce3c",
+      "size": 728
+    },
+    {
+      "path": "RELEASE_NOTES_v0.7.0.md",
+      "sha256": "99cca547db2fd5b36439f54af475279839d32a763a721c71d7d54190d0b7dfa6",
+      "size": 912
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "e521d9a6f6f01baa3f969ba995e6a4067471aa91a63a3c499513217defe3d0e9",
+      "size": 690
+    },
+    {
+      "path": "START-HERE-WINDOWS.bat",
+      "sha256": "46a621adf7c210d8e1c8c1073dfec4bff2776db28a9ccc45b50d6fdc5b841a2e",
+      "size": 1206
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.2.0.md",
+      "sha256": "8cd92c7405c8bf0fd487c3ab69cc255c814d5407c6e07d530e8d1a0da9ecb09a",
+      "size": 503
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.2.1.md",
+      "sha256": "1e19cc9df47f3c7429e3598cbd2c7424624e974453d0e4ca9c6b7c6508154bd1",
+      "size": 439
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.3.0.md",
+      "sha256": "e7fa6fc256bf37608f7970ba39247d1eba7d46db24ffb8c192422f60ae65a120",
+      "size": 266
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.3.1.md",
+      "sha256": "ddd491606b84750081a196ba1242eeeb63e6b72a7183aa8c0034fbd8c5c2ae9b",
+      "size": 405
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.4.0.md",
+      "sha256": "f0690d4752feae3a1c085a6a4de09ba3b823ace0a354c6d08a8512be195afa4c",
+      "size": 435
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.5.0.md",
+      "sha256": "423350e8b899575e3da72376c336ed52d9cbcc2cb39a4515d4bd0305f14c9bba",
+      "size": 693
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.6.0.md",
+      "sha256": "076fb498d584f65343edcb1467fd7042f4145df61f17242d69718637da09c9e3",
+      "size": 492
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.6.1.md",
+      "sha256": "cb6c1f5512a34425973dadb40a9cf86c24ccf5a1d6fb31a3a764df9b3f1d1aab",
+      "size": 517
+    },
+    {
+      "path": "TECHNICAL_ANALYSIS_v0.7.0.md",
+      "sha256": "285bc3a772b8ba4f2438d5ccb1b6d1f417d0e45fa26bb45ea73e5a90911cefb9",
+      "size": 900
+    },
+    {
+      "path": "TEST_RESULT_v0.2.0.md",
+      "sha256": "1bfa1d41f6efb63f169cf14be8dbff50ca6415a317419b62d84f1810b76ff65d",
+      "size": 514
+    },
+    {
+      "path": "TEST_RESULT_v0.2.1.md",
+      "sha256": "98bff0f9e8062bc1f57d850f0cb8e6a94f4693c6e83f4d39cf6cc12e59ea989f",
+      "size": 402
+    },
+    {
+      "path": "TEST_RESULT_v0.3.0.md",
+      "sha256": "437c218fa0f3c8a7cbf6affd341bce8e451f0325d75dde14a5a3e24ac3d03cac",
+      "size": 685
+    },
+    {
+      "path": "TEST_RESULT_v0.3.1.md",
+      "sha256": "1ccc6c9e8b575bb2bf3f854081ddf2fc32333ddc27bbca4c7c67e4437fd2ea3b",
+      "size": 533
+    },
+    {
+      "path": "TEST_RESULT_v0.4.0.md",
+      "sha256": "b2eae0c179d799ecc30518eecbcea5f104bfac4f5ce950d4d9f4c77cee9e72ba",
+      "size": 296
+    },
+    {
+      "path": "TEST_RESULT_v0.5.0.md",
+      "sha256": "c714bb018c655e52389023fd620c51668931d7f012d90753d72977c886afc6a6",
+      "size": 588
+    },
+    {
+      "path": "TEST_RESULT_v0.6.0.md",
+      "sha256": "b29f85a61894eeeb76bda94a1605850ced02f0921680f205d7820d308822c961",
+      "size": 299
+    },
+    {
+      "path": "TEST_RESULT_v0.6.1.md",
+      "sha256": "06f613c4b09999432c479019c7e4f92438b3952be0dabfd70a110936fe9da052",
+      "size": 337
+    },
+    {
+      "path": "VERIFY-SOURCE-WINDOWS.bat",
+      "sha256": "cb3fce94b4db868e1579b14dc6b595c78f97bf5b6d99952fb4678e61889e2e69",
+      "size": 314
+    },
+    {
+      "path": "index.html",
+      "sha256": "f4a650e50affef177cc16e640c39c777109b55d333230b0c0e8a239b1d8a4191",
+      "size": 396
+    },
+    {
+      "path": "package.json",
+      "sha256": "d288cd187e5b07cf86eeedf62f870c5ff3086d9072601adeea63b3bb6f23d8ab",
+      "size": 1294
+    },
+    {
+      "path": "render.yaml",
+      "sha256": "ec460504f66de3b2bf193c1da5f58d45e03eb27e21d21089bb5eced1b95507fa",
+      "size": 175
+    },
+    {
+      "path": "scripts/check-source.mjs",
+      "sha256": "1e318d31ae35db3dc09f1ab381c39c6addef81a5b2cfac0e38bb358fa0b93800",
+      "size": 669
+    },
+    {
+      "path": "scripts/design-regression-test.mjs",
+      "sha256": "6a4495edcbaefae0380089f03d3a19a37c6fd2947e8b624832b2f0a3c4213a49",
+      "size": 950
+    },
+    {
+      "path": "scripts/source-regression-test.mjs",
+      "sha256": "b2d381d122b017cf0bd909fe7a658a404c72482674b4daac8029394c6e1b2be1",
+      "size": 12626
+    },
+    {
+      "path": "scripts/v0.5.0-renderer-v3-regression-test.mjs",
+      "sha256": "0653142fa7453b702a4d3f1f73a0483a9f290e4fe7ae2ae0c6ca599ed9548502",
+      "size": 4532
+    },
+    {
+      "path": "scripts/v0.6.0-account-address-regression-test.mjs",
+      "sha256": "3d6e14b4851148116d3e65f1880e1fdacd24d3be0cd9eed310110b442ab2dfb8",
+      "size": 2468
+    },
+    {
+      "path": "scripts/v0.6.1-renderer-reliability-regression-test.mjs",
+      "sha256": "e2f27e717401b94ce08e2700a382f02818d96f40710e74d9d7266128884e22d2",
+      "size": 1760
+    },
+    {
+      "path": "scripts/v0.7.0-customer-ux-regression-test.mjs",
+      "sha256": "c7bfb1cc73ec7c168ddb87be7f301ecda979c1a838b4519ee9b8c05fdbf6d3c6",
+      "size": 5820
+    },
+    {
+      "path": "src/api/client.js",
+      "sha256": "cd4162b645fc27eafa4b8d128f319cb94a1e36c415df371f317b20e9bb0a4c10",
+      "size": 5331
+    },
+    {
+      "path": "src/app/App.jsx",
+      "sha256": "d2e8fc259ce81c09475f1374d6941b3996facd88475f23746d8395a8efd2e9d6",
+      "size": 1704
+    },
+    {
+      "path": "src/app/router.js",
+      "sha256": "ced6470767dd6a09ee85dc76f9b82e6cda0c4087c43b1dad458429090089b329",
+      "size": 957
+    },
+    {
+      "path": "src/auth/AuthContext.jsx",
+      "sha256": "a488fde33886a51695549d45cf0800f850e035e2cd55884cd65eb398703dadd0",
+      "size": 2745
+    },
+    {
+      "path": "src/cart/CartContext.jsx",
+      "sha256": "ea6d2f3b1d46fb72f3eb2dfcf55da7e17767d208ade6478f6260d425e4bcea76",
+      "size": 1604
+    },
+    {
+      "path": "src/cart/reorder.js",
+      "sha256": "04b15907b45d22226ea848a50683bf0f618dbcd382e419fca95a0694c447ff7f",
+      "size": 1351
+    },
+    {
+      "path": "src/components/ComboBuilder.jsx",
+      "sha256": "25cd58678c2eecf4e3e3b1498be510e875b19b87109a11039e9d0f61bba1de3b",
+      "size": 6057
+    },
+    {
+      "path": "src/components/DeliveryLocation.jsx",
+      "sha256": "4c4d09af2ab893f6c0b3de5f937d7d3a0a55dd32a99ecedd5a723eb266475299",
+      "size": 8700
+    },
+    {
+      "path": "src/components/ProductCard.jsx",
+      "sha256": "a87788a7a7c401f73a7ba9087c1ee4208e2ddcabc56d4ffd59b12418e65ceb9a",
+      "size": 3850
+    },
+    {
+      "path": "src/components/SafeMedia.jsx",
+      "sha256": "12ea78579468185b7fd54b38b1fd91e540ae3eccdfeb09251edd1731a1a1a727",
+      "size": 334
+    },
+    {
+      "path": "src/components/SearchOverlay.jsx",
+      "sha256": "96905354b3e4d0cceab7dddc04e35313b87b974612d9fb81ee7087a1221fb80f",
+      "size": 3496
+    },
+    {
+      "path": "src/components/Shell.jsx",
+      "sha256": "96cb787f888cd4a4a6dd28bc8b57b9811709d3b2e306a1f3c977a84bf167724f",
+      "size": 5230
+    },
+    {
+      "path": "src/components/Skeleton.jsx",
+      "sha256": "ee85b2106870880db85128d568698434ad2a3b4e03ef5230d6e19f556c9d8e61",
+      "size": 1756
+    },
+    {
+      "path": "src/components/StatusVisuals.jsx",
+      "sha256": "f733aed44e9c0eb251c3f67d36f2022fcb40105261d244b80e02e84b78397416",
+      "size": 10747
+    },
+    {
+      "path": "src/components/SupportLauncher.jsx",
+      "sha256": "4e4fb337272048a7f26c76cdf1c91ec3a727d40e57138609aac911a90291ba01",
+      "size": 1627
+    },
+    {
+      "path": "src/components/UI.jsx",
+      "sha256": "a990dcbbad3a48dd98555e553c907ed7d4859ad2e57d20f5f3a7720616ef1446",
+      "size": 3520
+    },
+    {
+      "path": "src/components/icons.jsx",
+      "sha256": "b2bf1ce22bfc6e49a6cea040471c42ad4a457e5636bd9b923442822b9b68846a",
+      "size": 5159
+    },
+    {
+      "path": "src/delivery/locationPrototype.js",
+      "sha256": "cfa4b1457dc9817cab52ca0a399e8a8d26c029b4ebf916d4d42ad6c92933a927",
+      "size": 2355
+    },
+    {
+      "path": "src/main.jsx",
+      "sha256": "8737fa2b7bb7e90250bf38e6fa37bf85cb4de12f34dba6d309d7c7dae3478ef4",
+      "size": 551
+    },
+    {
+      "path": "src/pages/AuthPages.jsx",
+      "sha256": "82c3dca8141d50705c6a4e27f25abc0d83a87d693b9182e192e72eea84cc9da9",
+      "size": 2048
+    },
+    {
+      "path": "src/pages/CartPage.jsx",
+      "sha256": "f8ff9e6e75bb8509c233e72d3e7913769f8d38436620803606758a894e45c003",
+      "size": 4629
+    },
+    {
+      "path": "src/pages/CheckoutPage.jsx",
+      "sha256": "28cc4a2c68ca93417dc07b442050c60792e0d4f655e6e822ab3f4fbb40aa25bf",
+      "size": 9340
+    },
+    {
+      "path": "src/pages/ExplorePage.jsx",
+      "sha256": "2cb01127ba95b01f33c81efbefb8f6824a0e8a738677c2a25ab414fb9e1a8eb0",
+      "size": 4406
+    },
+    {
+      "path": "src/pages/HomePage.jsx",
+      "sha256": "d273d1dce80bcbc2f1bd369f8d26b772f27200f6597e306f3500bf447450c0a4",
+      "size": 12122
+    },
+    {
+      "path": "src/pages/NotFoundPage.jsx",
+      "sha256": "eec4f8b0233c4ba630ff7e8513161e61cfa26dbe4a6fd69ac5a0f81669edabc5",
+      "size": 302
+    },
+    {
+      "path": "src/pages/OrderDetailPage.jsx",
+      "sha256": "90f4f55acefabb03f89b920a27075f86322acedf17595dc11568b1043c86c0e1",
+      "size": 13308
+    },
+    {
+      "path": "src/pages/OrdersPage.jsx",
+      "sha256": "bb4cc760132543f4567edf7bb13bfc0ab0f5c82d2166d30057067b674cbd1722",
+      "size": 4701
+    },
+    {
+      "path": "src/pages/ProductPage.jsx",
+      "sha256": "998f0f6346fdcc5b990124ff09a01face15ffcee7042ff1c050a29119d86a0c4",
+      "size": 6627
+    },
+    {
+      "path": "src/pages/ProfilePage.jsx",
+      "sha256": "d98f7ed4d32f92951bdbb139e692fe22bba896cd3b0b19c7d9d6c2c2c16ea71e",
+      "size": 13378
+    },
+    {
+      "path": "src/store/StoreContext.jsx",
+      "sha256": "b4b420ceaf93398e62e01d784c22d5eae1a1cd2a037c07b98c7cae68189fa3cd",
+      "size": 9605
+    },
+    {
+      "path": "src/store/route-context.js",
+      "sha256": "6bdb1fae930d2e8bb08606765f2d8f1f52adf23d10bfbfc76c9be3e22604d019",
+      "size": 906
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "9466f44ecd632fb8dd9d689a3aa01377b78f8fe30c7635e4db1f47f741cb1e35",
+      "size": 75428
+    },
+    {
+      "path": "vite.config.js",
+      "sha256": "1e40a82b3332abbd71136beb4ba1acf0f2437bf6d114ab163db711ff752abc95",
+      "size": 167
+    }
+  ],
+  "excluded": [
+    ".git/",
+    "node_modules/",
+    "dist/",
+    "secret .env files",
+    "MANIFEST.json",
+    "FILE_CHECKSUMS.sha256"
+  ]
 }

@@ -1,37 +1,35 @@
-# API Integration — Customer Web v0.6.0
+# API Integration — Customer Web v0.7.0
 
-Required backend: Luke Shop Backend v0.11.0.
+Required backend: Luke Shop Backend v0.12.0 with migration 013.
 
-## Storefront bootstrap
+Customer Web preserves Luke's React/Vite API client, customer auth/session model, tenant/store resolution, Store Designer signed preview flow, cart/checkout/orders and Luke CS integration.
 
-Customer Web resolves tenant/store context through `/v1/storefront/resolve` or a signed `/v1/storefront/preview/:token`. Normal commerce requests then use the backend-resolved tenant/store context.
+## Storefront / Experience
 
-## Public storefront
+Customer Web resolves tenant/store through normal storefront bootstrap or signed preview routes. The Experience payload may include:
+- `status_visual_pack`
+- resolved `status_visuals.icons` from the Platform-managed pack
 
-- categories/products/product detail
-- promotions
-- customer-safe payment methods
-- customer-safe delivery methods
-- Store Designer v3 published rendering
+Semantic order statuses remain backend data; the mapping controls icons/presentation only.
 
-## Customer account
+## Customer delivery location
 
-- register/login/refresh/logout
-- `GET/PATCH /v1/customer/me`
-- saved address list/create/edit/delete/default
-- password change
-- session list/revoke/revoke-others
+Saved-address and checkout models support optional latitude/longitude/accuracy/source.
 
-## Commerce
+Active order routes used by Customer Web:
+- `PATCH /v1/customer/orders/:orderRef/delivery-location`
+- `POST /v1/customer/orders/:orderRef/live-location/start`
+- `POST /v1/customer/orders/:orderRef/live-location/ping`
+- `POST /v1/customer/orders/:orderRef/live-location/stop`
 
-- cart list/add/update/remove
-- checkout
-- order list/detail/cancel
-- payment retry
-- order payment/fulfillment reads
+Live sharing is explicit opt-in and browser-permissioned. Customer Web displays accuracy and never claims GPS is perfectly exact.
 
-Checkout can reuse a saved address, but the backend receives a shipping-address snapshot so later profile edits do not rewrite historical orders.
+## Commerce / order UX
 
-## Security boundaries
+Existing cart API remains authoritative. `Order again` re-adds historical items through the current cart route, allowing Backend to revalidate current product, variant, modifier, stock and price data. Historical selected modifier snapshots support both `public_id` and `id` forms.
 
-Customer Web does not collect raw card numbers or CVV/CVC values. A forgot-password delivery workflow is not claimed because this source does not include an external email/SMS reset-token delivery provider.
+Restaurant order UX prefers `estimated_ready_at`; delivery arrival prefers `estimated_delivery_at`.
+
+## Deliberately deferred
+
+Customer Web does not invent courier coordinates or a fake live courier map. A true drag-to-map-point editor is deferred until a map provider/projection is chosen.

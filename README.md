@@ -1,11 +1,22 @@
-# LUKE_SHOP_CUSTOMER_WEB — current release v0.6.1
+# LUKE_SHOP_CUSTOMER_WEB — current release v0.7.0
 
-**Storefront Renderer Reliability & Media Fallbacks** · 2026-08-15
+**Professional Commerce UX, Delivery Location & Themed Fulfillment** · 2026-08-16
 
-Requires Luke Shop Backend v0.11.1 with migration 012 for the new account/session fields.
+Requires Luke Shop Backend v0.12.0 with migration 013 for delivery-location persistence, live-location sessions, status visual packs and fulfillment ETA fields.
 
-See `RELEASE_NOTES_v0.6.1.md`, `TECHNICAL_ANALYSIS_v0.6.1.md` and `DEPLOYMENT_CHECKLIST_v0.6.1.md`.
+See `RELEASE_NOTES_v0.7.0.md`, `TECHNICAL_ANALYSIS_v0.7.0.md` and `DEPLOYMENT_CHECKLIST_v0.7.0.md`.
 
+
+
+## v0.7.0 customer experience
+
+- Preserves the real React/Vite tenant/store, auth, cart, checkout, orders, Experience Engine, preview-token and Luke CS architecture.
+- Adds professional order cards/detail, industry-aware fulfillment progress, restaurant preparation/pickup/delivery wording and theme-aware status icons.
+- Adds safe `Order again` using the existing cart API with current product/variant/modifier/price/stock validation.
+- Integrates precise browser-GPS capture into saved addresses, checkout and active-order delivery-location updates.
+- Adds real opt-in live customer-location sharing through Backend v0.12.0 start/ping/stop routes.
+- Does not implement fake courier coordinates or a decorative drag pin that pretends to change real latitude/longitude.
+- Adds richer search, modifiers/combo UX, skeleton/empty/error states and responsive storefront polish.
 
 ## v0.6.1 renderer reliability
 
