@@ -1,0 +1,16 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const test=(name,fn)=>{fn();n++;console.log('PASS',name)};
+const pkg=JSON.parse(read('package.json')),methods=read('src/components/AuthMethods.jsx'),pages=read('src/pages/AuthPages.jsx'),auth=read('src/auth/AuthContext.jsx'),profile=read('src/pages/ProfilePages.jsx'),headers=read('public/_headers');
+test('Customer Web release is v0.9.1',()=>assert.equal(pkg.version,'0.9.1'));
+test('Google uses official Google Identity Services client script',()=>assert.match(methods,/https:\/\/accounts\.google\.com\/gsi\/client/));
+test('Google button is rendered by Google Identity Services',()=>assert.match(methods,/google\.accounts\.id\.renderButton/));
+test('Telegram uses current official Telegram Login library',()=>assert.match(methods,/https:\/\/oauth\.telegram\.org\/js\/telegram-login\.js\?5/));
+test('Telegram modern login requests a server-generated nonce',()=>{assert.match(methods,/nonceLoader/);assert.match(pages,/\/v1\/customer\/auth\/telegram\/nonce/)});
+test('Telegram sends only the signed id_token and nonce to Shop auth endpoint',()=>assert.match(methods,/id_token:data\.id_token,nonce/));
+test('Telegram popup compatibility allows popups rather than strict COOP',()=>assert.match(headers,/same-origin-allow-popups/));
+test('Cloudflare Turnstile uses official explicit-render client',()=>assert.match(methods,/challenges\.cloudflare\.com\/turnstile\/v0\/api\.js\?render=explicit/));
+test('email login and signup use separate Turnstile actions',()=>{assert.match(pages,/action=\{isRegister\?'signup':'login'\}/);assert.match(auth,/turnstile_token/)});
+test('social Turnstile can be required independently',()=>assert.match(pages,/socialTurnstileRequired/));
+test('Login and Sign Up expose Google and Telegram without a fake Forgot Password action',()=>{assert.match(pages,/GoogleAuthButton/);assert.match(pages,/TelegramAuthButton/);assert.doesNotMatch(pages,/Forgot Password/i)});
+test('Login & Security can link modern Telegram OIDC identity',()=>{assert.match(profile,/clientId=\{m\.telegram\.client_id\}/);assert.match(profile,/nonceLoader=\{telegramNonce\}/)});
+console.log(`${n}/${n} v0.9.1 Customer Authentication Pro checks passed`);

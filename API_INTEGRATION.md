@@ -42,3 +42,7 @@ Customer Web does not invent courier coordinates or a fake live courier map. A t
 - Avatar upload uses `POST /v1/customer/me/avatar` with raw JPEG/PNG/WEBP bytes.
 - Address GPS capture can call `POST /v1/customer/location/reverse-geocode` to populate human-readable address fields.
 - Login identities and active sessions are managed through authenticated customer self-service routes.
+
+
+## Customer Authentication Pro v0.9.1
+Customer Web loads public authentication options, renders official Google/Telegram provider UX, obtains a tenant-bound Telegram nonce, and submits provider/Turnstile proof to Backend. It never receives provider secrets.

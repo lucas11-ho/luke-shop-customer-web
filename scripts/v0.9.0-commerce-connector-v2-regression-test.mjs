@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const read=(p)=>fs.readFileSync(new URL(`../${p}`,import.meta.url),'utf8');
 let n=0; const ok=(name,cond)=>{if(!cond) throw new Error(`FAIL ${name}`); n+=1;};
 const pkg=JSON.parse(read('package.json'));
-ok('version',pkg.version==='0.9.0');
+ok('version',['0.9.0','0.9.1'].includes(pkg.version));
 const s=read('src/components/SupportLauncher.jsx');
 ok('https chat target',s.includes("/^https:\\/\\//i"));
 ok('context never in iframe URL',s.includes('src={target.url}') && !s.includes("searchParams.set('context'"));
