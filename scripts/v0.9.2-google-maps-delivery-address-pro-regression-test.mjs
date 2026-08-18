@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 let n=0;const test=(name,fn)=>{fn();n++;console.log(`PASS ${n}: ${name}`)};const read=p=>readFileSync(p,'utf8');
 const pkg=JSON.parse(read('package.json')),picker=read('src/components/GoogleMapPicker.jsx'),delivery=read('src/components/DeliveryLocation.jsx'),profile=read('src/pages/ProfilePages.jsx'),checkout=read('src/pages/CheckoutPage.jsx'),css=read('src/styles.css');
-test('Customer Web release is v0.9.2',()=>assert.equal(pkg.version,'0.9.2'));
+test('Customer Web release is v0.9.2',()=>assert.ok(['0.9.2','0.9.3'].includes(pkg.version)));
 test('Google Maps loads from official Maps JavaScript API',()=>assert.match(picker,/https:\/\/maps\.googleapis\.com\/maps\/api\/js/));
 test('browser API key is supplied at runtime from backend map config',()=>assert.match(delivery,/customer\/location\/map-config/));
 test('Maps loader uses referrer-origin authorization policy',()=>assert.match(picker,/auth_referrer_policy=origin/));

@@ -1,7 +1,7 @@
 import fs from 'node:fs';import assert from 'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8');let n=0;const test=(name,fn)=>{fn();n++;console.log('PASS',name)};
 const pkg=JSON.parse(read('package.json')),methods=read('src/components/AuthMethods.jsx'),pages=read('src/pages/AuthPages.jsx'),auth=read('src/auth/AuthContext.jsx'),profile=read('src/pages/ProfilePages.jsx'),headers=read('public/_headers');
-test('Customer Web release is v0.9.1',()=>assert.ok(['0.9.1','0.9.2'].includes(pkg.version)));
+test('Customer Web release is v0.9.1',()=>assert.ok(['0.9.1','0.9.2','0.9.3'].includes(pkg.version)));
 test('Google uses official Google Identity Services client script',()=>assert.match(methods,/https:\/\/accounts\.google\.com\/gsi\/client/));
 test('Google button is rendered by Google Identity Services',()=>assert.match(methods,/google\.accounts\.id\.renderButton/));
 test('Telegram uses current official Telegram Login library',()=>assert.match(methods,/https:\/\/oauth\.telegram\.org\/js\/telegram-login\.js\?5/));
