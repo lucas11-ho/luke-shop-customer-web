@@ -46,3 +46,7 @@ Customer Web does not invent courier coordinates or a fake live courier map. A t
 
 ## Customer Authentication Pro v0.9.1
 Customer Web loads public authentication options, renders official Google/Telegram provider UX, obtains a tenant-bound Telegram nonce, and submits provider/Turnstile proof to Backend. It never receives provider secrets.
+
+## v0.9.2 Google Maps + Delivery Address Pro
+
+Customer Web calls `GET /v1/customer/location/map-config` after customer authentication. When Google Maps is enabled it dynamically loads the official Maps JavaScript API and Places API (New) using the returned browser-restricted key. GPS/map-pin coordinates are posted to `POST /v1/customer/location/reverse-geocode`; the backend-only geocoding key is never present in Customer Web source.
