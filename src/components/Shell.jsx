@@ -24,6 +24,15 @@ export function Shell({ children, path }) {
   const desktop = keys.filter((k) => !['cart', 'profile'].includes(k));
   const header = experience?.layout?.header || 'logo_left';
   const mobileNav = experience?.layout?.mobile_nav || 'standard';
+  const authOnly = path === '/login' || path === '/register';
+
+  if (authOnly) {
+    return (
+      <div className={`app professional-storefront auth-only-shell header-${header} mobile-nav-${mobileNav}`}>
+        <main className="auth-only-main">{children}</main>
+      </div>
+    );
+  }
 
   return (
     <div className={`app professional-storefront header-${header} mobile-nav-${mobileNav}`}>

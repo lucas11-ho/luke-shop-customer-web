@@ -14,6 +14,7 @@ const P = {
   'chevron-down': <path d="m6 9 6 6 6-6"/>,
   'chevron-right': <path d="m9 6 6 6-6 6"/>,
   'arrow-right': <><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></>,
+  'arrow-left': <><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></>,
   x: <path d="M6 6 18 18M18 6 6 18"/>,
   plus: <path d="M12 5v14M5 12h14"/>,
   minus: <path d="M5 12h14"/>,
