@@ -55,15 +55,16 @@ export function ProductPage({ slug }) {
   const total = unit * quantity;
   const modifierValidation = useMemo(() => validateModifierSelection(groups, safeMods), [groups, safeMods]);
 
-  const add = async (optionIds) => {
+  const add = async (optionIds, selectionOverride) => {
     if (!isAuthenticated) { go('/login', { next: `/product/${slug}` }); return; }
-    const validation = validateModifierSelection(groups, safeMods);
+    const effectiveSelection = sanitizeSelection(groups, selectionOverride ?? safeMods);
+    const validation = validateModifierSelection(groups, effectiveSelection);
     if (!validation.valid) {
       setToast(validation.message);
       setBuilderOpen(true);
       return;
     }
-    const ids = optionIds !== undefined ? optionIds : modifierOptionIds(groups, safeMods);
+    const ids = optionIds !== undefined ? optionIds : modifierOptionIds(groups, effectiveSelection);
     setBusy(true);
     try {
       await addItem({
@@ -76,7 +77,7 @@ export function ProductPage({ slug }) {
       setToast('Added to cart');
     } catch (requestError) {
       if (requestError?.code === 'MODIFIER_SELECTION_INVALID') {
-        setToast(modifierErrorMessage(requestError, groups, safeMods));
+        setToast(modifierErrorMessage(requestError, groups, effectiveSelection));
         setBuilderOpen(true);
       } else {
         setToast(requestError?.message || 'Unable to add this item. Please try again.');
@@ -163,7 +164,7 @@ export function ProductPage({ slug }) {
         unitBase={unitBase}
         quantity={quantity}
         initialSelection={safeMods}
-        onConfirm={(selection, ids) => { setMods(selection); add(ids); }}
+        onConfirm={(selection, ids) => { setMods(selection); add(ids, selection); }}
       />
       <ProductMediaViewer media={media} productName={product.name} openIndex={viewerIndex} onClose={() => setViewerIndex(-1)} />
       <Toast message={toast} type={toast === 'Added to cart' ? 'good' : 'bad'} onClose={() => setToast('')} />

@@ -17,6 +17,8 @@ export function ComboBuilder({ open, onClose, product, groups, currency, locale,
     setStep(firstInvalid >= 0 ? firstInvalid : 0);
   }, [open, safeGroups, initialSelection]);
 
+  const allOptions = useMemo(() => Object.values(sel).flat(), [sel]);
+
   if (!open || !safeGroups.length) return null;
   const group = safeGroups[step];
   const list = sel[group.public_id] || [];
@@ -37,7 +39,6 @@ export function ComboBuilder({ open, onClose, product, groups, currency, locale,
     });
   };
 
-  const allOptions = useMemo(() => Object.values(sel).flat(), [sel]);
   const itemTotal = Number(unitBase) + allOptions.reduce((sum, option) => sum + Number(option.price_delta || 0), 0);
   const isLast = step === safeGroups.length - 1;
   const hint = single

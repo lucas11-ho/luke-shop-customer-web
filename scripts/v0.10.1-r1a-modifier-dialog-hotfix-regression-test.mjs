@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+const read = (p) => fs.readFileSync(p, 'utf8').replace(/\r\n?/g, '\n');
+const pkg = JSON.parse(read('package.json'));
+const combo = read('src/components/ComboBuilder.jsx');
+const product = read('src/pages/ProductPage.jsx');
+let n = 0;
+const test = (name, ok) => { if (!ok) throw new Error(`FAIL ${name}`); n += 1; console.log(`PASS ${name}`); };
+test('base application remains v0.10.1', pkg.version === '0.10.1');
+test('allOptions hook runs before the closed-dialog return', combo.indexOf('const allOptions = useMemo') > -1 && combo.indexOf('const allOptions = useMemo') < combo.indexOf('if (!open || !safeGroups.length) return null'));
+test('no React hook appears after the closed-dialog return', !/if \(!open \|\| !safeGroups\.length\) return null;[\s\S]*\buse(?:Memo|State|Effect|Callback|Ref|Context|Id)\s*\(/.test(combo));
+test('add supports a confirmed selection override', product.includes('const add = async (optionIds, selectionOverride) =>'));
+test('confirmed modifier selection is sanitized before validation', product.includes('const effectiveSelection = sanitizeSelection(groups, selectionOverride ?? safeMods);'));
+test('confirmed selection is the source for modifier option ids', product.includes('modifierOptionIds(groups, effectiveSelection)'));
+test('backend modifier errors are interpreted against confirmed selection', product.includes('modifierErrorMessage(requestError, groups, effectiveSelection)'));
+test('combo confirmation passes selection directly into add', product.includes('setMods(selection); add(ids, selection);'));
+test('backend MODIFIER_SELECTION_INVALID enforcement remains handled', product.includes("requestError?.code === 'MODIFIER_SELECTION_INVALID'"));
+test('cart still posts modifier_option_ids to backend', product.includes('modifier_option_ids: ids'));
+console.log(`${n}/10 Step 3 R1A modifier dialog hotfix checks passed.`);
