@@ -7,6 +7,7 @@ import { SupportLauncher } from './SupportLauncher.jsx';
 import { SafeImage } from './SafeMedia.jsx';
 import { SearchOverlay } from './SearchOverlay.jsx';
 import { Icon } from './icons.jsx';
+import { PwaExperience } from '../pwa/PwaExperience.jsx';
 
 const NAV={home:['/','Home'],explore:['/explore','Shop'],cart:['/cart','Bag'],orders:['/orders','Orders'],profile:['/profile','Account']};
 const NAV_ICON={home:'home',explore:'grid',cart:'bag',orders:'receipt',profile:'user'};
@@ -100,6 +101,7 @@ export function Shell({ children, path }) {
         </div>
       </header>
       <main>{children}</main>
+      <PwaExperience path={path} />
       <SupportLauncher placement="floating" />
       {searchEnabled && <SearchOverlay open={search} onClose={() => setSearch(false)} />}
       <nav className="mobile-nav" aria-label="Primary mobile">

@@ -1,0 +1,4 @@
+Luke Shop Customer Web v0.10.0
+PWA Foundation Pro + Mobile Delivery Map + Address Field Policy
+Target repository: C:\Users\LENOVO\Documents\cloud-projects\luke-shop-customer-web
+This marker is installed by the Step 2 R1 package.

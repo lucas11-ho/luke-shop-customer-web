@@ -18,7 +18,7 @@ const styles=read('src/styles.css');
 const env=read('.env.example');
 const files=fs.readdirSync('src/pages').join(' ');
 let n=0;const ok=(name,cond)=>{if(!cond)throw new Error(`FAIL ${name}`);n++;console.log(`PASS ${name}`);};
-ok('release is v0.5.0',['0.5.0','0.6.0','0.6.1','0.7.0','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3','0.9.4','0.9.5'].includes(pkg.version));
+ok('release is v0.5.0',['0.5.0','0.6.0','0.6.1','0.7.0','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3','0.9.4','0.9.5','0.10.0'].includes(pkg.version));
 ok('Node 24+ required',pkg.engines?.node==='>=24');
 ok('React 19 pinned',pkg.dependencies?.react==='19.1.1');
 ok('Vite 7 pinned',pkg.devDependencies?.vite==='7.1.2');

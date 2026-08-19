@@ -55,6 +55,7 @@ const P = {
   bell: <><path d="M6 16h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v4L6 16Z"/><path d="M10 19h4"/></>,
   camera: <><path d="M4 8h4l1.5-2h5L16 8h4v11H4V8Z"/><circle cx="12" cy="13" r="3"/></>,
   globe: <><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></>,
+  'wifi-off': <><path d="M3 8.5a14 14 0 0 1 3.2-1.8M9.2 5.3A14.5 14.5 0 0 1 21 8.5"/><path d="M6 12a9.2 9.2 0 0 1 3.4-1.9M13 10.1a9.2 9.2 0 0 1 5 1.9"/><path d="M9.5 15.2a4.5 4.5 0 0 1 4.8-.5"/><path d="M12 19h.01"/><path d="M4 4l16 16"/></>,
   key: <><circle cx="8" cy="12" r="4"/><path d="M12 12h9M17 12v3M20 12v2"/></>,
   address: <><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h5M8 16h6"/></>,
   info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></>,

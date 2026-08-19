@@ -522,3 +522,43 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 @media(hover:none) and (pointer:coarse){
  .professional-storefront .product-card:hover,.professional-storefront .category-strip button:hover,.professional-storefront .telegram-login-button-compact:hover{transform:none!important;box-shadow:none!important}
 }
+
+/* v0.10.0 — PWA Foundation Pro + mobile delivery map */
+.google-map-picker{container-type:inline-size}
+@media(max-width:700px){
+  .professional-storefront .location-capture{margin-top:12px}
+  .professional-storefront .google-map-picker{gap:9px;margin-top:10px}
+  .professional-storefront .google-map-search{min-height:46px;border-radius:12px}
+  .professional-storefront .google-map-stage{height:228px!important;border-radius:15px}
+  .professional-storefront .google-map-picker.is-compact .google-map-stage{height:198px!important}
+  .professional-storefront .google-map-center-pin span{width:30px;height:30px;border-width:3px}
+  .professional-storefront .google-map-center-pin span:after{left:8px;top:8px;width:8px;height:8px}
+  .professional-storefront .google-map-center-pin i{top:33px;left:6px;width:18px}
+  .professional-storefront .google-map-toolbar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px}
+  .professional-storefront .google-map-toolbar .btn{width:100%;min-width:0;min-height:44px;padding:9px 8px;font-size:11px;justify-content:center}
+  .professional-storefront .google-map-help{font-size:11px;line-height:1.4}
+  .professional-storefront .location-capture-result{gap:8px}
+  .professional-storefront .location-capture-result>div{padding:9px 10px}
+}
+@media(max-width:380px){
+  .professional-storefront .google-map-stage{height:210px!important}
+  .professional-storefront .google-map-picker.is-compact .google-map-stage{height:184px!important}
+  .professional-storefront .google-map-toolbar{grid-template-columns:1fr!important}
+}
+@media(max-height:540px) and (orientation:landscape){
+  .professional-storefront .google-map-stage,.professional-storefront .google-map-picker.is-compact .google-map-stage{height:170px!important}
+}
+
+.pwa-network-banner,.pwa-update-banner{position:fixed;left:50%;transform:translateX(-50%);z-index:92;width:min(620px,calc(100vw - 28px));border-radius:14px;padding:10px 13px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:12px;font-weight:700;box-shadow:0 12px 32px #1118271f}
+.pwa-network-banner{top:calc(72px + env(safe-area-inset-top));background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.pwa-update-banner{top:calc(72px + env(safe-area-inset-top));background:var(--surface);color:var(--ink);border:1px solid var(--line);justify-content:space-between}
+.pwa-install-card{position:fixed;right:18px;bottom:18px;z-index:82;width:min(390px,calc(100vw - 28px));background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 18px 50px #11182724;display:grid;gap:12px}
+.pwa-install-brand{display:grid;grid-template-columns:44px 1fr;gap:11px;align-items:center}.pwa-install-brand strong,.pwa-install-brand small{display:block}.pwa-install-brand small{color:var(--muted);font-size:11px;line-height:1.45;margin-top:2px}.pwa-install-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--ink);color:var(--surface);font-size:20px;font-weight:850}.pwa-install-actions{display:flex;align-items:center;gap:12px;justify-content:flex-end}
+.pwa-ios-backdrop{position:fixed;inset:0;z-index:110;background:#11182770;display:grid;align-items:end;justify-items:center;padding:16px}.pwa-ios-sheet{width:min(520px,100%);background:var(--surface);color:var(--ink);border-radius:24px 24px 18px 18px;padding:22px;border:1px solid var(--line)}.pwa-ios-sheet h2{margin:4px 0 0}.pwa-ios-sheet ol{margin:18px 0;padding-left:22px;display:grid;gap:12px;line-height:1.45}
+@media(max-width:760px){
+  .pwa-install-card{left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));width:auto;border-radius:17px;padding:12px}
+  .pwa-install-actions{justify-content:space-between}
+  .pwa-network-banner,.pwa-update-banner{top:calc(62px + env(safe-area-inset-top));font-size:11px}
+  .pwa-update-banner{align-items:center}
+  .pwa-ios-backdrop{padding:0;align-items:end}.pwa-ios-sheet{border-radius:24px 24px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom))}
+}

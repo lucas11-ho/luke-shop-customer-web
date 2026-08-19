@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(p,'utf8');let n=0;const test=(name,fn)=>{fn();n++;console.log(`PASS ${n}: ${name}`)};
 const pkg=JSON.parse(read('package.json')),pages=read('src/pages/AuthPages.jsx'),methods=read('src/components/AuthMethods.jsx'),css=read('src/styles.css');
-test('Customer Web release is v0.9.3',()=>assert.ok(['0.9.3','0.9.4','0.9.5'].includes(pkg.version)));
+test('Customer Web release is v0.9.3',()=>assert.ok(['0.9.3','0.9.4','0.9.5','0.10.0'].includes(pkg.version)));
 test('email form is primary before social provider section',()=>assert.ok(pages.indexOf('auth-primary-form')<pages.indexOf('auth-social-section')));
 test('Google and Telegram providers render below the primary action',()=>assert.ok(pages.indexOf('auth-primary-action')<pages.indexOf('social-auth-row')));
 test('Google uses official GIS icon circle button',()=>{assert.match(methods,/type:'icon'/);assert.match(methods,/shape:'circle'/);assert.match(methods,/google\.accounts\.id\.renderButton/)});

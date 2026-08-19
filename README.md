@@ -1,14 +1,14 @@
-# LUKE_SHOP_CUSTOMER_WEB — current release v0.9.5
+# LUKE_SHOP_CUSTOMER_WEB — current release v0.10.0
 
-Customer Web v0.9.5 is **Step 1 R4: Mobile Storefront App UX + Turnstile Reliability**. It keeps the accepted full-screen mobile login/register experience from v0.9.4, converts the rest of the storefront from compressed desktop layouts into deliberate mobile commerce layouts, and restores a visible/recoverable Cloudflare Turnstile flow.
+Customer Web v0.10.0 is **Step 2 R1: PWA Foundation Pro + Mobile Delivery Map + Address Field Policy**. It turns the accepted v0.9.5 mobile storefront into an installable PWA foundation, reduces the Google delivery picker to phone-appropriate dimensions, and consumes tenant-controlled visibility for Label, Country code, Address line 2 and Postal code.
 
-- Dedicated compact mobile storefront header and safe-area bottom navigation.
-- Mobile hero, promotions, horizontal categories, compact two-column product cards, swipeable product media, and single-column commerce pages.
-- Email/password remains the primary authentication action, with Google/Telegram below it.
-- Turnstile is visibly rendered when required, reports loading/error/config states, supports retry, and keeps separate email/social proof actions.
-- Password visibility toggle, touch-friendly controls, dynamic viewport sizing, and safe-area support are carried forward.
-- Forgot Password remains intentionally unimplemented and hidden.
-- All v0.9.2 Google Maps + Delivery Address functionality is carried forward.
-- PWA manifest/service worker/install flow are intentionally not included yet.
+- PWA manifest, install icons, standalone metadata, service worker, update flow and offline fallback.
+- Conservative caching: same-origin static assets only; sensitive API/auth/checkout/payment/order traffic bypasses the service worker.
+- Android/Chromium install prompt and iPhone/iPad Add to Home Screen guidance.
+- Mobile map reduced from the legacy 300px phone height, with compact checkout sizing and touch-cooperative gestures.
+- Center-pin selection, map search, current location and reverse geocoding remain active.
+- Address visibility policy defaults all four fields ON for backward compatibility.
+- Hidden Country code keeps map/config fallback and blocks invalid blank-country submission.
+- All v0.9.5 mobile storefront and Turnstile reliability behavior is carried forward.
 
-See `RELEASE_NOTES_v0.9.5.md`, `TECHNICAL_ANALYSIS_v0.9.5.md`, `TEST_RESULT_v0.9.5.md` and `DEPLOYMENT_CHECKLIST_v0.9.5.md`.
+See `RELEASE_NOTES_v0.10.0.md`, `TECHNICAL_ANALYSIS_v0.10.0.md`, `TEST_RESULT_v0.10.0.md` and `DEPLOYMENT_CHECKLIST_v0.10.0.md`.

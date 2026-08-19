@@ -4,7 +4,15 @@ const LOCAL_HOSTS=new Set(['localhost','127.0.0.1','::1']);
 const decode=value=>{try{return decodeURIComponent(value)}catch{return value}};
 
 export function resolveBrowserStorefrontRoute(loc=window.location){
-  const parts=String(loc.pathname||'/').split('/').filter(Boolean).map(decode);
+  let pathname=String(loc.pathname||'/');
+  if(pathname==='/'&&typeof window!=='undefined'){
+    try{
+      const standalone=window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;
+      const remembered=standalone?localStorage.getItem('luke:pwa-storefront-route'):'';
+      if(remembered&&remembered.startsWith('/t/'))pathname=remembered;
+    }catch{}
+  }
+  const parts=pathname.split('/').filter(Boolean).map(decode);
   if(parts[0]==='preview'&&parts.length===2&&parts[1])return{mode:'preview',token:parts[1]};
   if(parts[0]==='t'&&parts[1]&&(parts.length===2||(parts.length===4&&parts[2]==='s'&&parts[3]))){
     return{mode:'tenant',tenantSlug:parts[1],storeSlug:parts.length===4?parts[3]:''};

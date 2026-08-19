@@ -1,0 +1,26 @@
+# Deployment Checklist — v0.10.0
+
+- [ ] Run `CHECK-TARGETS-WINDOWS.bat` before installation.
+- [ ] Install only into `C:\Users\LENOVO\Documents\cloud-projects\luke-shop-customer-web`.
+- [ ] Confirm `.git` remains present.
+- [ ] Review the external rollback backup under `_luke-release-backups`.
+- [ ] Run Node 24+ dependency install/build/type checks in the normal project workflow.
+- [ ] Confirm `manifest.webmanifest`, `sw.js`, `offline.html` and `/icons/*` are present in the deployed output.
+- [ ] Confirm Cloudflare/hosting serves `sw.js` without long-lived cache.
+- [ ] Test install from Android/Chromium.
+- [ ] Test Add to Home Screen guidance on iPhone/iPad.
+- [ ] Confirm Login/Register/Checkout do not show the install promotion.
+- [ ] Confirm service worker does not intercept checkout/payment/order mutation requests.
+- [ ] Test offline navigation fallback and online recovery.
+- [ ] Test Profile → Addresses on a 320–390px phone.
+- [ ] Confirm map height is compact and map toolbar is usable.
+- [ ] Confirm Search, Use my location and Confirm this pin still work.
+- [ ] Test checkout map independently from Profile addresses.
+- [ ] Test all four address-field policy flags ON (legacy behavior).
+- [ ] Test Label OFF.
+- [ ] Test Country code OFF with map-detected country.
+- [ ] Test Country code OFF with configured default country.
+- [ ] Test Address line 2 OFF.
+- [ ] Test Postal code OFF.
+- [ ] Confirm existing saved addresses and historical orders are not rewritten by visibility settings.
+- [ ] Do not deploy the staged Admin integration until the exact current Merchant Admin source is reviewed and its Experience save/publish contract is verified.

@@ -38,3 +38,23 @@ A real courier/driver GPS source and true courier map remain deferred.
 - Email cannot be edited from Customer Profile.
 - Customer-facing codes are not used as database/security identifiers.
 - No raw payment-card data is collected by Customer Web.
+
+## v0.10.0 Customer Experience address-field contract
+
+Customer Web v0.10.0 can consume the following nested published Experience configuration:
+
+```json
+{
+  "delivery": {
+    "address_fields": {
+      "label": true,
+      "country_code": true,
+      "address_line_2": true,
+      "postal_code": true,
+      "default_country_code": "IN"
+    }
+  }
+}
+```
+
+All visibility flags default to `true` when absent. The Experience save/sanitize/publish path must preserve these keys before Merchant Admin can control them in production. No new database table is required if the existing Experience document is JSON-backed and safely allows this controlled nested schema.

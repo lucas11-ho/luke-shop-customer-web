@@ -32,7 +32,8 @@ export function GoogleMapPicker({config,value,onConfirm,busy=false,compact=false
     const [{Map},{PlaceAutocompleteElement}]=await Promise.all([maps.importLibrary('maps'),maps.importLibrary('places')]);
     if(!alive||!mapNode.current)return;
     const center=draft?{lat:draft.latitude,lng:draft.longitude}:{lat:20,lng:0};
-    const map=new Map(mapNode.current,{center,zoom:draft?17:2,mapId:config.map_id||undefined,mapTypeControl:false,streetViewControl:false,fullscreenControl:false,clickableIcons:false,gestureHandling:'greedy'});
+    const touchLayout=compact||window.matchMedia?.('(max-width:700px), (pointer:coarse)').matches;
+    const map=new Map(mapNode.current,{center,zoom:draft?17:2,mapId:config.map_id||undefined,mapTypeControl:false,streetViewControl:false,fullscreenControl:false,clickableIcons:false,gestureHandling:touchLayout?'cooperative':'greedy'});
     mapRef.current=map;
     map.addListener('idle',()=>{const c=map.getCenter();if(c)setDraft({latitude:c.lat(),longitude:c.lng()});});
     if(searchNode.current){
@@ -54,7 +55,7 @@ export function GoogleMapPicker({config,value,onConfirm,busy=false,compact=false
     <div className="google-map-search" ref={searchNode}><span className="muted">Loading address search…</span></div>
     <div className="google-map-stage"><div className="google-map-canvas" ref={mapNode}/><div className="google-map-center-pin" aria-hidden="true"><span/><i/></div>{!ready&&!error&&<div className="google-map-loading">Loading Google Maps…</div>}</div>
     <div className="google-map-toolbar"><button type="button" className="btn btn-secondary btn-small" onClick={locate} disabled={busy||finding||!geolocationSupported()}><Icon name="locate" size={15}/>{finding?'Locating…':'Use current location'}</button><button type="button" className="btn btn-primary btn-small" onClick={confirm} disabled={busy||!ready||!draft}><Icon name="check" size={15}/> Confirm this pin</button></div>
-    <small className="google-map-help">Search, move the map until the pin is exactly on the delivery point, then confirm it. You can still correct the written address before saving.</small>
+    <small className="google-map-help">Search or drag the map until the center pin is on the delivery point, then confirm. On phones, use two fingers when the map asks so the page can still scroll normally.</small>
     {error&&<div className="form-error">{error}</div>}
   </div>;
 }

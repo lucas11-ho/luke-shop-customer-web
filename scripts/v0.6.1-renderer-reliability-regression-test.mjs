@@ -1,7 +1,7 @@
 import fs from'node:fs';import assert from'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');const pkg=JSON.parse(read('package.json'));const store=read('src/store/StoreContext.jsx');const support=read('src/components/SupportLauncher.jsx');const card=read('src/components/ProductCard.jsx');const shell=read('src/components/Shell.jsx');const safe=read('src/components/SafeMedia.jsx');const css=read('src/styles.css');
 const tests=[];const test=(n,f)=>tests.push([n,f]);
-test('release is v0.6.1',()=>assert.ok(['0.6.1','0.7.0','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3','0.9.4','0.9.5'].includes(pkg.version)));
+test('release is v0.6.1',()=>assert.ok(['0.6.1','0.7.0','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3','0.9.4','0.9.5','0.10.0'].includes(pkg.version)));
 test('button case setting reaches the real storefront renderer',()=>{assert.match(store,/dataset\.buttonCase=typography\.button_case/);assert.match(css,/data-button-case="uppercase"/)});
 test('support feature toggle gates the actual Luke CS launcher',()=>{assert.match(support,/experience\?\.features\?\.support!==false/);assert.match(support,/customerService\?\.enabled/)});
 test('stock status feature toggle controls product-card stock text',()=>{assert.match(card,/stockEnabled=experience\?\.features\?\.stock_status!==false/);assert.match(card,/stockEnabled&&<span className=\{`stock-note/)});

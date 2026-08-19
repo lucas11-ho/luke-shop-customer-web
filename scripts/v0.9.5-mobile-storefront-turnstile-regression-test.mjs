@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(p,'utf8');let n=0;const test=(name,fn)=>{fn();n++;console.log(`PASS ${n}: ${name}`)};
 const pkg=JSON.parse(read('package.json')),shell=read('src/components/Shell.jsx'),pages=read('src/pages/AuthPages.jsx'),methods=read('src/components/AuthMethods.jsx'),css=read('src/styles.css'),html=read('index.html');
-test('Customer Web release is v0.9.5',()=>assert.equal(pkg.version,'0.9.5'));
+test('Customer Web carries v0.9.5 behavior forward',()=>assert.ok(['0.9.5','0.10.0'].includes(pkg.version)));
 test('mobile viewport uses viewport-fit cover for safe areas',()=>assert.match(html,/viewport-fit=cover/));
 test('storefront has a dedicated mobile app header',()=>{assert.match(shell,/mobile-store-header/);assert.match(shell,/mobile-store-brand/);assert.match(shell,/mobile-header-search/);assert.match(shell,/mobile-header-account/)});
 test('desktop and mobile store headers are separated',()=>{assert.match(shell,/desktop-store-header/);assert.match(css,/\.mobile-store-header\{display:none\}/);assert.match(css,/@media\(max-width:760px\)[\s\S]*desktop-store-header[^}]*display:none/)});
