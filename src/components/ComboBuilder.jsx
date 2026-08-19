@@ -1,103 +1,114 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { money } from './UI.jsx';
 import { Icon } from './icons.jsx';
-
-// Guided "build your meal" flow over the EXISTING Luke Shop modifier groups/options.
-// No new APIs: it only assembles modifier_option_ids for the existing cart contract.
-
-function required(group) { return Boolean(group.required) || Number(group.min_selections) > 0; }
-function minFor(group) { return required(group) ? Math.max(1, Number(group.min_selections) || 1) : Number(group.min_selections) || 0; }
-function isGroupValid(group, list) {
-  const n = list.length;
-  const min = minFor(group);
-  const max = group.max_selections ? Number(group.max_selections) : Infinity;
-  return n >= min && n <= max;
-}
+import { maxSelections, minSelections, modifierOptionIds, sanitizeSelection, validateModifierGroup, validateModifierSelection } from '../modifiers/modifierRules.js';
+// Shared rules preserve the backend min_selections / max_selections modifier contract.
 
 export function ComboBuilder({ open, onClose, product, groups, currency, locale, unitBase = 0, quantity = 1, initialSelection = {}, onConfirm }) {
+  const safeGroups = useMemo(() => groups || [], [groups]);
   const [step, setStep] = useState(0);
-  const [sel, setSel] = useState(initialSelection);
+  const [sel, setSel] = useState(() => sanitizeSelection(safeGroups, initialSelection));
 
-  useEffect(() => { if (open) { setStep(0); setSel(initialSelection); } }, [open]);
-  if (!open || !groups?.length) return null;
+  useEffect(() => {
+    if (!open) return;
+    const safe = sanitizeSelection(safeGroups, initialSelection);
+    setSel(safe);
+    const firstInvalid = validateModifierSelection(safeGroups, safe).index;
+    setStep(firstInvalid >= 0 ? firstInvalid : 0);
+  }, [open, safeGroups, initialSelection]);
 
-  const group = groups[step];
+  if (!open || !safeGroups.length) return null;
+  const group = safeGroups[step];
   const list = sel[group.public_id] || [];
-  const single = group.max_selections === 1;
+  const max = maxSelections(group);
+  const min = minSelections(group);
+  const single = max === 1;
+  const groupValidation = validateModifierGroup(group, list);
+  const overallValidation = validateModifierSelection(safeGroups, sel);
 
-  const toggle = (opt) => {
-    setSel((cur) => {
-      const cl = cur[group.public_id] || [];
-      const exists = cl.some((x) => x.public_id === opt.public_id);
-      if (exists) return { ...cur, [group.public_id]: cl.filter((x) => x.public_id !== opt.public_id) };
-      if (single) return { ...cur, [group.public_id]: [opt] };
-      if (group.max_selections && cl.length >= group.max_selections) return cur;
-      return { ...cur, [group.public_id]: [...cl, opt] };
+  const toggle = (option) => {
+    setSel((current) => {
+      const existing = current[group.public_id] || [];
+      const active = existing.some((item) => item.public_id === option.public_id);
+      if (active) return { ...current, [group.public_id]: existing.filter((item) => item.public_id !== option.public_id) };
+      if (single) return { ...current, [group.public_id]: [option] };
+      if (Number.isFinite(max) && existing.length >= max) return current;
+      return { ...current, [group.public_id]: [...existing, option] };
     });
   };
 
   const allOptions = useMemo(() => Object.values(sel).flat(), [sel]);
-  const itemTotal = Number(unitBase) + allOptions.reduce((s, o) => s + Number(o.price_delta || 0), 0);
-  const stepValid = isGroupValid(group, list);
-  const firstInvalid = groups.findIndex((g) => !isGroupValid(g, sel[g.public_id] || []));
-  const allValid = firstInvalid === -1;
-  const isLast = step === groups.length - 1;
+  const itemTotal = Number(unitBase) + allOptions.reduce((sum, option) => sum + Number(option.price_delta || 0), 0);
+  const isLast = step === safeGroups.length - 1;
+  const hint = single
+    ? (min > 0 ? 'Choose 1' : 'Choose up to 1')
+    : Number.isFinite(max)
+      ? (min > 0 ? `Choose ${min}${max !== min ? `–${max}` : ''}` : `Add up to ${max}`)
+      : (min > 0 ? `Choose at least ${min}` : 'Optional');
 
-  const hint = single ? 'Choose 1' : `${required(group) ? 'Choose' : 'Add up to'} ${minFor(group) || 0}${group.max_selections ? `–${group.max_selections}` : '+'}`;
-
-  const confirm = () => { if (!allValid) { setStep(firstInvalid); return; } onConfirm(sel, allOptions.map((o) => o.public_id)); onClose(); };
-  const next = () => { if (!stepValid) return; if (isLast) confirm(); else setStep((s) => Math.min(groups.length - 1, s + 1)); };
+  const confirm = () => {
+    const result = validateModifierSelection(safeGroups, sel);
+    if (!result.valid) { setStep(result.index); return; }
+    onConfirm?.(sanitizeSelection(safeGroups, sel), modifierOptionIds(safeGroups, sel));
+    onClose?.();
+  };
+  const next = () => {
+    if (!groupValidation.valid) return;
+    if (isLast) confirm(); else setStep((value) => Math.min(safeGroups.length - 1, value + 1));
+  };
 
   return (
-    <div className="combo-overlay" role="dialog" aria-modal="true" aria-label="Build your meal" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="combo-overlay" role="dialog" aria-modal="true" aria-label="Choose product options" onMouseDown={(event) => event.target === event.currentTarget && onClose?.()}>
       <div className="combo-panel" data-testid="combo-builder">
         <div className="combo-head">
           <div>
-            <span className="eyebrow">Build your meal · Step {step + 1} of {groups.length}</span>
+            <span className="eyebrow">Customize · Step {step + 1} of {safeGroups.length}</span>
             <h2>{product?.name}</h2>
           </div>
-          <button className="modal-close" onClick={onClose} aria-label="Close builder"><Icon name="x" size={20} /></button>
+          <button className="modal-close" onClick={onClose} aria-label="Close options"><Icon name="x" size={20} /></button>
         </div>
 
-        <div className="combo-steps" aria-hidden="true">
-          {groups.map((g, i) => {
-            const done = isGroupValid(g, sel[g.public_id] || []);
-            return <button key={g.public_id} type="button" className={`combo-step-dot ${i === step ? 'is-current' : ''} ${done ? 'is-done' : ''}`} onClick={() => setStep(i)} title={g.name}>{done && i !== step ? <Icon name="check" size={12} /> : i + 1}</button>;
+        <div className="combo-steps" aria-label="Option groups">
+          {safeGroups.map((item, index) => {
+            const done = validateModifierGroup(item, sel[item.public_id] || []).valid;
+            return <button key={item.public_id} type="button" className={`combo-step-dot ${index === step ? 'is-current' : ''} ${done ? 'is-done' : ''}`} onClick={() => setStep(index)} title={item.name}>{done && index !== step ? <Icon name="check" size={12} /> : index + 1}</button>;
           })}
         </div>
 
         <div className="combo-body">
           <div className="modifier-group-head">
             <label>{group.name}</label>
-            {required(group) ? <span className="required">Required</span> : <span className="modifier-optional">Optional</span>}
+            {min > 0 ? <span className="required">Required</span> : <span className="modifier-optional">Optional</span>}
             <small className="modifier-count">{list.length > 0 ? `${list.length} selected` : hint}</small>
           </div>
           <div className="modifier-list modifier-list-v2" role={single ? 'radiogroup' : 'group'} aria-label={group.name}>
-            {group.options.map((o) => {
-              const active = list.some((x) => x.public_id === o.public_id);
-              const full = !single && group.max_selections && list.length >= group.max_selections;
+            {(group.options || []).map((option) => {
+              const active = list.some((item) => item.public_id === option.public_id);
+              const full = !single && Number.isFinite(max) && list.length >= max;
               const disabled = !active && full;
-              const delta = Number(o.price_delta);
+              const delta = Number(option.price_delta || 0);
               return (
-                <button key={o.public_id} type="button" role={single ? 'radio' : 'checkbox'} aria-checked={active} disabled={disabled} className={`modifier-option ${active ? 'selected' : ''} ${disabled ? 'is-disabled' : ''}`} onClick={() => toggle(o)} data-testid="combo-option">
+                <button key={option.public_id} type="button" role={single ? 'radio' : 'checkbox'} aria-checked={active} disabled={disabled} className={`modifier-option ${active ? 'selected' : ''} ${disabled ? 'is-disabled' : ''}`} onClick={() => toggle(option)} data-testid="combo-option">
                   <span className={`modifier-mark ${single ? 'is-radio' : 'is-check'}`}>{active && <Icon name="check" size={13} />}</span>
-                  <span className="modifier-name">{o.name}</span>
-                  <span className="modifier-price">{delta ? `+ ${money(o.price_delta, currency, locale)}` : 'Included'}</span>
+                  <span className="modifier-name">{option.name}</span>
+                  <span className="modifier-price">{delta ? `+ ${money(delta, currency, locale)}` : 'Included'}</span>
                 </button>
               );
             })}
           </div>
-          {required(group) && !stepValid && <p className="combo-validation"><Icon name="info" size={14} /> Please choose {minFor(group)} to continue.</p>}
+          {!groupValidation.valid && <p className="combo-validation" role="alert"><Icon name="info" size={14} /> {groupValidation.message}</p>}
+          {!group.options?.length && <p className="combo-validation" role="alert"><Icon name="alert-triangle" size={14} /> This option group has no available choices. Please contact the store.</p>}
         </div>
 
         <div className="combo-footer">
           <div className="combo-total"><span>Item total</span><strong>{money(itemTotal, currency, locale)}{quantity > 1 ? ` × ${quantity}` : ''}</strong></div>
           <div className="combo-actions">
-            {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep((s) => s - 1)}><Icon name="chevron-right" size={16} className="flip" /> Back</button>}
-            <button type="button" className="btn btn-primary" disabled={!stepValid} onClick={next} data-testid="combo-next">
+            {step > 0 && <button type="button" className="btn btn-secondary" onClick={() => setStep((value) => value - 1)}><Icon name="chevron-right" size={16} className="flip" /> Back</button>}
+            <button type="button" className="btn btn-primary" disabled={!groupValidation.valid} onClick={next} data-testid="combo-next">
               {isLast ? <>Add to cart · {money(itemTotal * quantity, currency, locale)}</> : <>Next <Icon name="arrow-right" size={16} /></>}
             </button>
           </div>
+          {!overallValidation.valid && overallValidation.index !== step && <small className="combo-footer-warning">Another required group still needs a selection.</small>}
         </div>
       </div>
     </div>

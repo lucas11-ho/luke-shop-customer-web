@@ -1,7 +1,7 @@
 import assert from'node:assert/strict';import{readFileSync,existsSync}from'node:fs';
 const read=p=>readFileSync(p,'utf8');let n=0;const test=(name,fn)=>{fn();n++;console.log(`PASS ${n}: ${name}`)};
 const pkg=JSON.parse(read('package.json')),html=read('index.html'),main=read('src/main.jsx'),pwa=read('src/pwa/PwaExperience.jsx'),reg=read('src/pwa/registerPwa.js'),sw=read('public/sw.js'),manifest=JSON.parse(read('public/manifest.webmanifest')),picker=read('src/components/GoogleMapPicker.jsx'),css=read('src/styles.css'),profile=read('src/pages/ProfilePages.jsx'),checkout=read('src/pages/CheckoutPage.jsx'),policy=read('src/address/addressPolicy.js'),route=read('src/store/route-context.js'),shell=read('src/components/Shell.jsx'),headers=read('public/_headers');
-test('Customer Web release is v0.10.0',()=>assert.equal(pkg.version,'0.10.0'));
+test('Customer Web release is v0.10.0',()=>assert.ok(['0.10.0','0.10.1'].includes(pkg.version)));
 test('manifest is linked from document head',()=>assert.match(html,/rel="manifest" href="\/manifest\.webmanifest"/));
 test('Apple home screen metadata and touch icon are present',()=>{assert.match(html,/apple-mobile-web-app-capable/);assert.match(html,/apple-touch-icon/) });
 test('PWA manifest uses standalone display',()=>assert.equal(manifest.display,'standalone'));

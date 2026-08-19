@@ -6,6 +6,9 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from '../cart/CartContext.jsx';
 import { SafeImage } from './SafeMedia.jsx';
 import { Icon } from './icons.jsx';
+import { productExplicitlyHasNoModifiers } from '../modifiers/modifierRules.js';
+
+function initials(name = '') { return String(name).trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || '•'; }
 
 export function ProductCard({ product }) {
   const { tenant, experience } = useStore();
@@ -20,28 +23,33 @@ export function ProductCard({ product }) {
   const style = experience?.layout?.product_card || 'standard';
   const quick = style === 'quick_add' || experience?.features?.quick_add === true;
   const mode = Array.isArray(product.fulfillment_modes) ? product.fulfillment_modes[0] : null;
-  const canQuick = quick && product.in_stock !== false && !product.has_variants && Boolean(mode);
+  // Quick-add is allowed only when the list payload explicitly confirms there are no modifier groups.
+  // Unknown modifier metadata must open the product page rather than risking MODIFIER_SELECTION_INVALID.
+  const modifierFree = productExplicitlyHasNoModifiers(product);
+  const canQuick = quick && product.in_stock !== false && !product.has_variants && Boolean(mode) && modifierFree;
   const open = () => go(`/product/${encodeURIComponent(product.slug)}`);
-  const quickAdd = async (e) => {
-    e.preventDefault(); e.stopPropagation();
+  const quickAdd = async (event) => {
+    event.preventDefault(); event.stopPropagation();
     if (!isAuthenticated) { go('/login', { next: `/product/${product.slug}` }); return; }
     if (!canQuick) { open(); return; }
     setAdding(true);
-    try { await addItem({ product_id: product.public_id, quantity: 1, fulfillment_mode: mode }); setAdded(true); setTimeout(() => setAdded(false), 1800); }
-    catch { open(); } finally { setAdding(false); }
+    try {
+      await addItem({ product_id: product.public_id, quantity: 1, fulfillment_mode: mode, modifier_option_ids: [] });
+      setAdded(true); setTimeout(() => setAdded(false), 1800);
+    } catch { open(); } finally { setAdding(false); }
   };
   return (
-    <article className={`product-card product-card-v3 product-card-${style}`} onClick={open} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') open(); }} tabIndex="0" role="link" aria-label={`View ${product.name}`} data-testid="product-card">
+    <article className={`product-card product-card-v3 product-card-${style}`} onClick={open} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') open(); }} tabIndex="0" role="link" aria-label={`View ${product.name}`} data-testid="product-card">
       <div className="product-media">
         {product.primary_media_url
-          ? <SafeImage src={product.primary_media_url} alt={product.name} loading="lazy" fallback={<div className="media-placeholder">{product.product_type?.replace('_', ' ')}</div>} />
-          : <div className="media-placeholder">{product.product_type?.replace('_', ' ')}</div>}
+          ? <SafeImage src={product.primary_media_url} alt={product.name} loading="lazy" fallback={<div className="media-placeholder">{initials(product.name)}</div>} />
+          : <div className="media-placeholder">{initials(product.name)}</div>}
         {discount > 0 && <div className="discount-chip">-{discount}%</div>}
         {!product.in_stock && <div className="sold-overlay">Out of stock</div>}
       </div>
       <div className="product-card-body">
         <div className="product-card-meta">
-          <Badge>{product.category_name || product.product_type}</Badge>
+          {product.category_name && <Badge>{product.category_name}</Badge>}
           {stockEnabled&&<span className={`stock-note ${product.in_stock === false ? 'bad' : ''}`}>{stockLabel}</span>}
         </div>
         <h3>{product.name}</h3>

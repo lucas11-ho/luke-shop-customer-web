@@ -1,0 +1,4 @@
+Luke Shop Customer Web v0.10.1
+Step 3 R1 — Commerce Reliability
+Modifier selection recovery + Merchant-managed categories + Product image zoom
+Database migration: none

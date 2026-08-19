@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(p,'utf8');let n=0;const test=(name,fn)=>{fn();n++;console.log(`PASS ${n}: ${name}`)};
 const pkg=JSON.parse(read('package.json')),pages=read('src/pages/AuthPages.jsx'),methods=read('src/components/AuthMethods.jsx'),shell=read('src/components/Shell.jsx'),icons=read('src/components/icons.jsx'),css=read('src/styles.css');
-test('Customer Web release carries v0.9.4 auth UX forward',()=>assert.ok(['0.9.4','0.9.5','0.10.0'].includes(pkg.version)));
+test('Customer Web release carries v0.9.4 auth UX forward',()=>assert.ok(['0.9.4','0.9.5','0.10.0','0.10.1'].includes(pkg.version)));
 test('login and register use dedicated v0.9.4 auth page',()=>assert.match(pages,/auth-page-v094/));
 test('auth routes are isolated from normal storefront chrome',()=>{assert.match(shell,/authOnly = path === '\/login' \|\| path === '\/register'/);assert.match(shell,/auth-only-shell/);assert.ok(shell.indexOf('if (authOnly)')<shell.indexOf('<header className="topbar">'))});
 test('auth-only shell omits support launcher and mobile navigation',()=>{const start=shell.indexOf('if (authOnly)');const end=shell.indexOf('return (',start+20);assert.ok(start>=0&&end>=0);assert.match(shell,/auth-only-main/)});

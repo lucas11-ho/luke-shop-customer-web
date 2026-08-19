@@ -24,6 +24,7 @@ const FRIENDLY_ERRORS = {
   STOREFRONT_ROUTE_REQUIRED: { title: 'Choose a store', body: 'Open a store link (for example /t/your-store) to start shopping.' },
   PREVIEW_TOKEN_INVALID: { title: 'Preview link expired', body: 'This preview link is no longer valid. Ask the store to share a fresh preview.' },
   NETWORK_ERROR: { title: "Can't reach the store", body: 'Please check your connection and try again.' },
+  MODIFIER_SELECTION_INVALID: { title: 'Review product options', body: 'Please choose the required product options and try again.' },
 };
 
 export function friendlyError(err) {
