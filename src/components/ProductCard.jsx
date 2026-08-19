@@ -7,11 +7,14 @@ import { useCart } from '../cart/CartContext.jsx';
 import { SafeImage } from './SafeMedia.jsx';
 import { Icon } from './icons.jsx';
 import { productExplicitlyHasNoModifiers } from '../modifiers/modifierRules.js';
+import { useLocalization } from '../i18n/LocalizationContext.jsx';
 
 function initials(name = '') { return String(name).trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || '•'; }
 
 export function ProductCard({ product }) {
   const { tenant, experience } = useStore();
+  const { t, localizeProduct } = useLocalization();
+  product = localizeProduct(product);
   const { isAuthenticated } = useAuth();
   const { addItem } = useCart();
   const [adding, setAdding] = useState(false);
@@ -19,7 +22,7 @@ export function ProductCard({ product }) {
   const price = Number(product.base_price || 0), compare = Number(product.compare_at_price || 0);
   const discount = compare > price && price >= 0 ? Math.round((1 - price / compare) * 100) : 0;
   const stockEnabled=experience?.features?.stock_status!==false;
-  const stockLabel = product.in_stock === false ? 'Out of stock' : product.available_quantity != null && Number(product.available_quantity) <= 5 ? `Only ${product.available_quantity} left` : 'In stock';
+  const stockLabel = product.in_stock === false ? t('common.out_of_stock') : product.available_quantity != null && Number(product.available_quantity) <= 5 ? t('common.only_left',{count:product.available_quantity}) : t('common.in_stock');
   const style = experience?.layout?.product_card || 'standard';
   const quick = style === 'quick_add' || experience?.features?.quick_add === true;
   const mode = Array.isArray(product.fulfillment_modes) ? product.fulfillment_modes[0] : null;
@@ -45,7 +48,7 @@ export function ProductCard({ product }) {
           ? <SafeImage src={product.primary_media_url} alt={product.name} loading="lazy" fallback={<div className="media-placeholder">{initials(product.name)}</div>} />
           : <div className="media-placeholder">{initials(product.name)}</div>}
         {discount > 0 && <div className="discount-chip">-{discount}%</div>}
-        {!product.in_stock && <div className="sold-overlay">Out of stock</div>}
+        {!product.in_stock && <div className="sold-overlay">{t('common.out_of_stock')}</div>}
       </div>
       <div className="product-card-body">
         <div className="product-card-meta">
@@ -59,8 +62,8 @@ export function ProductCard({ product }) {
           {compare > price && <del>{money(compare, product.currency || tenant?.currency, tenant?.locale)}</del>}
         </div>
         {quick
-          ? <button className="quick-add-button" disabled={adding || product.in_stock === false} onClick={quickAdd} data-testid="quick-add">{added ? <><Icon name="check" size={15} /> Added</> : adding ? 'Adding…' : canQuick ? <><Icon name="plus" size={15} /> Quick add</> : 'Choose options'}</button>
-          : <div className="product-card-action"><span>View product</span><Icon name="arrow-right" size={15} /></div>}
+          ? <button className="quick-add-button" disabled={adding || product.in_stock === false} onClick={quickAdd} data-testid="quick-add">{added ? <><Icon name="check" size={15} /> {t('common.added')}</> : adding ? t('common.adding') : canQuick ? <><Icon name="plus" size={15} /> {t('common.quick_add')}</> : t('common.choose_options')}</button>
+          : <div className="product-card-action"><span>{t('common.view_product')}</span><Icon name="arrow-right" size={15} /></div>}
       </div>
     </article>
   );

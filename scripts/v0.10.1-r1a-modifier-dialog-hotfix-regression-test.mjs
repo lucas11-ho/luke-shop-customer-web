@@ -5,7 +5,7 @@ const combo = read('src/components/ComboBuilder.jsx');
 const product = read('src/pages/ProductPage.jsx');
 let n = 0;
 const test = (name, ok) => { if (!ok) throw new Error(`FAIL ${name}`); n += 1; console.log(`PASS ${name}`); };
-test('base application remains v0.10.1', pkg.version === '0.10.1');
+test('v0.10.1 R1A modifier baseline is carried forward', ['0.10.1','0.11.0'].includes(pkg.version));
 test('allOptions hook runs before the closed-dialog return', combo.indexOf('const allOptions = useMemo') > -1 && combo.indexOf('const allOptions = useMemo') < combo.indexOf('if (!open || !safeGroups.length) return null'));
 test('no React hook appears after the closed-dialog return', !/if \(!open \|\| !safeGroups\.length\) return null;[\s\S]*\buse(?:Memo|State|Effect|Callback|Ref|Context|Id)\s*\(/.test(combo));
 test('add supports a confirmed selection override', product.includes('const add = async (optionIds, selectionOverride) =>'));

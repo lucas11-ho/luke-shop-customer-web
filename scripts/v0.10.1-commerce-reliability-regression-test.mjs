@@ -10,7 +10,7 @@ const viewer=read('src/components/ProductMediaViewer.jsx');
 const ui=read('src/components/UI.jsx');
 const styles=read('src/styles.css');
 let n=0;const test=(name,condition)=>{if(!condition)throw new Error(`FAIL ${name}`);n++;console.log(`PASS ${name}`);};
-test('release is v0.10.1',pkg.version==='0.10.1');
+test('v0.10.1 commerce baseline is carried forward',['0.10.1','0.11.0'].includes(pkg.version));
 test('Explore no longer exposes hard-coded product type filters',!explore.includes('All types')&&!explore.includes('DIGITAL_IMAGE')&&!explore.includes('DIGITAL_VIDEO')&&!explore.includes('type-filters'));
 test('Explore filters only by merchant categories and search',explore.includes('/v1/storefront/categories')&&explore.includes("category = query.get('category')")&&!explore.includes('product_type:'));
 test('Product cards no longer use product_type as customer category badge',!card.includes('product.category_name || product.product_type'));

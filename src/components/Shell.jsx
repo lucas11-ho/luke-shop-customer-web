@@ -8,17 +8,19 @@ import { SafeImage } from './SafeMedia.jsx';
 import { SearchOverlay } from './SearchOverlay.jsx';
 import { Icon } from './icons.jsx';
 import { PwaExperience } from '../pwa/PwaExperience.jsx';
+import { useLocalization } from '../i18n/LocalizationContext.jsx';
 
-const NAV={home:['/','Home'],explore:['/explore','Shop'],cart:['/cart','Bag'],orders:['/orders','Orders'],profile:['/profile','Account']};
+const NAV={home:['/','nav.home'],explore:['/explore','nav.explore'],cart:['/cart','nav.cart'],orders:['/orders','nav.orders'],profile:['/profile','nav.profile']};
 const NAV_ICON={home:'home',explore:'grid',cart:'bag',orders:'receipt',profile:'user'};
 
 export function Shell({ children, path }) {
   const { effectiveBranding, experience } = useStore();
+  const { t, localizedBranding, localePack } = useLocalization();
   const { session, isAuthenticated, logout } = useAuth();
   const { itemCount } = useCart();
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
-  const brand = effectiveBranding || {};
+  const brand = localizedBranding || effectiveBranding || {};
   const name = brand.store_name || 'Luke Shop';
   const searchEnabled = experience?.features?.search !== false;
   const keys = (experience?.navigation || ['home', 'explore', 'cart', 'orders', 'profile']).filter(k=>NAV[k]);
@@ -26,6 +28,7 @@ export function Shell({ children, path }) {
   const header = experience?.layout?.header || 'logo_left';
   const mobileNav = experience?.layout?.mobile_nav || 'standard';
   const authOnly = path === '/login' || path === '/register';
+  const navText=(key,labelKey)=>localePack?.navigation?.[key]?.title||t(labelKey);
 
   if (authOnly) {
     return (
@@ -50,14 +53,14 @@ export function Shell({ children, path }) {
           </button>
           <nav className="desktop-nav" aria-label="Primary">
             {desktop.map((k) => {
-              const [to, label] = NAV[k];
-              return <button key={k} className={path === to ? 'active' : ''} onClick={() => go(to)} data-testid={`nav-${k}`}>{label}</button>;
+              const [to, labelKey] = NAV[k];
+              return <button key={k} className={path === to ? 'active' : ''} onClick={() => go(to)} data-testid={`nav-${k}`}>{navText(k,labelKey)}</button>;
             })}
           </nav>
           <div className="header-actions">
             {searchEnabled && (
-              <button className="search-action" onClick={() => setSearch(true)} aria-label="Search products" data-testid="header-search">
-                <Icon name="search" size={16} /> <span className="search-action-label">Search</span>
+              <button className="search-action" onClick={() => setSearch(true)} aria-label={t('common.search_products')} data-testid="header-search">
+                <Icon name="search" size={16} /> <span className="search-action-label">{t('common.search')}</span>
               </button>
             )}
             {keys.includes('cart') && (
@@ -74,13 +77,14 @@ export function Shell({ children, path }) {
                   <Icon name="chevron-down" size={15} className="chevron" />
                 </button>
               )
-              : <button className="btn btn-primary btn-small" onClick={() => go('/login')} data-testid="header-signin">Sign in</button>}
+              : <button className="btn btn-primary btn-small" onClick={() => go('/login')} data-testid="header-signin">{t('common.sign_in')}</button>}
             {menu && isAuthenticated && (
               <div className="account-menu" role="menu">
-                <div className="menu-caption">Your account</div>
-                <button role="menuitem" onClick={() => { go('/profile'); setMenu(false); }}><Icon name="user" size={16} /> Profile</button>
-                <button role="menuitem" onClick={() => { go('/orders'); setMenu(false); }}><Icon name="receipt" size={16} /> Orders</button>
-                <button role="menuitem" onClick={logout}><Icon name="logout" size={16} /> Sign out</button>
+                <div className="menu-caption">{t('profile.your_account')}</div>
+                <button role="menuitem" onClick={() => { go('/profile'); setMenu(false); }}><Icon name="user" size={16} /> {t('auth.profile')}</button>
+                <button role="menuitem" onClick={() => { go('/orders'); setMenu(false); }}><Icon name="receipt" size={16} /> {t('auth.orders')}</button>
+                <button role="menuitem" onClick={() => { go('/profile/language'); setMenu(false); }}><Icon name="globe" size={16} /> {t('common.language')}</button>
+                <button role="menuitem" onClick={logout}><Icon name="logout" size={16} /> {t('common.sign_out')}</button>
               </div>
             )}
           </div>
@@ -93,8 +97,8 @@ export function Shell({ children, path }) {
             <span>{name}</span>
           </button>
           <div className="mobile-header-actions">
-            {searchEnabled && <button type="button" className="mobile-header-icon" onClick={() => setSearch(true)} aria-label="Search products" data-testid="mobile-header-search"><Icon name="search" size={20}/></button>}
-            <button type="button" className="mobile-header-icon mobile-account-shortcut" onClick={() => go(isAuthenticated?'/profile':'/login')} aria-label={isAuthenticated?'Open account':'Sign in'} data-testid="mobile-header-account">
+            {searchEnabled && <button type="button" className="mobile-header-icon" onClick={() => setSearch(true)} aria-label={t('common.search_products')} data-testid="mobile-header-search"><Icon name="search" size={20}/></button>}
+            <button type="button" className="mobile-header-icon mobile-account-shortcut" onClick={() => go(isAuthenticated?'/profile':'/login')} aria-label={isAuthenticated?t('common.account'):t('common.sign_in')} data-testid="mobile-header-account">
               {isAuthenticated?<span className="mobile-account-avatar">{(session?.customer?.display_name||'A').slice(0,1).toUpperCase()}</span>:<Icon name="user" size={20}/>}
             </button>
           </div>
@@ -106,11 +110,11 @@ export function Shell({ children, path }) {
       {searchEnabled && <SearchOverlay open={search} onClose={() => setSearch(false)} />}
       <nav className="mobile-nav" aria-label="Primary mobile">
         {keys.map((k) => {
-          const [to, label] = NAV[k];
+          const [to, labelKey] = NAV[k];
           return (
             <button key={k} className={path === to ? 'active' : ''} onClick={() => go(to)} data-testid={`mobile-nav-${k}`} aria-current={path === to ? 'page' : undefined}>
               <Icon name={NAV_ICON[k]} size={21} />
-              <span>{label}</span>
+              <span>{navText(k,labelKey)}</span>
               {k === 'cart' && itemCount > 0 && <b className="mobile-cart-count">{itemCount}</b>}
             </button>
           );

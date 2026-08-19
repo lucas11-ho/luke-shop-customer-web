@@ -588,3 +588,16 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   .product-media-viewer-nav{width:42px;height:42px}.product-media-viewer-nav.prev{left:12px}.product-media-viewer-nav.next{right:12px}
   .product-media-viewer-help{font-size:10px;margin-top:7px}
 }
+
+/* v0.11.0 — Localization Pro */
+.language-settings-page .section-head h1{display:flex;align-items:center;gap:9px}
+.language-settings-card{max-width:720px;display:grid;gap:16px}
+.language-current-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--accent) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 18%,var(--line))}
+.language-current-row span{color:var(--muted);font-size:12px}.language-current-row strong{font-family:var(--font-heading);font-size:15px}
+.language-choice-list{display:grid;gap:8px}
+.language-choice{width:100%;display:grid;grid-template-columns:40px minmax(0,1fr) 24px;align-items:center;gap:11px;text-align:left;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);cursor:pointer;min-height:62px}
+.language-choice:hover{border-color:color-mix(in srgb,var(--accent) 38%,var(--line));background:color-mix(in srgb,var(--accent) 4%,var(--surface))}.language-choice.active{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 12%,transparent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.language-choice-icon{width:40px;height:40px;border-radius:12px;background:var(--bg);display:grid;place-items:center}.language-choice span:nth-child(2){min-width:0}.language-choice strong,.language-choice small{display:block}.language-choice small{margin-top:2px;color:var(--muted);font-size:11px}
+.language-fallback-note{display:flex;gap:8px;align-items:flex-start;margin:0;color:var(--muted);font-size:11px;line-height:1.5}
+html[data-store-locale="my"] body{word-break:normal;line-break:auto}
+@media(max-width:700px){.language-settings-card{padding:12px}.language-choice{min-height:58px;padding:9px 10px;grid-template-columns:36px minmax(0,1fr) 22px}.language-choice-icon{width:36px;height:36px;border-radius:11px}}

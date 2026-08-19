@@ -5,10 +5,12 @@ import { ProductCard } from '../components/ProductCard.jsx';
 import { ErrorState, Empty } from '../components/UI.jsx';
 import { ProductGridSkeleton } from '../components/Skeleton.jsx';
 import { Icon } from '../components/icons.jsx';
+import { useLocalization } from '../i18n/LocalizationContext.jsx';
 
 export function ExplorePage() {
   const { query } = useRoute();
   const { publicApi, experience } = useStore();
+  const { t, localizeCategory } = useLocalization();
   const searchEnabled = experience?.features?.search !== false;
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -31,29 +33,30 @@ export function ExplorePage() {
   useEffect(() => { setQ(query.get('q') || ''); load(); }, [query.toString()]);
 
   const submit = (event) => { event.preventDefault(); go('/explore', { q, category }); };
-  const activeCategory = categories.find((item) => item.slug === category);
+  const localizedCategories = categories.map(localizeCategory);
+  const activeCategory = localizedCategories.find((item) => item.slug === category);
 
   return (
     <section className="section explore" data-testid="explore-page">
       <div className="section-head">
         <div>
-          <span className="eyebrow">Storefront</span>
-          <h1>{activeCategory ? activeCategory.name : q ? `Results for “${q}”` : 'Explore'}</h1>
+          <span className="eyebrow">{t('explore.eyebrow')}</span>
+          <h1>{activeCategory ? activeCategory.name : q ? t('explore.results_for',{query:q}) : t('explore.title')}</h1>
         </div>
       </div>
 
       {searchEnabled && (
         <form className="searchbar" onSubmit={submit} role="search">
           <span className="searchbar-icon"><Icon name="search" size={18} /></span>
-          <input value={q} onChange={(event) => setQ(event.target.value)} placeholder="Search products…" aria-label="Search products" data-testid="explore-search-input" />
+          <input value={q} onChange={(event) => setQ(event.target.value)} placeholder={t('explore.search_placeholder')} aria-label={t('common.search_products')} data-testid="explore-search-input" />
           {q && <button type="button" className="searchbar-clear" aria-label="Clear search" onClick={() => { setQ(''); go('/explore', { category }); }}><Icon name="x" size={16} /></button>}
-          <button className="btn btn-primary" data-testid="explore-search-submit">Search</button>
+          <button className="btn btn-primary" data-testid="explore-search-submit">{t('common.search')}</button>
         </form>
       )}
 
-      <div className="filters merchant-category-filters" role="tablist" aria-label="Categories">
-        <button className={!category ? 'active' : ''} onClick={() => go('/explore', { q })}>All</button>
-        {categories.map((item) => (
+      <div className="filters merchant-category-filters" role="tablist" aria-label={t('explore.categories')}>
+        <button className={!category ? 'active' : ''} onClick={() => go('/explore', { q })}>{t('common.all')}</button>
+        {localizedCategories.map((item) => (
           <button key={item.public_id} className={category === item.slug ? 'active' : ''} onClick={() => go('/explore', { q, category: item.slug })} data-testid={`filter-category-${item.slug}`}>{item.name}</button>
         ))}
       </div>
@@ -67,11 +70,11 @@ export function ExplorePage() {
             : (
               <Empty
                 icon="search"
-                title="No products found"
-                body={categories.length ? 'Try another search or choose a different category.' : 'This store has not published any categories or matching products yet.'}
+                title={t('explore.no_products')}
+                body={categories.length ? t('explore.try_another') : t('explore.no_categories')}
                 action={categories.length ? (
                   <div className="empty-suggestions">
-                    {categories.slice(0, 6).map((item) => (
+                    {localizedCategories.slice(0, 6).map((item) => (
                       <button key={item.public_id} className="search-chip" onClick={() => go('/explore', { category: item.slug })}><Icon name="grid" size={14} /> {item.name}</button>
                     ))}
                   </div>
