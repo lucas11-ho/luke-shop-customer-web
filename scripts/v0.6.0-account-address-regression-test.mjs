@@ -1,7 +1,7 @@
 import fs from'node:fs';import assert from'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');const pkg=JSON.parse(read('package.json'));const profile=read('src/pages/ProfilePage.jsx')+read('src/pages/ProfilePages.jsx');const checkout=read('src/pages/CheckoutPage.jsx');const css=read('src/styles.css');
 const tests=[];const test=(n,f)=>tests.push([n,f]);
-test('release is v0.6.0',()=>assert.ok(['0.6.0','0.6.1','0.7.0','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3','0.9.4'].includes(pkg.version)));
+test('release is v0.6.0',()=>assert.ok(['0.6.0','0.6.1','0.7.0','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3','0.9.4','0.9.5'].includes(pkg.version)));
 test('profile update uses authenticated customer self route',()=>{assert.match(profile,/\/v1\/customer\/me/);assert.match(profile,/method:'PATCH'/)});
 test('saved address CRUD is exposed',()=>{for(const x of ['/v1/customer/me/addresses',"method:'POST'","method:'PATCH'","method:'DELETE'"])assert.ok(profile.includes(x),`missing ${x}`)});
 test('default saved address can be selected',()=>{assert.match(profile,/is_default/);assert.match(profile,/Make default|default/i)});

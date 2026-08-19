@@ -40,7 +40,7 @@ export function Shell({ children, path }) {
         <div className="announcement"><Icon name="sparkles" size={13} />{brand.announcement}</div>
       )}
       <header className="topbar">
-        <div className="topbar-inner">
+        <div className="topbar-inner desktop-store-header">
           <button className="brand" onClick={() => go('/')} aria-label={`${name} home`} data-testid="brand-home">
             {brand.logo_url
               ? <SafeImage src={brand.logo_url} alt="" fallback={<span className="brand-mark">{name.slice(0, 1).toUpperCase()}</span>} />
@@ -82,6 +82,20 @@ export function Shell({ children, path }) {
                 <button role="menuitem" onClick={logout}><Icon name="logout" size={16} /> Sign out</button>
               </div>
             )}
+          </div>
+        </div>
+        <div className="mobile-store-header">
+          <button className="mobile-store-brand" onClick={() => go('/')} aria-label={`${name} home`} data-testid="mobile-brand-home">
+            {brand.logo_url
+              ? <SafeImage src={brand.logo_url} alt="" fallback={<span className="brand-mark">{name.slice(0, 1).toUpperCase()}</span>} />
+              : <span className="brand-mark">{name.slice(0, 1).toUpperCase()}</span>}
+            <span>{name}</span>
+          </button>
+          <div className="mobile-header-actions">
+            {searchEnabled && <button type="button" className="mobile-header-icon" onClick={() => setSearch(true)} aria-label="Search products" data-testid="mobile-header-search"><Icon name="search" size={20}/></button>}
+            <button type="button" className="mobile-header-icon mobile-account-shortcut" onClick={() => go(isAuthenticated?'/profile':'/login')} aria-label={isAuthenticated?'Open account':'Sign in'} data-testid="mobile-header-account">
+              {isAuthenticated?<span className="mobile-account-avatar">{(session?.customer?.display_name||'A').slice(0,1).toUpperCase()}</span>:<Icon name="user" size={20}/>}
+            </button>
           </div>
         </div>
       </header>
