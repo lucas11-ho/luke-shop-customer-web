@@ -1,0 +1,30 @@
+name: Luke Shop Customer Web CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: customer-web-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+    env:
+      VITE_APP_ENV: production
+      VITE_LUKE_SHOP_API_BASE_URL: https://api.example.invalid
+      VITE_LUKE_SHOP_ALLOW_ENV_TENANT_FALLBACK: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --registry=https://registry.npmjs.org/
+      - name: Run source and release regressions
+        run: npm run verify
+      - name: Build production bundle
+        run: npm run build
+      - name: Dependency audit
+        run: npm audit --audit-level=high --registry=https://registry.npmjs.org/
