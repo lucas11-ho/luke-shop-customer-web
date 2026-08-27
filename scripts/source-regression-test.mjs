@@ -21,7 +21,7 @@ let n=0;const ok=(name,cond)=>{if(!cond)throw new Error(`FAIL ${name}`);n++;cons
 ok('release is v0.5.0',['0.5.0','0.6.0','0.6.1','0.7.0','0.8.0','0.9.0','0.9.1','0.9.2','0.9.3','0.9.4','0.9.5','0.10.0','0.10.1','0.11.0'].includes(pkg.version));
 ok('Node 24+ required',pkg.engines?.node==='>=24');
 ok('React 19 pinned',pkg.dependencies?.react==='19.1.1');
-ok('Vite 7 pinned',pkg.devDependencies?.vite==='7.1.2');
+ok('Vite 7 pinned',pkg.devDependencies?.vite==='7.3.6');
 ok('API base is environment controlled',api.includes('VITE_LUKE_SHOP_API_BASE_URL'));
 ok('legacy tenant fallback remains environment controlled',api.includes('VITE_LUKE_SHOP_TENANT_SLUG'));
 ok('environment tenant fallback is opt-in and defaults false',api.includes('VITE_LUKE_SHOP_ALLOW_ENV_TENANT_FALLBACK')&&api.includes("||'false'"));
