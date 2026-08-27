@@ -2,6 +2,7 @@ import fs from'node:fs';import assert from'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');const pkg=JSON.parse(read('package.json')),main=read('src/main.jsx'),foundation=read('src/store/ExperienceFoundation.jsx'),css=read('src/experience-foundation.css'),store=read('src/store/StoreContext.jsx');
 const tests=[];const test=(name,fn)=>tests.push([name,fn]);
 test('Customer Web version remains 0.11.0',()=>assert.equal(pkg.version,'0.11.0'));
+test('Customer Web Vite security baseline is 7.3.6',()=>assert.equal(pkg.devDependencies.vite,'7.3.6'));
 test('verify carries CX v4 foundation regression',()=>{assert.match(pkg.scripts.verify,/test:cx-v4-foundation/);assert.match(pkg.scripts['test:cx-v4-foundation'],/v0\.11\.0-cx-v4-foundation-regression-test\.mjs/)});
 test('Customer Web loads ExperienceFoundation inside StoreProvider',()=>{assert.match(main,/ExperienceFoundation/);assert.match(main,/<StoreProvider>[\s\S]*<ExperienceFoundation\s*\/>[\s\S]*<LocalizationProvider>/)});
 test('foundation stylesheet loads after legacy storefront stylesheet',()=>assert.ok(main.indexOf("'./experience-foundation.css'")>main.indexOf("'./styles.css'")));
