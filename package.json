@@ -10,6 +10,9 @@
     "dev": "vite --host 0.0.0.0 --port 4174",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4174",
+    "deploy": "npm run verify && npm run build && wrangler deploy",
+    "deploy:production": "npm run deploy",
+    "cf:types": "wrangler types",
     "check": "node scripts/check-source.mjs",
     "test:source": "node scripts/source-regression-test.mjs",
     "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3 && npm run test:account-v06 && npm run test:renderer-reliability-v061 && npm run test:customer-ux-v07 && npm run test:identity-v08 && npm run test:commerce-connector-v2 && npm run test:auth-pro-v091 && npm run test:maps-delivery-v092 && npm run test:mobile-auth-v093 && npm run test:mobile-auth-v094 && npm run test:mobile-storefront-v095 && npm run test:pwa-v0100 && npm run test:commerce-r101 && npm run test:modifier-r1a && npm run test:localization-v0110",
@@ -36,7 +39,8 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "4.7.0",
-    "vite": "7.1.2"
+    "vite": "7.1.2",
+    "wrangler": "4.126.0"
   },
-  "description": "Luke Shop Customer Web v0.10.0 \u2014 PWA Foundation Pro, mobile delivery map refinement, and tenant-controlled address field policy"
+  "description": "Luke Shop Customer Web v0.10.0 — PWA Foundation Pro, mobile delivery map refinement, and tenant-controlled address field policy"
 }
