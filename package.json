@@ -8,10 +8,10 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 4174",
-    "build": "vite build",
+    "build": "node scripts/build.mjs",
     "preview": "vite preview --host 0.0.0.0 --port 4174",
     "deploy": "npm run verify && npm run build && wrangler deploy",
-    "deploy:production": "npm run deploy",
+    "deploy:production": "VITE_APP_ENV=production npm run deploy",
     "cf:types": "wrangler types",
     "check": "node scripts/check-source.mjs",
     "test:source": "node scripts/source-regression-test.mjs",
