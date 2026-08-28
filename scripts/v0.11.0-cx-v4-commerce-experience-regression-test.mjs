@@ -19,8 +19,8 @@ test('variant fulfillment and modifier workflows remain operational',()=>{assert
 test('variant compare-at price override is respected',()=>assert.match(product,/selectedVariant\?\.compare_at_price_override \?\?/));
 test('product media uses selected stage thumbnails and existing zoom viewer',()=>{assert.match(product,/selectedMediaIndex/);assert.match(product,/commerce-gallery-stage/);assert.match(product,/commerce-media-strip/);assert.match(product,/ProductMediaViewer/)});
 test('video media remains playable',()=>{assert.match(product,/media_type\)\.toUpperCase\(\) === 'VIDEO'/);assert.match(product,/<video src=\{selectedMedia\.url\} controls/)});
-test('related products reuse existing category list endpoint',()=>{assert.match(product,/\/v1\/storefront\/products/);assert.match(product,/category: nextProduct\.category\.slug/);assert.match(product,/relatedProducts/)});
-test('related-product failure does not fail product detail',()=>assert.match(product,/\.catch\(\(\) => setRelatedProducts\(\[\]\)\)/));
+test('related products reuse existing category list endpoint',()=>{assert.match(product,/\/v1\/storefront\/products/);assert.match(product,/const category = product\?\.category\?\.slug/);assert.match(product,/query: \{ category, limit:/);assert.match(product,/relatedProducts/)});
+test('related-product failure does not fail product detail',()=>{assert.match(product,/\.catch\(\(\) => \{ if \(alive\) setRelatedProducts\(\[\]\); \}\)/);assert.match(product,/setRelatedProducts\(\[\]\)/)});
 test('mobile sticky purchase action reuses the same add workflow',()=>{assert.match(product,/commerce-mobile-buybar/);assert.match(product,/data-testid="mobile-add-to-cart"/);assert.match(product,/onClick=\{purchaseAction\}/)});
 test('product detail retains customer support placement',()=>assert.match(product,/SupportLauncher placement="product_detail"/));
 test('commerce renderer does not invent merchant or payment collection APIs',()=>{assert.doesNotMatch(explore,/\/v1\/merchant\//);assert.doesNotMatch(product,/\/v1\/merchant\//);assert.doesNotMatch(product,/card_number|cvv|payment_intent/i)});

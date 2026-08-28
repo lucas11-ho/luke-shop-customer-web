@@ -43,7 +43,13 @@ html[data-cx-foundation="v4"] .commerce-media-strip button{position:relative;fle
 html[data-cx-foundation="v4"] .commerce-media-strip button.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--cx-focus)}
 html[data-cx-foundation="v4"] .commerce-media-strip img,html[data-cx-foundation="v4"] .commerce-media-strip video{width:100%;height:100%;object-fit:cover}
 html[data-cx-foundation="v4"] .commerce-media-strip button>span{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,#000 28%,transparent);color:#fff;font-size:18px}
-html[data-cx-foundation="v4"] .commerce-buy-panel{position:sticky;top:calc(var(--cx-header-height) + 20px);padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:var(--cx-radius-sheet);box-shadow:0 16px 48px color-mix(in srgb,var(--ink) 7%,transparent)}
+html[data-cx-foundation="v4"] .commerce-gallery-stack{display:grid;gap:14px}
+html[data-cx-foundation="v4"] .commerce-gallery-stack-item{position:relative;min-height:420px;aspect-ratio:4/5;display:grid;place-items:center;background:var(--soft);border:1px solid var(--line);border-radius:var(--cx-radius-sheet);overflow:hidden}
+html[data-cx-foundation="v4"] .commerce-gallery-stack-item>video,html[data-cx-foundation="v4"] .commerce-gallery-stack-item>.commerce-main-media,html[data-cx-foundation="v4"] .commerce-gallery-stack-item .commerce-main-media img{width:100%;height:100%}
+html[data-cx-foundation="v4"] .commerce-gallery-stack-item>video{object-fit:contain;background:#000}
+html[data-cx-foundation="v4"] .commerce-buy-panel{padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:var(--cx-radius-sheet);box-shadow:0 16px 48px color-mix(in srgb,var(--ink) 7%,transparent)}
+html[data-cx-foundation="v4"] .commerce-buy-panel.is-sticky{position:sticky;top:calc(var(--cx-header-height) + 20px)}
+html[data-cx-foundation="v4"] .commerce-buy-panel.is-standard{position:static}
 html[data-cx-foundation="v4"] .commerce-buy-panel h1{font-size:clamp(30px,3vw,44px);line-height:1.05;margin:10px 0 12px}
 html[data-cx-foundation="v4"] .commerce-product-tags{display:flex;flex-wrap:wrap;gap:7px}
 html[data-cx-foundation="v4"] .commerce-big-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;margin:18px 0 20px;font-size:clamp(26px,3vw,36px)}
@@ -69,6 +75,7 @@ html[data-cx-foundation="v4"] .commerce-mobile-buybar{display:none}
  html[data-product-grid="four"][data-cx-foundation="v4"] .commerce-product-grid,html[data-product-grid="three"][data-cx-foundation="v4"] .commerce-product-grid{grid-template-columns:repeat(var(--products-tablet,3),minmax(0,1fr))}
  html[data-cx-foundation="v4"] .commerce-product-shell{grid-template-columns:minmax(0,1fr) minmax(340px,.8fr);gap:28px}
  html[data-cx-foundation="v4"] .commerce-gallery-stage{min-height:420px}
+ html[data-cx-foundation="v4"] .commerce-gallery-stack-item{min-height:360px}
  html[data-cx-foundation="v4"] .commerce-buy-panel{padding:22px}
  html[data-cx-foundation="v4"] .commerce-purchase-facts{grid-template-columns:1fr}
  html[data-cx-foundation="v4"] .commerce-related-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -88,9 +95,11 @@ html[data-cx-foundation="v4"] .commerce-mobile-buybar{display:none}
  html[data-cx-foundation="v4"] .commerce-product-breadcrumbs{padding:0 16px;margin-bottom:10px}
  html[data-cx-foundation="v4"] .commerce-product-shell{display:block}
  html[data-cx-foundation="v4"] .commerce-gallery-stage{min-height:0;aspect-ratio:1/1;border-left:0;border-right:0;border-radius:0}
+ html[data-cx-foundation="v4"] .commerce-gallery-stack{gap:8px}
+ html[data-cx-foundation="v4"] .commerce-gallery-stack-item{min-height:0;aspect-ratio:1/1;border-left:0;border-right:0;border-radius:0}
  html[data-cx-foundation="v4"] .commerce-media-strip{padding:10px 16px 4px}
  html[data-cx-foundation="v4"] .commerce-media-strip button{flex-basis:62px;width:62px;height:62px}
- html[data-cx-foundation="v4"] .commerce-buy-panel{position:static;margin:14px 12px 0;padding:20px;border-radius:var(--cx-radius-card);box-shadow:none}
+ html[data-cx-foundation="v4"] .commerce-buy-panel,html[data-cx-foundation="v4"] .commerce-buy-panel.is-sticky,html[data-cx-foundation="v4"] .commerce-buy-panel.is-standard{position:static;margin:14px 12px 0;padding:20px;border-radius:var(--cx-radius-card);box-shadow:none}
  html[data-cx-foundation="v4"] .commerce-buy-panel h1{font-size:30px}
  html[data-cx-foundation="v4"] .commerce-purchase-row{margin-bottom:2px}
  html[data-cx-foundation="v4"] .commerce-related-products{margin:36px 16px 0;padding-top:24px}
