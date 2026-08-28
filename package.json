@@ -15,7 +15,7 @@
     "cf:types": "wrangler types",
     "check": "node scripts/check-source.mjs",
     "test:source": "node scripts/source-regression-test.mjs",
-    "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3 && npm run test:account-v06 && npm run test:renderer-reliability-v061 && npm run test:customer-ux-v07 && npm run test:identity-v08 && npm run test:commerce-connector-v2 && npm run test:auth-pro-v091 && npm run test:maps-delivery-v092 && npm run test:mobile-auth-v093 && npm run test:mobile-auth-v094 && npm run test:mobile-storefront-v095 && npm run test:pwa-v0100 && npm run test:commerce-r101 && npm run test:modifier-r1a && npm run test:localization-v0110 && npm run test:cx-v4-foundation && npm run test:cx-v4-home && npm run test:cx-v4-commerce",
+    "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3 && npm run test:account-v06 && npm run test:renderer-reliability-v061 && npm run test:customer-ux-v07 && npm run test:identity-v08 && npm run test:commerce-connector-v2 && npm run test:auth-pro-v091 && npm run test:maps-delivery-v092 && npm run test:mobile-auth-v093 && npm run test:mobile-auth-v094 && npm run test:mobile-storefront-v095 && npm run test:pwa-v0100 && npm run test:commerce-r101 && npm run test:modifier-r1a && npm run test:localization-v0110 && npm run test:cx-v4-foundation && npm run test:cx-v4-home && npm run test:cx-v4-commerce && npm run test:cx-v4-product-detail",
     "test:design": "node scripts/design-regression-test.mjs",
     "test:renderer-v3": "node scripts/v0.5.0-renderer-v3-regression-test.mjs",
     "test:account-v06": "node scripts/v0.6.0-account-address-regression-test.mjs",
@@ -34,7 +34,8 @@
     "test:modifier-r1a": "node scripts/v0.10.1-r1a-modifier-dialog-hotfix-regression-test.mjs",
     "test:cx-v4-foundation": "node scripts/v0.11.0-cx-v4-foundation-regression-test.mjs",
     "test:cx-v4-home": "node scripts/v0.11.0-cx-v4-home-renderer-regression-test.mjs",
-    "test:cx-v4-commerce": "node scripts/v0.11.0-cx-v4-commerce-experience-regression-test.mjs"
+    "test:cx-v4-commerce": "node scripts/v0.11.0-cx-v4-commerce-experience-regression-test.mjs",
+    "test:cx-v4-product-detail": "node scripts/v0.11.0-cx-v4-product-detail-schema-regression-test.mjs"
   },
   "dependencies": {
     "react": "19.1.1",
