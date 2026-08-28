@@ -132,7 +132,7 @@ export function ProductPage({ slug }) {
           {media.length > 1 && <div className="commerce-media-strip" aria-label={`${localizedProduct.name} thumbnails`}>
             {media.map((item, index) => <button type="button" key={item.public_id} className={selectedMediaIndex === index ? 'selected' : ''} onClick={() => setSelectedMediaIndex(index)} aria-label={`${localizedProduct.name} ${index + 1}`}>
               {String(item.media_type).toUpperCase() === 'VIDEO' ? <video src={item.url} muted preload="metadata" /> : <img src={item.url} alt="" />}
-              {String(item.media_type).toUpperCase() === 'VIDEO' && <span><Icon name="play" size={14} /></span>}
+              {String(item.media_type).toUpperCase() === 'VIDEO' && <span aria-hidden="true">▶</span>}
             </button>)}
           </div>}
         </div>
@@ -151,7 +151,7 @@ export function ProductPage({ slug }) {
           </div>
 
           <div className="commerce-purchase-facts" aria-label="Product purchase facts">
-            <div><Icon name="package" size={17} /><span><strong>{localizedProduct.availability?.in_stock ? t('common.in_stock') : t('common.out_of_stock')}</strong><small>{localizedProduct.availability?.inventory_tracked ? t('common.in_stock') : t('product.standard_price')}</small></span></div>
+            <div><Icon name="package" size={17} /><span><strong>{localizedProduct.availability?.in_stock ? t('common.in_stock') : t('common.out_of_stock')}</strong><small>{String(localizedProduct.product_type || '').replaceAll('_', ' ') || '—'}</small></span></div>
             <div><Icon name="truck" size={17} /><span><strong>{t('product.fulfillment')}</strong><small>{localizedProduct.fulfillment_modes?.map((item) => item.replaceAll('_', ' ')).join(' · ') || '—'}</small></span></div>
             <div><Icon name="sparkles" size={17} /><span><strong>{t('product.product_options')}</strong><small>{groups.length ? `${groups.length}` : t('product.none_added')}</small></span></div>
           </div>
