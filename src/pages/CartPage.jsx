@@ -7,13 +7,15 @@ import { LineSkeleton } from '../components/Skeleton.jsx';
 import { SafeImage } from '../components/SafeMedia.jsx';
 import { Icon } from '../components/icons.jsx';
 import { go } from '../app/router.js';
+import { resolveCartExperience } from '../commerce/cartCheckoutExperience.js';
 
 export function CartPage() {
   const { isAuthenticated } = useAuth();
-  const { tenant } = useStore();
+  const { tenant, experience } = useStore();
   const { cart, loading, updateItem, removeItem } = useCart();
   const [busy, setBusy] = useState('');
   const [toast, setToast] = useState('');
+  const presentation = resolveCartExperience(experience);
 
   if (!isAuthenticated) {
     return <section className="section"><Empty icon="bag" title="Sign in to view your cart" body="Your cart is connected to your customer account." action={<button className="btn btn-primary" onClick={() => go('/login', { next: '/cart' })}>Sign in</button>} /></section>;
@@ -25,27 +27,27 @@ export function CartPage() {
   const mutate = async (fn, id) => { setBusy(id); try { await fn(); } catch (e) { setToast(e.message); } finally { setBusy(''); } };
 
   return (
-    <section className="section commerce-cart-v4" data-testid="cart-page" data-commerce-surface="cart-v4">
+    <section className={`section commerce-cart-v4 cart-layout-${presentation.layout} cart-items-${presentation.item_style} cart-summary-${presentation.summary_style} cart-empty-${presentation.empty_style}`} data-testid="cart-page" data-commerce-surface="cart-v4" data-cart-layout={presentation.layout} data-cart-item-style={presentation.item_style}>
       <header className="commerce-cart-hero">
         <div>
-          <button type="button" className="commerce-back-link" onClick={() => go('/explore')}><Icon name="arrow-left" size={14} /> Continue shopping</button>
+          {presentation.show_continue_shopping && <button type="button" className="commerce-back-link" onClick={() => go('/explore')}><Icon name="arrow-left" size={14} /> Continue shopping</button>}
           <span className="eyebrow">Your bag</span>
           <h1>Cart</h1>
           <p>Review quantities and product options before checkout.</p>
         </div>
-        <div className="commerce-cart-count" aria-label={`${itemCount} cart items`}>
+        {presentation.show_item_count && <div className="commerce-cart-count" aria-label={`${itemCount} cart items`}>
           <Icon name="bag" size={20} />
           <span><strong>{itemCount}</strong><small>{itemCount === 1 ? 'item' : 'items'}</small></span>
-        </div>
+        </div>}
       </header>
 
       {!items.length
-        ? <Empty icon="bag" title="Your cart is empty" body="Discover something you'll love." action={<button className="btn btn-primary" onClick={() => go('/explore')}>Start shopping</button>} />
+        ? <div className="commerce-cart-empty"><Empty icon="bag" title="Your cart is empty" body={presentation.empty_style === 'minimal' ? '' : "Discover something you'll love."} action={<button className="btn btn-primary" onClick={() => go('/explore')}>Start shopping</button>} /></div>
         : (
           <div className="cart-layout commerce-cart-layout">
             <div className="cart-list commerce-cart-list">
               {items.map((item) => (
-                <article className="cart-item commerce-cart-item" key={item.public_id} data-testid="cart-item">
+                <article className={`cart-item commerce-cart-item cart-item-${presentation.item_style}`} key={item.public_id} data-testid="cart-item">
                   <button type="button" className="commerce-cart-media" onClick={() => go(`/product/${item.product_slug}`)} aria-label={`View ${item.title_snapshot}`}>
                     {item.media_url
                       ? <SafeImage src={item.media_url} alt="" loading="lazy" fallback={<div className="cart-thumb media-placeholder">Item</div>} />
@@ -59,8 +61,8 @@ export function CartPage() {
                       </div>
                       <strong className="commerce-cart-line-total">{money(item.line_total, item.currency, tenant?.locale)}</strong>
                     </div>
-                    <span className="cart-item-mode"><Icon name="truck" size={13} /> {item.fulfillment_mode.replaceAll('_', ' ').toLowerCase()}</span>
-                    {item.selected_modifiers?.length > 0 && <small className="commerce-cart-modifiers">{item.selected_modifiers.map((m) => m.name).join(', ')}</small>}
+                    {presentation.show_fulfillment && <span className="cart-item-mode"><Icon name="truck" size={13} /> {item.fulfillment_mode.replaceAll('_', ' ').toLowerCase()}</span>}
+                    {presentation.show_modifiers && item.selected_modifiers?.length > 0 && <small className="commerce-cart-modifiers">{item.selected_modifiers.map((m) => m.name).join(', ')}</small>}
                   </div>
                   <div className="cart-controls commerce-cart-controls">
                     <div className="qty">
@@ -74,14 +76,14 @@ export function CartPage() {
               ))}
             </div>
 
-            <aside className="summary-card cart-summary commerce-cart-summary">
+            <aside className={`summary-card cart-summary commerce-cart-summary summary-${presentation.summary_style}`}>
               <div className="commerce-summary-heading"><div><span className="eyebrow">Summary</span><h3>Order summary</h3></div><Icon name="receipt" size={20} /></div>
               <div><span>Subtotal</span><strong>{money(cart.totals?.subtotal, cart.currency, tenant?.locale)}</strong></div>
-              <div><span>Delivery</span><span className="muted">Calculated at checkout</span></div>
+              {presentation.show_delivery_hint && <div><span>Delivery</span><span className="muted">Calculated at checkout</span></div>}
               <hr />
               <div className="summary-total"><span>Estimated total</span><strong>{money(cart.totals?.grand_total, cart.currency, tenant?.locale)}</strong></div>
               <button className="btn btn-primary btn-full commerce-checkout-cta" onClick={() => go('/checkout')} data-testid="cart-checkout">Continue to checkout <Icon name="arrow-right" size={16} /></button>
-              <p className="commerce-summary-assurance"><Icon name="shield" size={15} /> Final delivery fees and discounts are confirmed during checkout.</p>
+              {presentation.show_assurance && <p className="commerce-summary-assurance"><Icon name="shield" size={15} /> Final delivery fees and discounts are confirmed during checkout.</p>}
             </aside>
           </div>
         )}
