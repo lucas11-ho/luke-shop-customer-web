@@ -9,6 +9,7 @@ import { PwaProvider } from './pwa/PwaExperience.jsx';
 import { LocalizationProvider } from './i18n/LocalizationContext.jsx';
 import './styles.css';
 import './experience-foundation.css';
+import './home-v4.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
