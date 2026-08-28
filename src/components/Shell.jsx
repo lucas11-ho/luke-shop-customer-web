@@ -12,6 +12,40 @@ import { useLocalization } from '../i18n/LocalizationContext.jsx';
 
 const NAV={home:['/','nav.home'],explore:['/explore','nav.explore'],cart:['/cart','nav.cart'],orders:['/orders','nav.orders'],profile:['/profile','nav.profile']};
 const NAV_ICON={home:'home',explore:'grid',cart:'bag',orders:'receipt',profile:'user'};
+const FOOTER_NAV={home:'/',explore:'/explore',cart:'/cart',orders:'/orders',profile:'/profile',signin:'/login'};
+const SOCIAL_LABEL={facebook:'Facebook',instagram:'Instagram',telegram:'Telegram',tiktok:'TikTok',youtube:'YouTube',x:'X'};
+function safeHttps(value){try{const url=new URL(String(value||''));return url.protocol==='https:'?url.toString():''}catch{return''}}
+
+function StorefrontFooter({brand}){
+  const{experience}=useStore();
+  const footer=experience?.footer;
+  if(!footer?.enabled)return null;
+  const name=brand?.store_name||'Luke Shop';
+  const groups=Array.isArray(footer.groups)?footer.groups.slice(0,4):[];
+  const socials=(Array.isArray(footer.social_links)?footer.social_links:[]).map(item=>({...item,url:safeHttps(item?.url)})).filter(item=>item.url&&SOCIAL_LABEL[item.network]).slice(0,6);
+  const copyright=footer.copyright_text||`© ${new Date().getFullYear()} ${name}`;
+  return <footer className={`storefront-footer footer-${footer.layout||'columns'}`} data-testid="storefront-footer">
+    <div className="storefront-footer-inner">
+      <div className="footer-main">
+        {footer.show_brand!==false&&<div className="footer-brand">
+          <button type="button" className="footer-brand-home" onClick={()=>go('/')} aria-label={`${name} home`}>
+            {brand?.logo_url?<SafeImage src={brand.logo_url} alt="" fallback={<span className="footer-brand-mark">{name.slice(0,1).toUpperCase()}</span>}/>:<span className="footer-brand-mark">{name.slice(0,1).toUpperCase()}</span>}
+            <strong>{name}</strong>
+          </button>
+          {footer.tagline&&<p>{footer.tagline}</p>}
+        </div>}
+        {groups.length>0&&<div className="footer-groups">{groups.map((group,index)=><section key={group.id||index}>
+          {group.title&&<strong>{group.title}</strong>}
+          <div>{(group.links||[]).slice(0,6).map((link,linkIndex)=>{const to=FOOTER_NAV[link.destination];if(!to)return null;return <button type="button" key={link.id||linkIndex} onClick={()=>go(to)}>{link.label||link.destination}</button>})}</div>
+        </section>)}</div>}
+      </div>
+      {(socials.length>0||footer.show_copyright!==false)&&<div className="footer-bottom">
+        {footer.show_copyright!==false&&<span>{copyright}</span>}
+        {socials.length>0&&<nav aria-label="Social links">{socials.map(item=><a key={item.network} href={item.url} target="_blank" rel="noopener noreferrer">{SOCIAL_LABEL[item.network]}</a>)}</nav>}
+      </div>}
+    </div>
+  </footer>;
+}
 
 export function Shell({ children, path }) {
   const { effectiveBranding, experience } = useStore();
@@ -105,6 +139,7 @@ export function Shell({ children, path }) {
         </div>
       </header>
       <main>{children}</main>
+      <StorefrontFooter brand={brand}/>
       <PwaExperience path={path} />
       <SupportLauncher placement="floating" />
       {searchEnabled && <SearchOverlay open={search} onClose={() => setSearch(false)} />}
