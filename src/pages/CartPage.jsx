@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../cart/CartContext.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useStore } from '../store/StoreContext.jsx';
@@ -21,7 +21,7 @@ export function CartPage() {
   if (loading && !cart) return <section className="section"><LineSkeleton rows={3} /></section>;
 
   const items = cart?.items || [];
-  const itemCount = useMemo(() => items.reduce((sum, item) => sum + Number(item.quantity || 0), 0), [items]);
+  const itemCount = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
   const mutate = async (fn, id) => { setBusy(id); try { await fn(); } catch (e) { setToast(e.message); } finally { setBusy(''); } };
 
   return (
