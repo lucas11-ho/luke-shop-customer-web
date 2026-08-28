@@ -87,8 +87,8 @@ export function CheckoutPage() {
         idempotency_key: `web-${Date.now()}-${crypto.randomUUID()}`,
         payment_method_id: payment || undefined,
         delivery_method_id: delivery || undefined,
-        promotion_code: presentation.show_promotion_code ? (promo.trim() || undefined) : undefined,
-        customer_note: presentation.show_order_note ? (note.trim() || undefined) : undefined,
+        promotion_code: promo.trim() || undefined,
+        customer_note: note.trim() || undefined,
         shipping_address: needsAddress ? { ...shipping, country_code: (shipping.country_code || '').toUpperCase() } : undefined,
       };
       const result = await api.request('/v1/customer/checkout', { method: 'POST', body, auth: true });
