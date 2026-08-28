@@ -115,20 +115,20 @@ export function CheckoutPage() {
             {savedAddresses.length > 0 && addressMode === 'saved' ? <div className="checkout-address-options commerce-address-options">
               {savedAddresses.map((a) => <label key={a.id} className={`checkout-address-option ${selectedAddress === a.id ? 'selected' : ''}`}>
                 <input type="radio" name="saved-address" checked={selectedAddress === a.id} onChange={() => chooseSaved(a.id)} />
-                <div><div className="address-option-title">{addressPolicy.label !== false && <strong>{a.label}</strong>}{a.is_default && <Badge tone="good">Default</Badge>}</div><span>{a.recipient_name}{a.phone ? ` · ${a.phone}` : ''}</span><small>{a.formatted_address || addressSummaryParts(a, addressPolicy).join(', ')}</small></div>
+                <div><div className="address-option-title">{addressPolicy.label!==false && <strong>{a.label}</strong>}{a.is_default && <Badge tone="good">Default</Badge>}</div><span>{a.recipient_name}{a.phone ? ` · ${a.phone}` : ''}</span><small>{a.formatted_address || addressSummaryParts(a,addressPolicy).join(', ')}</small></div>
               </label>)}
               <button type="button" className="btn btn-secondary btn-small address-manual-button" onClick={useManual}>Enter a different address</button>
             </div> : <>
               <div className="form-grid">
                 <label>Recipient<input required value={address.recipient_name} onChange={(e) => updateAddress('recipient_name', e.target.value)} /></label>
                 <label>Phone<input value={address.phone} onChange={(e) => updateAddress('phone', e.target.value)} /></label>
-                {addressPolicy.country_code !== false && <label>Country code<input required maxLength="2" placeholder="US" value={address.country_code} onChange={(e) => updateAddress('country_code', e.target.value.toUpperCase())} /></label>}
+                {addressPolicy.country_code!==false && <label>Country code<input required maxLength="2" placeholder="US" value={address.country_code} onChange={(e) => updateAddress('country_code', e.target.value.toUpperCase())} /></label>}
                 <label>State / region<input value={address.state} onChange={(e) => updateAddress('state', e.target.value)} /></label>
                 <label>City<input required value={address.city} onChange={(e) => updateAddress('city', e.target.value)} /></label>
-                {addressPolicy.postal_code !== false && <label>Postal code<input value={address.postal_code} onChange={(e) => updateAddress('postal_code', e.target.value)} /></label>}
+                {addressPolicy.postal_code!==false && <label>Postal code<input value={address.postal_code} onChange={(e) => updateAddress('postal_code', e.target.value)} /></label>}
                 <label className="span-2">Detected / formatted address<input value={address.formatted_address || ''} onChange={(e) => updateAddress('formatted_address', e.target.value)} placeholder="Map lookup can fill this automatically" /></label>
                 <label className="span-2">Address line 1<input required value={address.address_line_1} onChange={(e) => updateAddress('address_line_1', e.target.value)} /></label>
-                {addressPolicy.address_line_2 !== false && <label className="span-2">Address line 2<input value={address.address_line_2} onChange={(e) => updateAddress('address_line_2', e.target.value)} /></label>}
+                {addressPolicy.address_line_2!==false && <label className="span-2">Address line 2<input value={address.address_line_2} onChange={(e) => updateAddress('address_line_2', e.target.value)} /></label>}
                 <label className="span-2">Delivery note<textarea value={address.delivery_note} onChange={(e) => updateAddress('delivery_note', e.target.value)} /></label>
               </div>
               {savedAddresses.length > 0 && <button type="button" className="link-btn checkout-saved-link" onClick={() => { setAddressMode('saved'); chooseSaved(savedAddresses.find((x) => x.is_default)?.id || savedAddresses[0].id); }}>Choose from saved addresses</button>}
