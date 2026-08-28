@@ -7,6 +7,7 @@ import { SupportLauncher } from '../components/SupportLauncher.jsx';
 import { LocationCapture } from '../components/DeliveryLocation.jsx';
 import { Icon } from '../components/icons.jsx';
 import { resolveAddressFieldPolicy, prepareAddressForPolicy, addressSummaryParts } from '../address/addressPolicy.js';
+import { resolveCheckoutExperience } from '../commerce/cartCheckoutExperience.js';
 import { go } from '../app/router.js';
 
 const emptyAddress = { recipient_name: '', phone: '', country_code: '', state: '', city: '', postal_code: '', address_line_1: '', address_line_2: '', delivery_note: '', formatted_address: '', latitude: null, longitude: null, accuracy_meters: null, location_source: null, location_updated_at: null };
@@ -21,6 +22,7 @@ export function CheckoutPage() {
   const { cart, refresh, setCart } = useCart();
   const { tenant, store, experience, publicApi } = useStore();
   const addressPolicy = useMemo(() => resolveAddressFieldPolicy(experience, tenant, store), [experience, tenant, store]);
+  const presentation = useMemo(() => resolveCheckoutExperience(experience), [experience]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [deliveryMethods, setDeliveryMethods] = useState([]);
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -37,6 +39,8 @@ export function CheckoutPage() {
 
   const needsAddress = useMemo(() => cart?.items?.some((i) => ['SHIPPING', 'LOCAL_DELIVERY'].includes(i.fulfillment_mode)), [cart]);
   const physicalMode = cart?.items?.find((i) => ['SHIPPING', 'LOCAL_DELIVERY', 'PICKUP'].includes(i.fulfillment_mode))?.fulfillment_mode;
+  const sectionBody = (value) => presentation.show_section_descriptions ? value : '';
+  const showExtras = presentation.show_promotion_code || presentation.show_order_note || presentation.show_support;
 
   useEffect(() => { setAddress((a) => prepareAddressForPolicy(a, addressPolicy)); }, [addressPolicy.label, addressPolicy.country_code, addressPolicy.address_line_2, addressPolicy.postal_code, addressPolicy.default_country_code]);
   useEffect(() => {
@@ -83,8 +87,8 @@ export function CheckoutPage() {
         idempotency_key: `web-${Date.now()}-${crypto.randomUUID()}`,
         payment_method_id: payment || undefined,
         delivery_method_id: delivery || undefined,
-        promotion_code: promo.trim() || undefined,
-        customer_note: note.trim() || undefined,
+        promotion_code: presentation.show_promotion_code ? (promo.trim() || undefined) : undefined,
+        customer_note: presentation.show_order_note ? (note.trim() || undefined) : undefined,
         shipping_address: needsAddress ? { ...shipping, country_code: (shipping.country_code || '').toUpperCase() } : undefined,
       };
       const result = await api.request('/v1/customer/checkout', { method: 'POST', body, auth: true });
@@ -94,7 +98,7 @@ export function CheckoutPage() {
   };
 
   return (
-    <section className="section checkout commerce-checkout-v4" data-testid="checkout-page" data-commerce-surface="checkout-v4">
+    <section className={`section checkout commerce-checkout-v4 checkout-layout-${presentation.layout} checkout-summary-${presentation.summary_style} checkout-sections-${presentation.section_style} checkout-addresses-${presentation.saved_address_style}`} data-testid="checkout-page" data-commerce-surface="checkout-v4" data-checkout-layout={presentation.layout} data-checkout-section-style={presentation.section_style}>
       <header className="commerce-checkout-hero">
         <div>
           <button type="button" className="commerce-back-link" onClick={() => go('/cart')}><Icon name="arrow-left" size={14} /> Back to cart</button>
@@ -102,17 +106,17 @@ export function CheckoutPage() {
           <h1>Checkout</h1>
           <p>Confirm delivery, payment and order details before placing the order.</p>
         </div>
-        <div className="commerce-checkout-trust"><Icon name="shield" size={19} /><span><strong>Server-confirmed order</strong><small>Final fees and discounts are validated when you place it.</small></span></div>
+        {presentation.show_trust && <div className="commerce-checkout-trust"><Icon name="shield" size={19} /><span><strong>Server-confirmed order</strong><small>Final fees and discounts are validated when you place it.</small></span></div>}
       </header>
 
       <form className="checkout-layout commerce-checkout-layout" onSubmit={submit}>
         <div className="checkout-main commerce-checkout-main">
           {needsAddress && <div className="form-card commerce-checkout-card">
             <div className="card-title-row">
-              <CheckoutSectionTitle icon="map-pin" title="Delivery address" body="Choose a saved address or enter a different delivery address for this order." />
+              <CheckoutSectionTitle icon="map-pin" title="Delivery address" body={sectionBody('Choose a saved address or enter a different delivery address for this order.')} />
               {addressMode === 'saved' && <button type="button" className="btn btn-secondary btn-small" onClick={useManual}>Use another address</button>}
             </div>
-            {savedAddresses.length > 0 && addressMode === 'saved' ? <div className="checkout-address-options commerce-address-options">
+            {savedAddresses.length > 0 && addressMode === 'saved' ? <div className={`checkout-address-options commerce-address-options address-style-${presentation.saved_address_style}`}>
               {savedAddresses.map((a) => <label key={a.id} className={`checkout-address-option ${selectedAddress === a.id ? 'selected' : ''}`}>
                 <input type="radio" name="saved-address" checked={selectedAddress === a.id} onChange={() => chooseSaved(a.id)} />
                 <div><div className="address-option-title">{addressPolicy.label!==false && <strong>{a.label}</strong>}{a.is_default && <Badge tone="good">Default</Badge>}</div><span>{a.recipient_name}{a.phone ? ` · ${a.phone}` : ''}</span><small>{a.formatted_address || addressSummaryParts(a,addressPolicy).join(', ')}</small></div>
@@ -137,23 +141,26 @@ export function CheckoutPage() {
           </div>}
 
           {eligibleDelivery.length > 0 && <div className="form-card commerce-checkout-card">
-            <CheckoutSectionTitle icon="truck" title="Delivery method" body="Available methods match the fulfillment mode already selected for your cart." />
+            <CheckoutSectionTitle icon="truck" title="Delivery method" body={sectionBody('Available methods match the fulfillment mode already selected for your cart.')} />
             <div className="select-cards commerce-select-cards">{eligibleDelivery.map((d) => <label key={d.id} className={delivery === d.id ? 'selected' : ''}><input type="radio" name="delivery" checked={delivery === d.id} onChange={() => setDelivery(d.id)} /><div><strong>{d.name}</strong><span>{money(d.flat_fee, tenant?.currency, tenant?.locale)}{d.estimated_min_minutes != null && ` · ${d.estimated_min_minutes}-${d.estimated_max_minutes} min`}</span></div></label>)}</div>
           </div>}
 
           <div className="form-card commerce-checkout-card">
-            <CheckoutSectionTitle icon="shield" title="Payment" body="Choose from the payment methods enabled for this storefront." />
+            <CheckoutSectionTitle icon="shield" title="Payment" body={sectionBody('Choose from the payment methods enabled for this storefront.')} />
             <div className="select-cards commerce-select-cards">{paymentMethods.map((p) => <label key={p.id} className={payment === p.id ? 'selected' : ''}><input type="radio" name="payment" checked={payment === p.id} onChange={() => setPayment(p.id)} /><div><strong>{p.name}</strong><span>{p.instructions || p.provider_type}</span></div></label>)}</div>
           </div>
 
-          <div className="form-card commerce-checkout-card">
-            <CheckoutSectionTitle icon="tag" title="Discount & note" body="Optional order details are sent with the same checkout request." />
-            <div className="commerce-checkout-extras"><label>Promotion code<input value={promo} onChange={(e) => setPromo(e.target.value)} placeholder="Optional coupon code" /></label><label>Order note<textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note for the merchant" /></label></div>
-            <SupportLauncher placement="checkout" />
-          </div>
+          {showExtras && <div className="form-card commerce-checkout-card commerce-checkout-extras-card">
+            <CheckoutSectionTitle icon="tag" title={presentation.show_promotion_code || presentation.show_order_note ? 'Discount & note' : 'Support'} body={sectionBody('Optional order details are sent with the same checkout request.')} />
+            {(presentation.show_promotion_code || presentation.show_order_note) && <div className="commerce-checkout-extras">
+              {presentation.show_promotion_code && <label>Promotion code<input value={promo} onChange={(e) => setPromo(e.target.value)} placeholder="Optional coupon code" /></label>}
+              {presentation.show_order_note && <label>Order note<textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note for the merchant" /></label>}
+            </div>}
+            {presentation.show_support && <SupportLauncher placement="checkout" />}
+          </div>}
         </div>
 
-        <aside className="summary-card checkout-summary commerce-checkout-summary">
+        <aside className={`summary-card checkout-summary commerce-checkout-summary summary-${presentation.summary_style}`}>
           <div className="commerce-summary-heading"><div><span className="eyebrow">Review</span><h3>Your order</h3></div><Icon name="receipt" size={20} /></div>
           <div className="commerce-checkout-lines">{cart.items.map((item) => <div className="checkout-line" key={item.public_id}><span><small>{item.quantity} ×</small> {item.title_snapshot}</span><strong>{money(item.line_total, item.currency, tenant?.locale)}</strong></div>)}</div>
           <hr />
