@@ -23,12 +23,10 @@ export function ExplorePage() {
   const [error, setError] = useState('');
   const [q, setQ] = useState(query.get('q') || '');
   const category = query.get('category') || '';
-  const productType = query.get('product_type') || '';
 
   const productQuery = (offset = 0) => ({
     q: query.get('q') || '',
     category,
-    product_type: productType || undefined,
     limit: PAGE_SIZE,
     offset,
   });
@@ -65,7 +63,7 @@ export function ExplorePage() {
 
   const submit = (event) => {
     event.preventDefault();
-    go('/explore', { q: q.trim() || undefined, category: category || undefined, product_type: productType || undefined });
+    go('/explore', { q: q.trim() || undefined, category: category || undefined });
   };
   const localizedCategories = categories.map(localizeCategory);
   const activeCategory = localizedCategories.find((item) => item.slug === category);
@@ -87,15 +85,15 @@ export function ExplorePage() {
           <form className="searchbar commerce-searchbar" onSubmit={submit} role="search">
             <span className="searchbar-icon"><Icon name="search" size={18} /></span>
             <input value={q} onChange={(event) => setQ(event.target.value)} placeholder={t('explore.search_placeholder')} aria-label={t('common.search_products')} data-testid="explore-search-input" />
-            {q && <button type="button" className="searchbar-clear" aria-label="Clear search" onClick={() => { setQ(''); go('/explore', { category: category || undefined, product_type: productType || undefined }); }}><Icon name="x" size={16} /></button>}
+            {q && <button type="button" className="searchbar-clear" aria-label="Clear search" onClick={() => { setQ(''); go('/explore', { category: category || undefined }); }}><Icon name="x" size={16} /></button>}
             <button className="btn btn-primary" data-testid="explore-search-submit">{t('common.search')}</button>
           </form>
         )}
 
         <div className="filters merchant-category-filters commerce-category-rail" role="tablist" aria-label={t('explore.categories')}>
-          <button className={!category ? 'active' : ''} onClick={() => go('/explore', { q: q || undefined, product_type: productType || undefined })}>{t('common.all')}</button>
+          <button className={!category ? 'active' : ''} onClick={() => go('/explore', { q: q || undefined })}>{t('common.all')}</button>
           {localizedCategories.map((item) => (
-            <button key={item.public_id} className={category === item.slug ? 'active' : ''} onClick={() => go('/explore', { q: q || undefined, category: item.slug, product_type: productType || undefined })} data-testid={`filter-category-${item.slug}`}>{item.name}</button>
+            <button key={item.public_id} className={category === item.slug ? 'active' : ''} onClick={() => go('/explore', { q: q || undefined, category: item.slug })} data-testid={`filter-category-${item.slug}`}>{item.name}</button>
           ))}
         </div>
       </div>
