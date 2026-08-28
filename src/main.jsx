@@ -10,6 +10,7 @@ import { LocalizationProvider } from './i18n/LocalizationContext.jsx';
 import './styles.css';
 import './experience-foundation.css';
 import './home-v4.css';
+import './commerce-v4.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
