@@ -12,15 +12,50 @@ import { ProductMediaViewer } from '../components/ProductMediaViewer.jsx';
 import { modifierErrorMessage, modifierOptionIds, normalizeModifierGroups, sanitizeSelection, validateModifierSelection } from '../modifiers/modifierRules.js';
 import { useLocalization } from '../i18n/LocalizationContext.jsx';
 
+const PRODUCT_DETAIL_DEFAULT = Object.freeze({
+  gallery_style: 'thumbnails',
+  buy_box_style: 'sticky',
+  mobile_buy_bar: true,
+  related_products: { enabled: true, limit: 4 },
+  visibility: { category: true, discount: true, description: true, support: true },
+  info_blocks: ['availability', 'fulfillment', 'options'],
+});
+const INFO_BLOCKS = new Set(PRODUCT_DETAIL_DEFAULT.info_blocks);
+
+function productDetailConfig(experience) {
+  const raw = experience?.product_detail && typeof experience.product_detail === 'object' ? experience.product_detail : {};
+  const related = raw.related_products && typeof raw.related_products === 'object' ? raw.related_products : {};
+  const visibility = raw.visibility && typeof raw.visibility === 'object' ? raw.visibility : {};
+  const requested = Array.isArray(raw.info_blocks) ? raw.info_blocks : PRODUCT_DETAIL_DEFAULT.info_blocks;
+  const limitValue = Number(related.limit);
+  return {
+    gallery_style: ['thumbnails', 'stacked'].includes(raw.gallery_style) ? raw.gallery_style : PRODUCT_DETAIL_DEFAULT.gallery_style,
+    buy_box_style: ['sticky', 'standard'].includes(raw.buy_box_style) ? raw.buy_box_style : PRODUCT_DETAIL_DEFAULT.buy_box_style,
+    mobile_buy_bar: raw.mobile_buy_bar !== false,
+    related_products: {
+      enabled: related.enabled !== false,
+      limit: Number.isFinite(limitValue) ? Math.max(1, Math.min(8, Math.round(limitValue))) : PRODUCT_DETAIL_DEFAULT.related_products.limit,
+    },
+    visibility: {
+      category: visibility.category !== false,
+      discount: visibility.discount !== false,
+      description: visibility.description !== false,
+      support: visibility.support !== false,
+    },
+    info_blocks: [...new Set(requested.filter((item) => INFO_BLOCKS.has(item)))],
+  };
+}
+
 function initials(name = '') {
   return String(name).trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || '•';
 }
 
 export function ProductPage({ slug }) {
-  const { tenant, publicApi } = useStore();
+  const { tenant, publicApi, experience } = useStore();
   const { t, localizeProduct } = useLocalization();
   const { isAuthenticated } = useAuth();
   const { addItem } = useCart();
+  const productDetail = useMemo(() => productDetailConfig(experience), [experience]);
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,14 +84,27 @@ export function ProductPage({ slug }) {
       const initial = {};
       for (const group of groups) initial[group.public_id] = [];
       setMods(initial);
-      if (nextProduct.category?.slug) {
-        publicApi.request('/v1/storefront/products', { query: { category: nextProduct.category.slug, limit: 8, offset: 0 } })
-          .then((related) => setRelatedProducts((related.data.products || []).filter((item) => item.public_id !== nextProduct.public_id).slice(0, 4)))
-          .catch(() => setRelatedProducts([]));
-      }
     } catch (requestError) { setError(requestError); } finally { setLoading(false); }
   };
   useEffect(() => { load(); }, [slug]);
+
+  useEffect(() => {
+    let alive = true;
+    const category = product?.category?.slug;
+    if (!product?.public_id || !category || !productDetail.related_products.enabled) {
+      setRelatedProducts([]);
+      return () => { alive = false; };
+    }
+    setRelatedProducts([]);
+    const requestedLimit = productDetail.related_products.limit;
+    publicApi.request('/v1/storefront/products', { query: { category, limit: Math.min(9, requestedLimit + 1), offset: 0 } })
+      .then((related) => {
+        if (!alive) return;
+        setRelatedProducts((related.data.products || []).filter((item) => item.public_id !== product.public_id).slice(0, requestedLimit));
+      })
+      .catch(() => { if (alive) setRelatedProducts([]); });
+    return () => { alive = false; };
+  }, [product?.public_id, product?.category?.slug, productDetail.related_products.enabled, productDetail.related_products.limit, publicApi]);
 
   const localizedProduct = localizeProduct(product);
   const selectedVariant = localizedProduct?.variants?.find((item) => item.public_id === variant);
@@ -109,39 +157,66 @@ export function ProductPage({ slug }) {
   const canAdd = localizedProduct.availability?.in_stock && !busy;
   const discount = comparePrice > unitBase && unitBase >= 0 ? Math.round((1 - unitBase / comparePrice) * 100) : 0;
   const purchaseAction = () => hasGroups && !modifierValidation.valid ? setBuilderOpen(true) : add();
+  const infoBlocks = productDetail.info_blocks.map((key) => {
+    if (key === 'availability') return <div key={key} data-info-block="availability"><Icon name="package" size={17} /><span><strong>{localizedProduct.availability?.in_stock ? t('common.in_stock') : t('common.out_of_stock')}</strong><small>{String(localizedProduct.product_type || '').replaceAll('_', ' ') || '—'}</small></span></div>;
+    if (key === 'fulfillment') return <div key={key} data-info-block="fulfillment"><Icon name="truck" size={17} /><span><strong>{t('product.fulfillment')}</strong><small>{localizedProduct.fulfillment_modes?.map((item) => item.replaceAll('_', ' ')).join(' · ') || '—'}</small></span></div>;
+    if (key === 'options') return <div key={key} data-info-block="options"><Icon name="sparkles" size={17} /><span><strong>{t('product.product_options')}</strong><small>{groups.length ? `${groups.length}` : t('product.none_added')}</small></span></div>;
+    return null;
+  }).filter(Boolean);
 
   return (
-    <section className="section product-detail commerce-product-detail-v4" data-testid="product-detail-v4">
+    <section
+      className="section product-detail commerce-product-detail-v4"
+      data-testid="product-detail-v4"
+      data-product-detail-schema="4"
+      data-gallery-style={productDetail.gallery_style}
+      data-buy-box-style={productDetail.buy_box_style}
+    >
       <div className="commerce-product-breadcrumbs">
         <button type="button" onClick={() => go('/explore')}><Icon name="arrow-left" size={14} /> {t('nav.explore')}</button>
-        {localizedProduct.category?.name && <><span>/</span><button type="button" onClick={() => go('/explore', { category: localizedProduct.category.slug })}>{localizedProduct.category.name}</button></>}
+        {productDetail.visibility.category && localizedProduct.category?.name && <><span>/</span><button type="button" onClick={() => go('/explore', { category: localizedProduct.category.slug })}>{localizedProduct.category.name}</button></>}
       </div>
 
       <div className="commerce-product-shell">
         <div className="commerce-product-media-column">
-          <div className="commerce-gallery-stage" aria-label={`${localizedProduct.name} media`}>
-            {selectedMedia ? (
-              String(selectedMedia.media_type).toUpperCase() === 'VIDEO'
-                ? <video src={selectedMedia.url} controls poster={selectedMedia.poster_url || undefined} />
-                : <button type="button" className="product-image-zoom-trigger commerce-main-media" onClick={() => setViewerIndex(selectedMediaIndex)} aria-label={`${t('product.zoom')} ${localizedProduct.name} ${selectedMediaIndex + 1}`}>
-                    <img src={selectedMedia.url} alt={selectedMedia.alt_text || localizedProduct.name} />
-                    <span className="product-image-zoom-hint"><Icon name="search" size={16} /> {t('product.zoom')}</span>
-                  </button>
-            ) : <div className="gallery-item primary media-placeholder commerce-main-placeholder">{initials(localizedProduct.name)}</div>}
-          </div>
-          {media.length > 1 && <div className="commerce-media-strip" aria-label={`${localizedProduct.name} thumbnails`}>
-            {media.map((item, index) => <button type="button" key={item.public_id} className={selectedMediaIndex === index ? 'selected' : ''} onClick={() => setSelectedMediaIndex(index)} aria-label={`${localizedProduct.name} ${index + 1}`}>
-              {String(item.media_type).toUpperCase() === 'VIDEO' ? <video src={item.url} muted preload="metadata" /> : <img src={item.url} alt="" />}
-              {String(item.media_type).toUpperCase() === 'VIDEO' && <span aria-hidden="true">▶</span>}
-            </button>)}
-          </div>}
+          {productDetail.gallery_style === 'stacked' ? (
+            <div className="commerce-gallery-stack" aria-label={`${localizedProduct.name} media`}>
+              {media.length ? media.map((item, index) => (
+                <div className="commerce-gallery-stack-item" key={item.public_id || index}>
+                  {String(item.media_type).toUpperCase() === 'VIDEO'
+                    ? <video src={item.url} controls poster={item.poster_url || undefined} />
+                    : <button type="button" className="product-image-zoom-trigger commerce-main-media" onClick={() => setViewerIndex(index)} aria-label={`${t('product.zoom')} ${localizedProduct.name} ${index + 1}`}>
+                        <img src={item.url} alt={item.alt_text || localizedProduct.name} />
+                        <span className="product-image-zoom-hint"><Icon name="search" size={16} /> {t('product.zoom')}</span>
+                      </button>}
+                </div>
+              )) : <div className="commerce-gallery-stage"><div className="gallery-item primary media-placeholder commerce-main-placeholder">{initials(localizedProduct.name)}</div></div>}
+            </div>
+          ) : <>
+            <div className="commerce-gallery-stage" aria-label={`${localizedProduct.name} media`}>
+              {selectedMedia ? (
+                String(selectedMedia.media_type).toUpperCase() === 'VIDEO'
+                  ? <video src={selectedMedia.url} controls poster={selectedMedia.poster_url || undefined} />
+                  : <button type="button" className="product-image-zoom-trigger commerce-main-media" onClick={() => setViewerIndex(selectedMediaIndex)} aria-label={`${t('product.zoom')} ${localizedProduct.name} ${selectedMediaIndex + 1}`}>
+                      <img src={selectedMedia.url} alt={selectedMedia.alt_text || localizedProduct.name} />
+                      <span className="product-image-zoom-hint"><Icon name="search" size={16} /> {t('product.zoom')}</span>
+                    </button>
+              ) : <div className="gallery-item primary media-placeholder commerce-main-placeholder">{initials(localizedProduct.name)}</div>}
+            </div>
+            {media.length > 1 && <div className="commerce-media-strip" aria-label={`${localizedProduct.name} thumbnails`}>
+              {media.map((item, index) => <button type="button" key={item.public_id} className={selectedMediaIndex === index ? 'selected' : ''} onClick={() => setSelectedMediaIndex(index)} aria-label={`${localizedProduct.name} ${index + 1}`}>
+                {String(item.media_type).toUpperCase() === 'VIDEO' ? <video src={item.url} muted preload="metadata" /> : <img src={item.url} alt="" />}
+                {String(item.media_type).toUpperCase() === 'VIDEO' && <span aria-hidden="true">▶</span>}
+              </button>)}
+            </div>}
+          </>}
         </div>
 
-        <aside className="product-buy commerce-buy-panel">
+        <aside className={`product-buy commerce-buy-panel ${productDetail.buy_box_style === 'sticky' ? 'is-sticky' : 'is-standard'}`}>
           <div className="product-tags commerce-product-tags">
-            {localizedProduct.category?.name && <Badge>{localizedProduct.category.name}</Badge>}
+            {productDetail.visibility.category && localizedProduct.category?.name && <Badge>{localizedProduct.category.name}</Badge>}
             <Badge tone={localizedProduct.availability?.in_stock ? 'good' : 'bad'}>{localizedProduct.availability?.in_stock ? t('common.in_stock') : t('common.out_of_stock')}</Badge>
-            {discount > 0 && <Badge tone="good">-{discount}%</Badge>}
+            {productDetail.visibility.discount && discount > 0 && <Badge tone="good">-{discount}%</Badge>}
           </div>
           <h1>{localizedProduct.name}</h1>
           {localizedProduct.short_description && <p className="lead">{localizedProduct.short_description}</p>}
@@ -150,11 +225,7 @@ export function ProductPage({ slug }) {
             {comparePrice > unit && <del>{money(comparePrice, localizedProduct.currency || tenant?.currency, tenant?.locale)}</del>}
           </div>
 
-          <div className="commerce-purchase-facts" aria-label="Product purchase facts">
-            <div><Icon name="package" size={17} /><span><strong>{localizedProduct.availability?.in_stock ? t('common.in_stock') : t('common.out_of_stock')}</strong><small>{String(localizedProduct.product_type || '').replaceAll('_', ' ') || '—'}</small></span></div>
-            <div><Icon name="truck" size={17} /><span><strong>{t('product.fulfillment')}</strong><small>{localizedProduct.fulfillment_modes?.map((item) => item.replaceAll('_', ' ')).join(' · ') || '—'}</small></span></div>
-            <div><Icon name="sparkles" size={17} /><span><strong>{t('product.product_options')}</strong><small>{groups.length ? `${groups.length}` : t('product.none_added')}</small></span></div>
-          </div>
+          {infoBlocks.length > 0 && <div className="commerce-purchase-facts" aria-label="Product purchase facts">{infoBlocks}</div>}
 
           {localizedProduct.variants?.length > 0 && <div className="option-block">
             <label>{t('product.variant')}</label>
@@ -186,20 +257,20 @@ export function ProductPage({ slug }) {
             </button>
           </div>
 
-          <SupportLauncher placement="product_detail" />
-          <div className="description commerce-product-description"><h3>{t('product.about')}</h3><p>{localizedProduct.description || localizedProduct.short_description || t('product.details_fallback')}</p></div>
+          {productDetail.visibility.support && <SupportLauncher placement="product_detail" />}
+          {productDetail.visibility.description && <div className="description commerce-product-description"><h3>{t('product.about')}</h3><p>{localizedProduct.description || localizedProduct.short_description || t('product.details_fallback')}</p></div>}
         </aside>
       </div>
 
-      {relatedProducts.length > 0 && <section className="commerce-related-products" aria-label={t('home.curated')}>
+      {productDetail.related_products.enabled && relatedProducts.length > 0 && <section className="commerce-related-products" aria-label={t('home.curated')}>
         <div className="section-head"><div><span className="eyebrow">{t('home.curated')}</span><h2>{t('home.explore_products')}</h2></div><button type="button" className="link-btn" onClick={() => go('/explore', { category: localizedProduct.category?.slug || undefined })}>{t('home.see_all')} <Icon name="arrow-right" size={15} /></button></div>
         <div className="product-grid commerce-related-grid">{relatedProducts.map((item) => <ProductCard key={item.public_id} product={item} />)}</div>
       </section>}
 
-      <div className="commerce-mobile-buybar" data-testid="mobile-add-to-cart">
+      {productDetail.mobile_buy_bar && <div className="commerce-mobile-buybar" data-testid="mobile-add-to-cart">
         <div><small>{localizedProduct.name}</small><strong>{money(total, localizedProduct.currency || tenant?.currency, tenant?.locale)}</strong></div>
         <button className="btn btn-primary" disabled={!canAdd} onClick={purchaseAction}>{busy ? t('common.adding') : hasGroups && !modifierValidation.valid ? t('common.choose_options') : t('product.add', { price: money(total, localizedProduct.currency || tenant?.currency, tenant?.locale) })}</button>
-      </div>
+      </div>}
 
       <ComboBuilder
         open={builderOpen}
