@@ -11,6 +11,7 @@ import './styles.css';
 import './experience-foundation.css';
 import './home-v4.css';
 import './commerce-v4.css';
+import './cart-checkout-v4.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
