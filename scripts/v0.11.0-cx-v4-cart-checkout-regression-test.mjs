@@ -106,9 +106,10 @@ test('checkout submits exactly through the existing idempotent endpoint', () => 
   assert.match(checkout, /api\.request\('\/v1\/customer\/checkout', \{ method: 'POST', body, auth: true \}\)/);
 });
 
-test('successful checkout clears cart and routes to the real order', () => {
+test('successful checkout clears cart and routes using the real created order reference', () => {
+  assert.match(checkout, /const orderRef = result\.data\.order\.id/);
   assert.match(checkout, /setCart\(null\)/);
-  assert.match(checkout, /go\(`\/orders\/\$\{encodeURIComponent\(result\.data\.order\.id\)\}`\)/);
+  assert.match(checkout, /go\(`\/orders\/\$\{encodeURIComponent\(orderRef\)\}`\)/);
 });
 
 test('checkout retains support launcher placement', () => {
