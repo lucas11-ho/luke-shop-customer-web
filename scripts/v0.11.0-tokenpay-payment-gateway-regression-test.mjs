@@ -4,7 +4,8 @@ const pkg=JSON.parse(read('package.json')),checkout=read('src/pages/CheckoutPage
 const tests=[];const test=(name,fn)=>tests.push([name,fn]);
 test('runtime remains Customer Web 0.11.0',()=>{assert.equal(pkg.version,'0.11.0');assert.equal(pkg.dependencies.react,'19.1.1');assert.equal(pkg.devDependencies.vite,'7.3.6')});
 test('verify permanently includes TokenPay gateway suite',()=>{assert.equal(pkg.scripts['test:payments-tokenpay-v1'],'node scripts/v0.11.0-tokenpay-payment-gateway-regression-test.mjs');assert.match(pkg.scripts.verify,/test:payments-tokenpay-v1/)});
-test('browser recognizes TokenPay only through safe provider metadata',()=>{assert.match(gateway,/provider_type/);assert.match(gateway,/provider_key/);assert.match(gateway,/TOKENPAY/)});
+test('browser recognizes TokenPay only through safe payment metadata',()=>{assert.match(gateway,/provider_type/);assert.match(gateway,/provider_key/);assert.match(gateway,/payment_method_code/);assert.match(gateway,/TOKENPAY/)});
+test('TokenPay order recovery tolerates Backend rows that expose method code before provider key',()=>{assert.match(gateway,/provider===TOKENPAY\|\|methodCode===TOKENPAY/);assert.doesNotMatch(gateway,/payment_method_name.*TOKENPAY/)});
 test('browser creates hosted payment through Shope Backend only',()=>{assert.match(gateway,/\/v1\/customer\/orders\/\$\{encodeURIComponent\(orderRef\)\}\/payment\/session/);assert.doesNotMatch(`${gateway}\n${checkout}\n${order}`,/api\.tokenpay\.me|\/v1\/transaction\/prepayment/)});
 test('browser contains no TokenPay signing or secret material',()=>assert.doesNotMatch(`${gateway}\n${checkout}\n${order}`,/app_secret|APP_PSECRET|TTPAY-AES|TTPay-Signature|aes-256-ecb|Authorization:/i));
 test('hosted payment redirect is HTTPS only',()=>{assert.match(gateway,/url\.protocol==='https:'/);assert.match(gateway,/window\.location\.assign/)});
@@ -18,5 +19,5 @@ test('failed TokenPay orders preserve existing retry transition before hosted se
 test('ordinary payment retry remains available only for non-TokenPay payment',()=>assert.match(order,/!tokenPay && order\.status === 'PAYMENT_FAILED'/));
 test('payment setup failure routes to existing order rather than checkout retry',()=>{assert.match(checkout,/payment_setup: 'failed'/);assert.match(order,/paymentSetupFailed/)});
 test('gateway styling is isolated loaded last and reduced-motion safe',()=>{assert.ok(main.indexOf("./payment-gateway-v1.css")>main.indexOf("./cart-checkout-a4.css"));for(const marker of ['.payment-gateway-notice','max-width:720px','prefers-reduced-motion:reduce'])assert.ok(css.includes(marker),`missing ${marker}`)});
-test('Customer Web still has no provider credential configuration surface',()=>assert.doesNotMatch(`${checkout}\n${order}\n${gateway}`,/merchant\/payment-methods|credential_status|mch_id|app_id/i));
+test('Customer Web still has no provider credential or settlement configuration surface',()=>assert.doesNotMatch(`${checkout}\n${order}\n${gateway}`,/merchant\/payment-methods|credential_status|mch_id|app_id|settlement_rate/i));
 let passed=0;for(const[name,fn]of tests){try{fn();passed++;console.log(`PASS ${name}`)}catch(error){console.error(`FAIL ${name}`);throw error}}console.log(`${passed}/${tests.length} Shope Customer Web TokenPay gateway checks passed`);

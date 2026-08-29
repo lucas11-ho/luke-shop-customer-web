@@ -5,7 +5,10 @@ export function isTokenPayMethod(method){
 }
 
 export function isTokenPayPayment(payment){
-  return String(payment?.provider_type||'').toUpperCase()==='EXTERNAL'&&String(payment?.provider_key||'').toUpperCase()===TOKENPAY;
+  if(String(payment?.provider_type||'').toUpperCase()!=='EXTERNAL')return false;
+  const provider=String(payment?.provider_key||'').toUpperCase();
+  const methodCode=String(payment?.payment_method_code||'').toUpperCase();
+  return provider===TOKENPAY||methodCode===TOKENPAY;
 }
 
 export function paymentSessionKey(prefix='payment'){
