@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const client=fs.readFileSync(new URL('../src/api/client.js',import.meta.url),'utf8');
+assert.ok(client.includes("const diagnostic=[code,requestId].filter(Boolean).join(' · ')") ,'5xx errors must include safe code/request ID diagnostics');
+assert.ok(client.includes('if(res.status<500)return base'),'non-5xx customer messages must remain unchanged');
+const css=fs.readFileSync(new URL('../src/mobile-scroll-safety.css',import.meta.url),'utf8');
+for(const token of ['overflow-y:auto!important','overscroll-behavior-y:auto!important','-webkit-overflow-scrolling:touch','touch-action:pan-y pinch-zoom'])assert.ok(css.includes(token),`missing mobile scroll contract ${token}`);
+assert.ok(css.includes('.delivery-map,.google-map-stage,.google-map-canvas,.product-media-viewer-stage{touch-action:none}'),'gesture surfaces must keep isolated touch handling');
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+assert.ok(main.indexOf("'./mobile-scroll-safety.css'")>main.indexOf("'./payment-gateway-v1.css'"),'mobile scroll safety must load last');
+console.log('PASS native mobile vertical scrolling and safe backend checkout diagnostics');

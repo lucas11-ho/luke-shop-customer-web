@@ -1,0 +1,9 @@
+/* Mobile scroll safety — keep the document as the vertical scroll owner on iPhone/PWA.
+   Gesture-heavy map and media controls retain their own touch-action rules elsewhere. */
+@media (max-width:760px){
+  html,body{min-height:100%;width:100%;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;-webkit-overflow-scrolling:touch}
+  body{min-height:100dvh;touch-action:pan-y pinch-zoom}
+  #root,.app,.professional-storefront{min-height:100dvh;overflow-x:hidden;overflow-y:visible!important;touch-action:pan-y pinch-zoom}
+  .professional-storefront main,.professional-storefront .section{overflow:visible;touch-action:pan-y pinch-zoom}
+  .delivery-map,.google-map-stage,.google-map-canvas,.product-media-viewer-stage{touch-action:none}
+}
