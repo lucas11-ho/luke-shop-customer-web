@@ -20,9 +20,18 @@ export function clearStorefrontRuntimeContext(){setStorefrontRuntimeContext({});
 export function readStoredSession(){try{return JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');}catch{return null;}}
 export function writeStoredSession(value){if(value)sessionStorage.setItem(SESSION_KEY,JSON.stringify(value));else sessionStorage.removeItem(SESSION_KEY);}
 
+function safeErrorMessage(res,error={}){
+  const code=error.code||'HTTP_ERROR';
+  const requestId=error.request_id||null;
+  const base=error.message||`Request failed (${res.status})`;
+  if(res.status<500)return base;
+  const diagnostic=[code,requestId].filter(Boolean).join(' · ');
+  return diagnostic?`${base} · ${diagnostic}`:base;
+}
+
 async function parseResponse(res){
   let payload=null;try{payload=await res.json();}catch{payload=null;}
-  if(!res.ok){const e=payload?.error||{};throw new ApiError(e.message||`Request failed (${res.status})`,{status:res.status,code:e.code||'HTTP_ERROR',requestId:e.request_id||null,details:e.details||null});}
+  if(!res.ok){const e=payload?.error||{};throw new ApiError(safeErrorMessage(res,e),{status:res.status,code:e.code||'HTTP_ERROR',requestId:e.request_id||null,details:e.details||null});}
   return payload;
 }
 
