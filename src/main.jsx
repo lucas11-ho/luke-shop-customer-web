@@ -15,6 +15,7 @@ import './cart-checkout-v4.css';
 import './footer-v4.css';
 import './explore-a3.css';
 import './cart-checkout-a4.css';
+import './payment-gateway-v1.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

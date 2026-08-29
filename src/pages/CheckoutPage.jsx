@@ -8,6 +8,7 @@ import { LocationCapture } from '../components/DeliveryLocation.jsx';
 import { Icon } from '../components/icons.jsx';
 import { resolveAddressFieldPolicy, prepareAddressForPolicy, addressSummaryParts } from '../address/addressPolicy.js';
 import { resolveCheckoutExperience } from '../commerce/cartCheckoutExperience.js';
+import { createHostedPaymentSession, isTokenPayMethod, redirectToHostedPayment } from '../commerce/paymentGateway.js';
 import { go } from '../app/router.js';
 
 const emptyAddress = { recipient_name: '', phone: '', country_code: '', state: '', city: '', postal_code: '', address_line_1: '', address_line_2: '', delivery_note: '', formatted_address: '', latitude: null, longitude: null, accuracy_meters: null, location_source: null, location_updated_at: null };
@@ -72,6 +73,7 @@ export function CheckoutPage() {
   if (!cart?.items?.length) return <section className="section"><Empty title="Your cart is empty" action={<button className="btn btn-primary" onClick={() => go('/explore')}>Explore</button>} /></section>;
 
   const eligibleDelivery = deliveryMethods.filter((d) => !physicalMode || d.fulfillment_mode === physicalMode);
+  const selectedPaymentMethod = paymentMethods.find((method) => method.id === payment) || null;
   const updateAddress = (key, value) => setAddress((a) => prepareAddressForPolicy({ ...a, [key]: value }, addressPolicy));
   const chooseSaved = (id) => { setSelectedAddress(id); const found = savedAddresses.find((x) => x.id === id); if (found) setAddress(prepareAddressForPolicy(fromSaved(found), addressPolicy)); };
   const useManual = () => { setAddressMode('manual'); setSelectedAddress(''); setAddress(prepareAddressForPolicy(emptyAddress, addressPolicy)); };
@@ -92,8 +94,20 @@ export function CheckoutPage() {
         shipping_address: needsAddress ? { ...shipping, country_code: (shipping.country_code || '').toUpperCase() } : undefined,
       };
       const result = await api.request('/v1/customer/checkout', { method: 'POST', body, auth: true });
+      const orderRef = result.data.order.id;
       setCart(null);
-      go(`/orders/${encodeURIComponent(result.data.order.id)}`);
+      if (isTokenPayMethod(selectedPaymentMethod)) {
+        try {
+          const session = await createHostedPaymentSession(api, orderRef, { prefix: 'checkout-tokenpay' });
+          if (session?.status === 'PAID') { go(`/orders/${encodeURIComponent(orderRef)}`); return; }
+          redirectToHostedPayment(session);
+          return;
+        } catch (paymentError) {
+          go(`/orders/${encodeURIComponent(orderRef)}`, { payment_setup: 'failed' });
+          return;
+        }
+      }
+      go(`/orders/${encodeURIComponent(orderRef)}`);
     } catch (err) { setToast(err.message); } finally { setBusy(false); }
   };
 
@@ -147,7 +161,7 @@ export function CheckoutPage() {
 
           <div className="form-card commerce-checkout-card">
             <CheckoutSectionTitle icon="shield" title="Payment" body={sectionBody('Choose from the payment methods enabled for this storefront.')} />
-            <div className="select-cards commerce-select-cards">{paymentMethods.map((p) => <label key={p.id} className={payment === p.id ? 'selected' : ''}><input type="radio" name="payment" checked={payment === p.id} onChange={() => setPayment(p.id)} /><div><strong>{p.name}</strong><span>{p.instructions || p.provider_type}</span></div></label>)}</div>
+            <div className="select-cards commerce-select-cards">{paymentMethods.map((p) => <label key={p.id} className={payment === p.id ? 'selected' : ''}><input type="radio" name="payment" checked={payment === p.id} onChange={() => setPayment(p.id)} /><div><strong>{p.name}</strong><span>{isTokenPayMethod(p) ? `Secure hosted payment · ${p.public_config?.chain || ''} ${p.public_config?.currency || ''}`.trim() : (p.instructions || p.provider_type)}</span></div></label>)}</div>
           </div>
 
           {showExtras && <div className="form-card commerce-checkout-card commerce-checkout-extras-card">
@@ -166,8 +180,8 @@ export function CheckoutPage() {
           <hr />
           <div><span>Subtotal</span><strong>{money(cart.totals.subtotal, cart.currency, tenant?.locale)}</strong></div>
           <p className="summary-hint">Delivery fees and promotion discounts are finalized by the server when you place the order.</p>
-          <button className="btn btn-primary btn-full commerce-place-order" disabled={busy}>{busy ? 'Placing order…' : 'Place order'} <Icon name="arrow-right" size={16} /></button>
-          <p className="commerce-summary-assurance"><Icon name="shield" size={15} /> One checkout submission creates the order through the existing idempotent server flow.</p>
+          <button className="btn btn-primary btn-full commerce-place-order" disabled={busy}>{busy ? (isTokenPayMethod(selectedPaymentMethod) ? 'Opening secure payment…' : 'Placing order…') : (isTokenPayMethod(selectedPaymentMethod) ? 'Place order & pay' : 'Place order')} <Icon name="arrow-right" size={16} /></button>
+          <p className="commerce-summary-assurance"><Icon name="shield" size={15} /> {isTokenPayMethod(selectedPaymentMethod) ? 'Payment opens on TokenPay after Shope securely creates the order and signed payment session.' : 'One checkout submission creates the order through the existing idempotent server flow.'}</p>
         </aside>
       </form>
       <Toast message={toast} type="bad" onClose={() => setToast('')} />
