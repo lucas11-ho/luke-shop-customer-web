@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from '../cart/CartContext.jsx';
 import { useStore } from '../store/StoreContext.jsx';
 import { reorderItems, canReorder } from '../cart/reorder.js';
+import { createHostedPaymentSession, isTokenPayPayment, redirectToHostedPayment } from '../commerce/paymentGateway.js';
 import { Spinner, ErrorState, Badge, money, formatDate, Toast } from '../components/UI.jsx';
 import { SupportLauncher } from '../components/SupportLauncher.jsx';
 import { Icon } from '../components/icons.jsx';
@@ -11,7 +12,7 @@ import {
   statusLabel, resolveStatusIconOverrides, primaryFulfillmentMode, isTerminalFailure, isRestaurantOrder,
 } from '../components/StatusVisuals.jsx';
 import { DeliveryLocationCard, LiveLocationCard } from '../components/DeliveryLocation.jsx';
-import { go } from '../app/router.js';
+import { go, useRoute } from '../app/router.js';
 
 const HEADLINE = {
   OUT_FOR_DELIVERY: 'Your order is on the way.',
@@ -26,7 +27,6 @@ const HEADLINE = {
   PENDING_PAYMENT: 'Waiting for payment confirmation.',
 };
 
-// Restaurant / food orders get kitchen-tuned wording.
 const RESTAURANT_HEADLINE = {
   PAID: 'Order confirmed — the kitchen is on it.',
   CONFIRMED: 'Order confirmed — the kitchen is on it.',
@@ -58,6 +58,7 @@ export function OrderDetailPage({ orderRef }) {
   const { api } = useAuth();
   const { addItem } = useCart();
   const { tenant, experience } = useStore();
+  const { query } = useRoute();
   const pack = resolveVisualPack(experience);
   const statusIcons = resolveStatusIconOverrides(experience);
   const [order, setOrder] = useState(null);
@@ -67,18 +68,63 @@ export function OrderDetailPage({ orderRef }) {
   const [toast, setToast] = useState('');
   const [reordering, setReordering] = useState(false);
   const [reorderResult, setReorderResult] = useState(null);
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [paymentVerificationTimedOut, setPaymentVerificationTimedOut] = useState(false);
+  const returnedFromTokenPay = query.get('payment_return') === 'tokenpay';
+  const paymentSetupFailed = query.get('payment_setup') === 'failed';
 
-  const load = async () => {
-    setLoading(true); setError('');
-    try { const d = await api.request(`/v1/customer/orders/${encodeURIComponent(orderRef)}`, { auth: true }); setOrder(d.data.order); }
-    catch (e) { setError(e.message); } finally { setLoading(false); }
+  const fetchOrder = async ({ quiet = false } = {}) => {
+    if (!quiet) { setLoading(true); setError(''); }
+    try {
+      const d = await api.request(`/v1/customer/orders/${encodeURIComponent(orderRef)}`, { auth: true });
+      setOrder(d.data.order);
+      return d.data.order;
+    } catch (e) {
+      if (!quiet) setError(e.message);
+      throw e;
+    } finally {
+      if (!quiet) setLoading(false);
+    }
   };
-  useEffect(() => { load(); }, [orderRef]);
+
+  useEffect(() => { fetchOrder().catch(() => {}); }, [orderRef]);
+
+  useEffect(() => {
+    if (!returnedFromTokenPay) return undefined;
+    let active = true;
+    let timer = null;
+    let attempt = 0;
+    setVerifyingPayment(true);
+    setPaymentVerificationTimedOut(false);
+    const verify = async () => {
+      try {
+        const latest = await fetchOrder({ quiet: true });
+        if (!active) return;
+        if (latest?.payment_status === 'PAID' || latest?.payment?.status === 'PAID') {
+          setVerifyingPayment(false);
+          setPaymentVerificationTimedOut(false);
+          return;
+        }
+      } catch {
+        if (!active) return;
+      }
+      attempt += 1;
+      if (attempt >= 15) {
+        setVerifyingPayment(false);
+        setPaymentVerificationTimedOut(true);
+        return;
+      }
+      timer = setTimeout(verify, 2000);
+    };
+    verify();
+    return () => { active = false; if (timer) clearTimeout(timer); };
+  }, [returnedFromTokenPay, orderRef]);
 
   if (loading) return <Spinner label="Loading your order…" />;
-  if (error) return <section className="section"><ErrorState code={error} message={error} onRetry={load} /></section>;
+  if (error) return <section className="section"><ErrorState code={error} message={error} onRetry={() => fetchOrder().catch(() => {})} /></section>;
   if (!order) return null;
 
+  const tokenPay = isTokenPayPayment(order.payment);
   const cancel = async () => {
     if (!confirm('Cancel this order?')) return;
     setBusy(true);
@@ -87,8 +133,19 @@ export function OrderDetailPage({ orderRef }) {
   };
   const retry = async () => {
     setBusy(true);
-    try { await api.request(`/v1/customer/orders/${encodeURIComponent(order.id)}/payment/retry`, { method: 'POST', body: { idempotency_key: `retry-${Date.now()}-${crypto.randomUUID()}` }, auth: true }); await load(); setToast('Payment retry created'); }
+    try { await api.request(`/v1/customer/orders/${encodeURIComponent(order.id)}/payment/retry`, { method: 'POST', body: { idempotency_key: `retry-${Date.now()}-${crypto.randomUUID()}` }, auth: true }); await fetchOrder({ quiet: true }); setToast('Payment retry created'); }
     catch (e) { setToast(e.message); } finally { setBusy(false); }
+  };
+  const continueHostedPayment = async () => {
+    setBusy(true); setToast('');
+    try {
+      if (order.status === 'PAYMENT_FAILED') {
+        await api.request(`/v1/customer/orders/${encodeURIComponent(order.id)}/payment/retry`, { method: 'POST', body: { idempotency_key: `retry-tokenpay-${Date.now()}-${crypto.randomUUID()}` }, auth: true });
+      }
+      const session = await createHostedPaymentSession(api, order.id, { prefix: 'order-tokenpay' });
+      if (session?.status === 'PAID') { await fetchOrder({ quiet: true }); return; }
+      redirectToHostedPayment(session);
+    } catch (e) { setToast(e.message); } finally { setBusy(false); }
   };
   const orderAgain = async () => {
     setReordering(true); setReorderResult(null);
@@ -117,6 +174,16 @@ export function OrderDetailPage({ orderRef }) {
     <section className="section order-detail" data-testid="order-detail-page">
       <button className="back-link" onClick={() => go('/orders')}><Icon name="chevron-right" size={16} className="flip" /> All orders</button>
 
+      {(returnedFromTokenPay || paymentSetupFailed) && tokenPay && order.payment_status !== 'PAID' && (
+        <div className={`payment-gateway-notice ${verifyingPayment ? 'verifying' : paymentSetupFailed ? 'warning' : 'pending'}`} data-testid="tokenpay-verification-notice">
+          <span className="payment-gateway-icon"><Icon name={verifyingPayment ? 'clock' : 'shield'} size={20} /></span>
+          <div>
+            <strong>{verifyingPayment ? 'Verifying your payment…' : paymentSetupFailed ? 'Payment page could not be opened' : 'Payment is still awaiting confirmation'}</strong>
+            <p>{verifyingPayment ? 'Shope is checking the trusted server payment status. Returning from TokenPay does not mark an order as paid by itself.' : paymentVerificationTimedOut ? 'TokenPay has not confirmed this payment yet. You can retry verification or continue the secure hosted payment.' : 'Your order already exists. Continue payment from here instead of placing the order again.'}</p>
+          </div>
+          {!verifyingPayment && <div className="payment-gateway-actions"><button type="button" className="btn btn-secondary btn-small" disabled={busy} onClick={() => fetchOrder({ quiet: true }).catch((e) => setToast(e.message))}>Check status</button><button type="button" className="btn btn-primary btn-small" disabled={busy} onClick={continueHostedPayment}>{busy ? 'Opening…' : 'Continue payment'}</button></div>}
+        </div>
+      )}
 
       <div className={`order-hero order-hero-${terminal ? 'alert' : 'active'}`} data-status-pack={pack}>
         <div>
@@ -213,7 +280,8 @@ export function OrderDetailPage({ orderRef }) {
               <Badge tone={order.payment.status === 'PAID' ? 'good' : 'warn'}>{statusLabel(order.payment.status)}</Badge>
             </div>
           )}
-          {order.status === 'PAYMENT_FAILED' && <button className="btn btn-primary btn-full" disabled={busy} onClick={retry} data-testid="retry-payment"><Icon name="cog" size={16} /> Retry payment</button>}
+          {tokenPay && ['PENDING_PAYMENT','PAYMENT_FAILED'].includes(order.status) && <button className="btn btn-primary btn-full" disabled={busy || verifyingPayment} onClick={continueHostedPayment} data-testid="continue-tokenpay"><Icon name="shield" size={16} /> {busy ? 'Opening secure payment…' : 'Continue secure payment'}</button>}
+          {!tokenPay && order.status === 'PAYMENT_FAILED' && <button className="btn btn-primary btn-full" disabled={busy} onClick={retry} data-testid="retry-payment"><Icon name="cog" size={16} /> Retry payment</button>}
           {order.status === 'PENDING_PAYMENT' && <button className="btn btn-danger btn-full" disabled={busy} onClick={cancel} data-testid="cancel-order"><Icon name="x" size={16} /> Cancel order</button>}
           {canReorder(order.status) && <button className="btn btn-secondary btn-full" disabled={reordering} onClick={orderAgain} data-testid="order-again"><Icon name="bag" size={16} /> {reordering ? 'Adding…' : 'Order again'}</button>}
           {reorderResult && reorderResult.failed.length > 0 && (
