@@ -1,0 +1,28 @@
+import assert from'node:assert/strict';
+import{readFile}from'node:fs/promises';
+const checkout=await readFile(new URL('../src/pages/CheckoutPage.jsx',import.meta.url),'utf8');
+const main=await readFile(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=await readFile(new URL('../src/zone-delivery-quote.css',import.meta.url),'utf8');
+const pkg=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
+
+assert.ok(checkout.includes("/v1/customer/delivery/quote"),'checkout must use the authenticated Backend delivery quote contract');
+assert.ok(checkout.includes("delivery_method_id: selectedDeliveryMethod.id")||checkout.includes("delivery_method_id:selectedDeliveryMethod.id"),'quote must bind the selected real delivery method');
+assert.ok(checkout.includes('shipping_address: quoteAddress')||checkout.includes('shipping_address:quoteAddress'),'quote must send the prepared real checkout address');
+assert.ok(checkout.includes('auth: true'),'quote must remain customer authenticated');
+assert.ok(checkout.includes('deliveryQuoteAddressReady'),'quote must wait for the Backend-required address fields');
+assert.ok(checkout.includes("method.pricing_mode === 'ZONE_AWARE'")&&checkout.includes('Address-based rate'),'zone-aware methods must not advertise their baseline flat fee as the address price');
+assert.ok(checkout.includes('pricing_source')&&checkout.includes('delivery_quote'),'resolved pricing source must be surfaced from Backend data');
+assert.ok(checkout.includes('VIP delivery benefit'),'VIP delivery discount must be presented from the server quote when present');
+assert.ok(checkout.includes('Checkout recalculates this delivery fee on the server'),'quote UI must disclose that checkout remains authoritative');
+assert.ok(checkout.includes("error?.code === 'DELIVERY_ZONE_UNAVAILABLE'"),'unavailable-zone errors need a safe customer message');
+assert.ok(checkout.includes("error?.code === 'DELIVERY_ZONE_MIN_ORDER'"),'zone minimum-order errors need a safe customer message');
+const checkoutBody=checkout.slice(checkout.indexOf('const body = {'),checkout.indexOf("api.request('/v1/customer/checkout"));
+assert.ok(checkoutBody.includes('delivery_method_id'),'actual checkout must still send the selected delivery method');
+assert.ok(checkoutBody.includes('shipping_address'),'actual checkout must still send the shipping address for independent server resolution');
+for(const forbidden of ['deliveryQuote','delivery_total','pricing_source','delivery_zone_id','delivery_zone_rate_id'])assert.ok(!checkoutBody.includes(forbidden),`checkout body must not trust client quote field ${forbidden}`);
+assert.ok(checkout.includes('disabled={busy}'),'quote state must not become financial authority that blocks the real checkout request');
+assert.ok(main.includes("'./zone-delivery-quote.css'"),'delivery quote stylesheet must load');
+assert.match(css,/checkout-zone-quote/);assert.match(css,/checkout-zone-quote-error/);
+assert.equal(pkg.scripts['test:zone-delivery-quote'],'node scripts/v0.11.0-zone-delivery-quote-ux-regression-test.mjs');
+assert.ok(pkg.scripts.verify.includes('test:zone-delivery-quote'));
+console.log('PASS customer server-authoritative delivery quote UX, zone pricing presentation, VIP quote display and checkout revalidation boundary');
