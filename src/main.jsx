@@ -16,6 +16,7 @@ import './footer-v4.css';
 import './explore-a3.css';
 import './cart-checkout-a4.css';
 import './payment-gateway-v1.css';
+import './digital-library.css';
 import './mobile-scroll-safety.css';
 
 createRoot(document.getElementById('root')).render(

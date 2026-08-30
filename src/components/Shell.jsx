@@ -14,6 +14,7 @@ const NAV={home:['/','nav.home'],explore:['/explore','nav.explore'],cart:['/cart
 const NAV_ICON={home:'home',explore:'grid',cart:'bag',orders:'receipt',profile:'user'};
 const FOOTER_NAV={home:'/',explore:'/explore',cart:'/cart',orders:'/orders',profile:'/profile',signin:'/login'};
 const SOCIAL_LABEL={facebook:'Facebook',instagram:'Instagram',telegram:'Telegram',tiktok:'TikTok',youtube:'YouTube',x:'X'};
+const LIBRARY_LABEL={en:'My library',my:'My Library',id:'Perpustakaan saya'};
 function safeHttps(value){try{const url=new URL(String(value||''));return url.protocol==='https:'?url.toString():''}catch{return''}}
 
 function StorefrontFooter({brand}){
@@ -49,7 +50,7 @@ function StorefrontFooter({brand}){
 
 export function Shell({ children, path }) {
   const { effectiveBranding, experience } = useStore();
-  const { t, localizedBranding, localePack } = useLocalization();
+  const { t, localizedBranding, localePack, locale } = useLocalization();
   const { session, isAuthenticated, logout } = useAuth();
   const { itemCount } = useCart();
   const [menu, setMenu] = useState(false);
@@ -63,6 +64,7 @@ export function Shell({ children, path }) {
   const mobileNav = experience?.layout?.mobile_nav || 'standard';
   const authOnly = path === '/login' || path === '/register';
   const navText=(key,labelKey)=>localePack?.navigation?.[key]?.title||t(labelKey);
+  const libraryLabel=LIBRARY_LABEL[locale]||LIBRARY_LABEL.en;
 
   if (authOnly) {
     return (
@@ -117,6 +119,7 @@ export function Shell({ children, path }) {
                 <div className="menu-caption">{t('profile.your_account')}</div>
                 <button role="menuitem" onClick={() => { go('/profile'); setMenu(false); }}><Icon name="user" size={16} /> {t('auth.profile')}</button>
                 <button role="menuitem" onClick={() => { go('/orders'); setMenu(false); }}><Icon name="receipt" size={16} /> {t('auth.orders')}</button>
+                <button className="account-library-menuitem" role="menuitem" onClick={() => { go('/library'); setMenu(false); }} data-testid="account-library-link"><Icon name="gift" size={16} /> {libraryLabel}</button>
                 <button role="menuitem" onClick={() => { go('/profile/language'); setMenu(false); }}><Icon name="globe" size={16} /> {t('common.language')}</button>
                 <button role="menuitem" onClick={logout}><Icon name="logout" size={16} /> {t('common.sign_out')}</button>
               </div>
