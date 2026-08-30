@@ -94,7 +94,7 @@ test('checkout filters physical delivery methods and hides them for digital-only
 
 test('checkout keeps enabled storefront payment methods without collecting card fields', () => {
   assert.match(checkout, /paymentMethods\.map/);
-  assert.match(checkout, /p\.instructions \|\| p\.provider_type/);
+  assert.match(checkout, /method\.instructions \|\| method\.provider_type/);
   assert.doesNotMatch(checkout, /card_number|card number|cvv|cvc|expiry|expiration/i);
 });
 
