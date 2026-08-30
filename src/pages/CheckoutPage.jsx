@@ -72,7 +72,7 @@ export function CheckoutPage() {
   if (loading) return <Spinner />;
   if (!cart?.items?.length) return <section className="section"><Empty title="Your cart is empty" action={<button className="btn btn-primary" onClick={() => go('/explore')}>Explore</button>} /></section>;
 
-  const eligibleDelivery = deliveryMethods.filter((d) => !physicalMode || d.fulfillment_mode === physicalMode);
+  const eligibleDelivery = physicalMode ? deliveryMethods.filter((d) => d.fulfillment_mode === physicalMode) : [];
   const selectedPaymentMethod = paymentMethods.find((method) => method.id === payment) || null;
   const updateAddress = (key, value) => setAddress((a) => prepareAddressForPolicy({ ...a, [key]: value }, addressPolicy));
   const chooseSaved = (id) => { setSelectedAddress(id); const found = savedAddresses.find((x) => x.id === id); if (found) setAddress(prepareAddressForPolicy(fromSaved(found), addressPolicy)); };
@@ -88,7 +88,7 @@ export function CheckoutPage() {
       const body = {
         idempotency_key: `web-${Date.now()}-${crypto.randomUUID()}`,
         payment_method_id: payment || undefined,
-        delivery_method_id: delivery || undefined,
+        delivery_method_id: physicalMode ? (delivery || undefined) : undefined,
         promotion_code: promo.trim() || undefined,
         customer_note: note.trim() || undefined,
         shipping_address: needsAddress ? { ...shipping, country_code: (shipping.country_code || '').toUpperCase() } : undefined,
@@ -179,7 +179,7 @@ export function CheckoutPage() {
           <div className="commerce-checkout-lines">{cart.items.map((item) => <div className="checkout-line" key={item.public_id}><span><small>{item.quantity} ×</small> {item.title_snapshot}</span><strong>{money(item.line_total, item.currency, tenant?.locale)}</strong></div>)}</div>
           <hr />
           <div><span>Subtotal</span><strong>{money(cart.totals.subtotal, cart.currency, tenant?.locale)}</strong></div>
-          <p className="summary-hint">Delivery fees and promotion discounts are finalized by the server when you place the order.</p>
+          <p className="summary-hint">{physicalMode ? 'Delivery fees and promotion discounts are finalized by the server when you place the order.' : 'Promotion discounts are finalized by the server when you place the order.'}</p>
           <button className="btn btn-primary btn-full commerce-place-order" disabled={busy}>{busy ? (isTokenPayMethod(selectedPaymentMethod) ? 'Opening secure payment…' : 'Placing order…') : (isTokenPayMethod(selectedPaymentMethod) ? 'Place order & pay' : 'Place order')} <Icon name="arrow-right" size={16} /></button>
           <p className="commerce-summary-assurance"><Icon name="shield" size={15} /> {isTokenPayMethod(selectedPaymentMethod) ? 'Payment opens on TokenPay after Shope securely creates the order and signed payment session.' : 'One checkout submission creates the order through the existing idempotent server flow.'}</p>
         </aside>
