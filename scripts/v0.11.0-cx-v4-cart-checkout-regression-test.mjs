@@ -85,9 +85,11 @@ test('checkout keeps map-assisted location capture', () => {
   assert.match(checkout, /location_source/);
 });
 
-test('checkout filters delivery methods by cart fulfillment mode', () => {
+test('checkout filters physical delivery methods and hides them for digital-only carts', () => {
   assert.match(checkout, /\['SHIPPING', 'LOCAL_DELIVERY', 'PICKUP'\]/);
-  assert.match(checkout, /deliveryMethods\.filter\(\(d\) => !physicalMode \|\| d\.fulfillment_mode === physicalMode\)/);
+  assert.match(checkout, /const eligibleDelivery = physicalMode \? deliveryMethods\.filter\(\(d\) => d\.fulfillment_mode === physicalMode\) : \[\]/);
+  assert.match(checkout, /delivery_method_id: physicalMode \? \(delivery \|\| undefined\) : undefined/);
+  assert.match(checkout, /eligibleDelivery\.length > 0/);
 });
 
 test('checkout keeps enabled storefront payment methods without collecting card fields', () => {
