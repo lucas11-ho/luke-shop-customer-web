@@ -6,6 +6,7 @@ const profile=fs.readFileSync(new URL('../src/pages/ProfilePages.jsx',import.met
 const profileEntry=fs.readFileSync(new URL('../src/pages/ProfilePage.jsx',import.meta.url),'utf8');
 const shell=fs.readFileSync(new URL('../src/components/Shell.jsx',import.meta.url),'utf8');
 const cart=fs.readFileSync(new URL('../src/cart/CartContext.jsx',import.meta.url),'utf8');
+const checkout=fs.readFileSync(new URL('../src/pages/CheckoutPage.jsx',import.meta.url),'utf8');
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/digital-library.css',import.meta.url),'utf8');
 assert.ok(app.includes("import{LibraryPage}from'../pages/LibraryPage.jsx'"),'Library page must be registered');
@@ -26,7 +27,10 @@ assert.ok(!profileEntry.includes('profile-library-shortcut'),'Profile must not r
 assert.ok(shell.includes("go('/library')")&&shell.includes('account-library-link'),'Desktop account menu must expose My Library');
 assert.ok(cart.includes("'/v1/customer/cart/repair'"),'Authenticated cart refresh must ask the Backend to repair stale fulfillment modes');
 assert.ok(cart.includes("e?.status===404||e?.code==='ROUTE_NOT_FOUND'"),'Customer cart repair must keep a safe rollout fallback to the legacy cart GET route');
+assert.ok(checkout.includes("const eligibleDelivery = physicalMode ? deliveryMethods.filter((d) => d.fulfillment_mode === physicalMode) : [];"),'Digital-only checkout must render zero physical delivery methods');
+assert.ok(checkout.includes("delivery_method_id: physicalMode ? (delivery || undefined) : undefined"),'Digital-only checkout must never submit a stale physical delivery method ID');
+assert.ok(checkout.includes("{eligibleDelivery.length > 0 &&"),'Delivery method card must render only when a physical mode has eligible methods');
 assert.ok(main.includes("'./digital-library.css'"),'Digital Library stylesheet must be loaded');
 assert.ok(main.indexOf("'./digital-library.css'")<main.indexOf("'./mobile-scroll-safety.css'"),'Mobile scroll safety must remain the last stylesheet');
 assert.match(css,/library-viewer-backdrop/);assert.match(css,/digital-library-card/);assert.match(css,/account-library-menuitem/);
-console.log('PASS secure Customer My Library route, protected VIEW/DOWNLOAD access, professional Account placement and Backend-authoritative stale-cart fulfillment repair');
+console.log('PASS secure Customer My Library, Backend-authoritative cart repair and digital-only checkout without physical delivery UI');
