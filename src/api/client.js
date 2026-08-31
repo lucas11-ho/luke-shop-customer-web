@@ -42,6 +42,17 @@ async function rawFetch(path,{query}={}){
   return parseResponse(response);
 }
 
+export async function fetchAuthenticatedBlob(path,{storeId}={}){
+  const ctx=getStorefrontRuntimeContext(),session=readStoredSession();
+  if(!ctx.tenantSlug)throw new ApiError('No storefront selected.',{code:'STOREFRONT_ROUTE_REQUIRED'});
+  if(!session?.accessToken||session.tenantSlug!==ctx.tenantSlug)throw new ApiError('Sign in to view this private content.',{status:401,code:'UNAUTHORIZED'});
+  const headers={Accept:'*/*','x-tenant-slug':ctx.tenantSlug,Authorization:`Bearer ${session.accessToken}`};
+  const effectiveStoreId=storeId===undefined?ctx.storeId:storeId;if(effectiveStoreId)headers['x-store-id']=effectiveStoreId;
+  let response;try{response=await fetch(`${API_BASE}${path}`,{headers});}catch{throw new ApiError('Unable to reach Luke Shop Backend. Check the API URL and backend status.');}
+  if(!response.ok){let payload=null;try{payload=await response.json();}catch{}const e=payload?.error||{};throw new ApiError(safeErrorMessage(response,e),{status:response.status,code:e.code||'HTTP_ERROR',requestId:e.request_id||null,details:e.details||null});}
+  return response.blob();
+}
+
 export async function resolveStorefrontBootstrap(selection){
   if(!selection)throw new ApiError('No storefront selected. Open a tenant storefront URL such as /t/demo.',{code:'STOREFRONT_ROUTE_REQUIRED'});
   if(selection.mode==='preview')return rawFetch(`/v1/storefront/preview/${encodeURIComponent(selection.token)}`);
