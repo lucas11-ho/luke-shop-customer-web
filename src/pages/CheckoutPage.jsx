@@ -10,6 +10,7 @@ import { resolveAddressFieldPolicy, prepareAddressForPolicy, addressSummaryParts
 import { resolveCheckoutExperience } from '../commerce/cartCheckoutExperience.js';
 import { createHostedPaymentSession, isTokenPayMethod, redirectToHostedPayment } from '../commerce/paymentGateway.js';
 import { go } from '../app/router.js';
+import '../vip-redemption-checkout.css';
 
 const emptyAddress = { recipient_name: '', phone: '', country_code: '', state: '', city: '', postal_code: '', address_line_1: '', address_line_2: '', delivery_note: '', formatted_address: '', latitude: null, longitude: null, accuracy_meters: null, location_source: null, location_updated_at: null };
 const fromSaved = (a) => ({ recipient_name: a?.recipient_name || '', phone: a?.phone || '', country_code: a?.country_code || '', state: a?.state || '', city: a?.city || '', postal_code: a?.postal_code || '', address_line_1: a?.address_line_1 || '', address_line_2: a?.address_line_2 || '', delivery_note: a?.delivery_note || '', formatted_address: a?.formatted_address || '', latitude: a?.latitude ?? null, longitude: a?.longitude ?? null, accuracy_meters: a?.accuracy_meters ?? null, location_source: a?.location_source || null, location_updated_at: a?.location_updated_at || null });
@@ -97,6 +98,11 @@ function checkoutErrorMessage(error) {
   if (error?.code === 'FULFILLMENT_MODE_NOT_AVAILABLE') return 'A product access or delivery option changed. Refresh your cart and try again.';
   if (error?.code === 'CONSTRAINT_VIOLATION') return 'This order could not be placed because a product setting changed. Refresh your cart and try again.';
   if (error?.code === 'PAYMENT_METHOD_NOT_AVAILABLE') return 'That payment method is no longer available. Choose another payment method.';
+  if (error?.code === 'VIP_REDEMPTION_DISABLED') return 'VIP cashback redemption is no longer available for this store. Your rewards were not spent.';
+  if (error?.code === 'VIP_REDEMPTION_MINIMUM_NOT_MET') return error?.message || 'The cashback amount is below the store minimum.';
+  if (error?.code === 'VIP_REDEMPTION_EXCEEDS_LIMIT') return 'The cashback amount is above the server-authorized checkout limit. Refresh your rewards and try a smaller amount.';
+  if (error?.code === 'VIP_REWARD_BALANCE_INSUFFICIENT') return 'Your VIP cashback balance changed. We refreshed it; choose the amount again.';
+  if (error?.code === 'VIP_REWARD_SOURCES_INSUFFICIENT') return 'Some VIP cashback is no longer spendable. We refreshed your rewards; choose the amount again.';
   if (['DELIVERY_ZONE_UNAVAILABLE', 'DELIVERY_ZONE_MIN_ORDER', 'DELIVERY_MIN_ORDER', 'DELIVERY_METHOD_NOT_FOUND'].includes(error?.code)) return deliveryQuoteErrorMessage(error);
   return error?.message || 'We could not place your order. Please try again.';
 }
@@ -134,6 +140,9 @@ export function CheckoutPage() {
   const [deliveryQuote, setDeliveryQuote] = useState(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState('');
+  const [vipRewards, setVipRewards] = useState(null);
+  const [vipRedemptionPolicy, setVipRedemptionPolicy] = useState(null);
+  const [vipCashbackAmount, setVipCashbackAmount] = useState('');
 
   const needsAddress = useMemo(() => cart?.items?.some((i) => ['SHIPPING', 'LOCAL_DELIVERY'].includes(i.fulfillment_mode)), [cart]);
   const physicalMode = cart?.items?.find((i) => PHYSICAL_MODES.includes(i.fulfillment_mode))?.fulfillment_mode;
@@ -155,7 +164,8 @@ export function CheckoutPage() {
       publicApi.request('/v1/storefront/payment-methods'),
       publicApi.request('/v1/storefront/delivery-methods'),
       api.request('/v1/customer/me/addresses', { auth: true }),
-    ]).then(([c, p, d, a]) => {
+      api.request('/v1/customer/vip/rewards', { auth: true }).catch(() => null),
+    ]).then(([c, p, d, a, r]) => {
       const methods = p.data.payment_methods || [];
       const deliveryOptions = d.data.delivery_methods || [];
       setPaymentMethods(methods);
@@ -166,6 +176,8 @@ export function CheckoutPage() {
       setDelivery(match?.id || '');
       const addresses = a.data.addresses || [];
       setSavedAddresses(addresses);
+      setVipRewards(r?.data?.rewards || null);
+      setVipRedemptionPolicy(r?.data?.redemption_policy || null);
       const preferred = addresses.find((x) => x.is_default) || addresses[0];
       if (preferred) {
         setAddressMode('saved');
@@ -205,6 +217,14 @@ export function CheckoutPage() {
 
   const itemCount = cart.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
   const currentTotal = cart.totals?.grand_total ?? cart.totals?.subtotal ?? 0;
+  const vipBalance = Math.max(0, Number(vipRewards?.balance || 0));
+  const vipPolicyEnabled = Boolean(vipRedemptionPolicy?.enabled);
+  const vipMaxPercent = Math.max(0, Math.min(100, Number(vipRedemptionPolicy?.max_percent ?? 100)));
+  const vipMinAmount = Math.max(0, Number(vipRedemptionPolicy?.min_amount || 0));
+  const vipCashbackValue = Number.isFinite(Number(vipCashbackAmount)) ? Math.max(0, Number(vipCashbackAmount)) : 0;
+  const vipSuggestedMax = Math.max(0, Math.min(vipBalance, Number(currentTotal || 0) * vipMaxPercent / 100));
+  const vipCanRedeem = vipPolicyEnabled && vipSuggestedMax > 0 && (vipMinAmount <= 0 || vipSuggestedMax >= vipMinAmount);
+  const vipEstimatedPayable = Math.max(0, Number(currentTotal || 0) - Math.min(vipCashbackValue, vipSuggestedMax));
   const digitalAccessLabel = digitalItems.length === 0 ? '' : digitalItems.every((item) => item.fulfillment_mode === 'DIGITAL_DOWNLOAD') ? 'Protected download after purchase' : digitalItems.every((item) => item.fulfillment_mode === 'DIGITAL_ACCESS') ? 'Secure access in My Library' : 'Secure library & download access';
   const paymentDetail = (method) => !method ? 'Choose a payment method' : isTokenPayMethod(method) ? `Secure hosted payment · ${method.public_config?.chain || ''} ${method.public_config?.currency || ''}`.trim() : (method.instructions || method.provider_type || 'Merchant-enabled payment');
   const selectedQuote = deliveryQuote?.delivery_method_id === selectedDeliveryMethod?.id ? deliveryQuote : null;
@@ -225,6 +245,15 @@ export function CheckoutPage() {
   const useManual = () => { setAddressMode('manual'); setSelectedAddress(''); setAddress(prepareAddressForPolicy(emptyAddress, addressPolicy)); };
   const applyDetected = (detected) => setAddress((a) => prepareAddressForPolicy({ ...a, formatted_address: detected.formatted_address || a.formatted_address, address_line_1: detected.address_line_1 || a.address_line_1, address_line_2: detected.address_line_2 ?? a.address_line_2, city: detected.city || a.city, state: detected.state ?? a.state, postal_code: detected.postal_code ?? a.postal_code, country_code: detected.country_code || a.country_code }, addressPolicy));
 
+  const refreshVipRewards = async () => {
+    try {
+      const latest = await api.request('/v1/customer/vip/rewards', { auth: true });
+      setVipRewards(latest?.data?.rewards || null);
+      setVipRedemptionPolicy(latest?.data?.redemption_policy || null);
+      return latest;
+    } catch { return null; }
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
@@ -240,11 +269,17 @@ export function CheckoutPage() {
         delivery_method_id: physicalMode ? (delivery || undefined) : undefined,
         promotion_code: promo.trim() || undefined,
         customer_note: note.trim() || undefined,
+        vip_cashback_amount: vipCashbackValue > 0 ? vipCashbackValue : undefined,
         shipping_address: needsAddress ? { ...shipping, country_code: (shipping.country_code || '').toUpperCase() } : undefined,
       };
       const result = await api.request('/v1/customer/checkout', { method: 'POST', body, auth: true });
       const orderRef = result.data.order.id;
+      const serverPaymentStatus = String(result.data.order.payment_status || '').toUpperCase();
       setCart(null);
+      if (serverPaymentStatus === 'PAID') {
+        go(`/orders/${encodeURIComponent(orderRef)}`, result.data.vip_redemption ? { vip_cashback: 'applied' } : undefined);
+        return;
+      }
       if (isTokenPayMethod(selectedPaymentMethod)) {
         try {
           const session = await createHostedPaymentSession(api, orderRef, { prefix: 'checkout-tokenpay' });
@@ -257,7 +292,13 @@ export function CheckoutPage() {
         }
       }
       go(`/orders/${encodeURIComponent(orderRef)}`);
-    } catch (error) { setToast(checkoutErrorMessage(error)); } finally { setBusy(false); }
+    } catch (error) {
+      if (['VIP_REDEMPTION_DISABLED','VIP_REDEMPTION_MINIMUM_NOT_MET','VIP_REDEMPTION_EXCEEDS_LIMIT','VIP_REWARD_BALANCE_INSUFFICIENT','VIP_REWARD_SOURCES_INSUFFICIENT'].includes(error?.code)) {
+        setVipCashbackAmount('');
+        await refreshVipRewards();
+      }
+      setToast(checkoutErrorMessage(error));
+    } finally { setBusy(false); }
   };
 
   return (
@@ -335,6 +376,21 @@ export function CheckoutPage() {
               {Number(selectedQuote.vip_discount || 0) > 0 && <div className="checkout-zone-quote-vip"><span>VIP delivery benefit</span><strong>−{money(selectedQuote.vip_discount, selectedQuote.currency || tenant?.currency, tenant?.locale)}</strong></div>}
               <div className="checkout-zone-quote-copy">Checkout recalculates this delivery fee on the server before creating the order, so this quote is informative rather than client-authoritative.</div>
             </> : <div className="checkout-zone-quote-copy">Complete the required delivery address fields to verify this method’s fee, ETA and availability with the server.</div>}
+          </section>}
+
+          {vipPolicyEnabled && <section className="form-card commerce-checkout-card checkout-vip-cashback-card" data-testid="checkout-vip-cashback">
+            <div className="checkout-vip-cashback-head">
+              <CheckoutSectionTitle icon="star" title="VIP cashback" body={sectionBody('Apply available cashback to this order. The server confirms the final eligible amount during checkout.')} />
+              <Badge tone="good">Server confirmed</Badge>
+            </div>
+            <div className="checkout-vip-balance-row"><span>Available balance</span><strong>{money(vipBalance, vipRewards?.currency || cart.currency || tenant?.currency, tenant?.locale)}</strong></div>
+            <div className="checkout-vip-redemption-control">
+              <label><span>Cashback to use</span><input data-testid="vip-cashback-amount" type="number" min="0" step="0.01" inputMode="decimal" value={vipCashbackAmount} disabled={!vipCanRedeem} onChange={(event) => setVipCashbackAmount(event.target.value)} placeholder={vipCanRedeem ? '0.00' : 'Not available'} /></label>
+              <button type="button" className="btn btn-secondary checkout-vip-max-btn" disabled={!vipCanRedeem} onClick={() => setVipCashbackAmount(String(Number(vipSuggestedMax.toFixed(4))))}>Use maximum</button>
+            </div>
+            <div className="checkout-vip-policy-note">Store policy allows up to <strong>{vipMaxPercent}%</strong> of the server-calculated payable total{vipMinAmount > 0 ? <> with a minimum redemption of <strong>{money(vipMinAmount, vipRewards?.currency || cart.currency || tenant?.currency, tenant?.locale)}</strong></> : null}. The amount shown here is an estimate from the current cart; Backend rechecks balance, expiry, promotions, delivery and the policy inside the order transaction.</div>
+            {vipCashbackValue > 0 && <div className="checkout-vip-estimate"><span>Cart estimate after cashback</span><strong>{money(vipEstimatedPayable, cart.currency || tenant?.currency, tenant?.locale)}</strong></div>}
+            {!vipCanRedeem && vipBalance > 0 && vipMinAmount > vipSuggestedMax && <div className="checkout-vip-unavailable">Your current server-confirmed balance or cart amount does not meet this store’s minimum redemption.</div>}
           </section>}
 
           <section className="form-card commerce-checkout-card checkout-pro-compact-card" data-testid="checkout-payment-method">
