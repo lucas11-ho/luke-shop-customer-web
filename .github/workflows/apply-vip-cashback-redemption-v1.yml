@@ -1,0 +1,34 @@
+name: Apply VIP Cashback Redemption v1 checkout patch
+
+on:
+  push:
+    branches:
+      - feat/vip-cashback-redemption-v1
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vip-cashback-redemption-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Apply deterministic checkout patch
+        run: node scripts/apply-vip-cashback-redemption-v1.mjs
+      - name: Commit patched checkout
+        shell: bash
+        run: |
+          if git diff --quiet -- src/pages/CheckoutPage.jsx; then
+            echo 'Checkout already patched.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/pages/CheckoutPage.jsx
+          git commit -m 'Add VIP cashback redemption to customer checkout'
+          git push origin HEAD:feat/vip-cashback-redemption-v1
