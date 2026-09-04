@@ -9,6 +9,7 @@ import { PwaProvider } from './pwa/PwaExperience.jsx';
 import { LocalizationProvider } from './i18n/LocalizationContext.jsx';
 import './styles.css';
 import './experience-foundation.css';
+import './theme-system-v1.css';
 import './home-v4.css';
 import './commerce-v4.css';
 import './cart-checkout-v4.css';
