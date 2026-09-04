@@ -26,6 +26,8 @@ jobs:
         run: npm run verify
       - name: Theme System v1 A2 renderer guard
         run: node scripts/v0.11.0-theme-system-v1-a2-regression-test.mjs
+      - name: Theme System v1 A3 component renderer guard
+        run: node scripts/v0.11.0-theme-system-v1-a3-regression-test.mjs
       - name: Build production bundle
         run: npm run build
       - name: Dependency audit
