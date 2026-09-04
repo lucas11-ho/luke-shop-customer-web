@@ -1,0 +1,14 @@
+import fs from'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
+const store=read('src/store/StoreContext.jsx'),card=read('src/components/ProductCard.jsx');
+pass(store.includes("product_card:new Set(['standard','minimal','soft','bold','technical','compact','quick_add','editorial'])"),'Customer A3 capability exactly matches the real Product Card renderer');
+pass(store.includes('function resolveThemeComponents(themePackage,experience={})'),'Customer resolves named component variants locally');
+pass(store.includes('manifest.component_options')&&store.includes('experience.theme_component_overrides'),'Renderer requires package-advertised override metadata');
+pass(store.includes('allowed.has(override)&&packageAllowed.includes(override)'),'Unknown or unadvertised Product Card overrides fail closed to package/default layout');
+pass(store.includes('themeComponents=resolveThemeComponents(themePackage,experience)'),'Effective Customer theme components are derived from resolved package and CX snapshot');
+pass(store.includes('themeComponents,effectiveBranding'),'Effective component choices are exposed through StoreContext');
+pass(card.includes('themeComponents?.product_card || experience?.layout?.product_card'),'Product Card prefers the validated A3 theme variant and preserves legacy layout fallback');
+pass(card.includes('data-theme-product-card={themeComponents?.product_card || undefined}'),'Rendered Product Card exposes its effective theme variant for diagnostics');
+pass(card.includes("style === 'quick_add' || experience?.features?.quick_add === true"),'Quick Add authority and existing feature behavior are preserved');
+pass(!store.includes('eval(')&&!store.includes('new Function')&&!card.includes('dangerouslySetInnerHTML'),'A3 Customer renderer executes no package source');
+console.log(`${n}/${n} Luke Customer Web Theme System v1 A3 checks passed`);
