@@ -16,5 +16,5 @@ test('auth shell uses full dynamic viewport height on mobile',()=>{assert.match(
 test('mobile auth respects top and bottom safe areas',()=>{assert.match(css,/safe-area-inset-top/);assert.match(css,/safe-area-inset-bottom/)});
 test('mobile input and primary action touch sizes are at least 54px',()=>{assert.match(css,/@media\(max-width:640px\)[\s\S]*auth-primary-form input[^}]*min-height:54px/);assert.match(css,/@media\(max-width:640px\)[\s\S]*auth-primary-action[^}]*min-height:56px/)});
 test('compact auth uses icon-only providers while retaining accessible labels',()=>{assert.match(methods,/provider-name/);assert.match(methods,/aria-label=\{label\}/);assert.match(css,/provider-name[^}]*position:absolute/)});
-test('normal storefront shell remains present for non-auth routes',()=>{assert.match(shell,/<header className="topbar">/);assert.match(shell,/<SupportLauncher placement="floating"/);assert.match(shell,/<nav className="mobile-nav"/)});
+test('normal storefront shell remains present for non-auth routes',()=>{assert.match(shell,/<header className="topbar">/);assert.match(shell,/<SupportLauncher placement="floating"/);assert.match(shell,/const mobileNavClass=/);assert.match(shell,/<nav className=\{mobileNavClass\}/)});
 console.log(`${n}/${n} v0.9.4 Mobile Auth Layout & Social Icon Refinement checks passed`);
