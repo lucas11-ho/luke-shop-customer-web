@@ -7,6 +7,7 @@ import { SupportLauncher } from './SupportLauncher.jsx';
 import { SafeImage } from './SafeMedia.jsx';
 import { SearchOverlay } from './SearchOverlay.jsx';
 import { Icon } from './icons.jsx';
+import { ThemeNavIcon } from './ThemeNavIcon.jsx';
 import { PwaExperience } from '../pwa/PwaExperience.jsx';
 import { useLocalization } from '../i18n/LocalizationContext.jsx';
 
@@ -15,7 +16,12 @@ const NAV_ICON={home:'home',explore:'grid',cart:'bag',orders:'receipt',profile:'
 const FOOTER_NAV={home:'/',explore:'/explore',cart:'/cart',orders:'/orders',profile:'/profile',signin:'/login'};
 const SOCIAL_LABEL={facebook:'Facebook',instagram:'Instagram',telegram:'Telegram',tiktok:'TikTok',youtube:'YouTube',x:'X'};
 const LIBRARY_LABEL={en:'My library',my:'My Library',id:'Perpustakaan saya'};
+const NAV_VARIANTS=new Set(['standard','ios_tab','floating_tab','minimal_tab','commerce_tab']);
+const NAV_LABELS=new Set(['always','active_only','hidden']);
+const NAV_INDICATORS=new Set(['filled_icon','pill','dot','underline','background']);
+const NAV_CONTAINERS=new Set(['edge','floating','glass']);
 function safeHttps(value){try{const url=new URL(String(value||''));return url.protocol==='https:'?url.toString():''}catch{return''}}
+function safeChoice(value,allowed,fallback){return allowed.has(value)?value:fallback}
 
 function StorefrontFooter({brand}){
   const{experience}=useStore();
@@ -49,7 +55,7 @@ function StorefrontFooter({brand}){
 }
 
 export function Shell({ children, path }) {
-  const { effectiveBranding, experience } = useStore();
+  const { effectiveBranding, experience, themePackage } = useStore();
   const { t, localizedBranding, localePack, locale } = useLocalization();
   const { session, isAuthenticated, logout } = useAuth();
   const { itemCount } = useCart();
@@ -61,21 +67,31 @@ export function Shell({ children, path }) {
   const keys = (experience?.navigation || ['home', 'explore', 'cart', 'orders', 'profile']).filter(k=>NAV[k]);
   const desktop = keys.filter((k) => !['cart', 'profile'].includes(k));
   const header = experience?.layout?.header || 'logo_left';
-  const mobileNav = experience?.layout?.mobile_nav || 'standard';
+  const packageManifest=themePackage?.manifest||{};
+  const packageNav=packageManifest.navigation||{};
+  const packageIcons=packageManifest.icons||{};
+  const packageActive=Boolean(themePackage?.key&&themePackage?.version);
+  const mobileNav=packageActive?safeChoice(packageNav.mobile,NAV_VARIANTS,'standard'):(experience?.layout?.mobile_nav||'standard');
+  const navLabels=safeChoice(packageNav.labels,NAV_LABELS,'always');
+  const navIndicator=safeChoice(packageNav.active_indicator,NAV_INDICATORS,'filled_icon');
+  const navContainer=safeChoice(packageNav.container,NAV_CONTAINERS,'edge');
+  const requestedIconSize=Number(packageIcons.size);const navIconSize=[20,22,24,26].includes(requestedIconSize)?requestedIconSize:21;
   const authOnly = path === '/login' || path === '/register';
   const navText=(key,labelKey)=>localePack?.navigation?.[key]?.title||t(labelKey);
   const libraryLabel=LIBRARY_LABEL[locale]||LIBRARY_LABEL.en;
+  const appClass=`app professional-storefront header-${header} mobile-nav-${mobileNav}${packageActive?' theme-package-active':''}`;
+  const mobileNavClass=packageActive?`mobile-nav theme-system-nav theme-nav-${mobileNav} theme-nav-labels-${navLabels} theme-nav-indicator-${navIndicator} theme-nav-container-${navContainer}`:'mobile-nav';
 
   if (authOnly) {
     return (
-      <div className={`app professional-storefront auth-only-shell header-${header} mobile-nav-${mobileNav}`}>
+      <div className={`${appClass} auth-only-shell`}>
         <main className="auth-only-main">{children}</main>
       </div>
     );
   }
 
   return (
-    <div className={`app professional-storefront header-${header} mobile-nav-${mobileNav}`}>
+    <div className={appClass}>
       {brand.announcement && (
         <div className="announcement"><Icon name="sparkles" size={13} />{brand.announcement}</div>
       )}
@@ -146,12 +162,14 @@ export function Shell({ children, path }) {
       <PwaExperience path={path} />
       <SupportLauncher placement="floating" />
       {searchEnabled && <SearchOverlay open={search} onClose={() => setSearch(false)} />}
-      <nav className="mobile-nav" aria-label="Primary mobile">
+      <nav className={mobileNavClass} aria-label="Primary mobile" data-theme-package={packageActive?`${themePackage.key}@${themePackage.version}`:undefined}>
         {keys.map((k) => {
           const [to, labelKey] = NAV[k];
+          const active=path===to;
+          const iconVariant=packageActive?(active?(packageIcons.active_style||'filled'):(packageIcons.inactive_style||'outline')):'outline';
           return (
-            <button key={k} className={path === to ? 'active' : ''} onClick={() => go(to)} data-testid={`mobile-nav-${k}`} aria-current={path === to ? 'page' : undefined}>
-              <Icon name={NAV_ICON[k]} size={21} />
+            <button key={k} className={`${active?'active':''}${k==='cart'?' theme-nav-cart':''}`} onClick={() => go(to)} data-testid={`mobile-nav-${k}`} aria-current={active ? 'page' : undefined}>
+              {packageActive?<span className="theme-nav-icon-wrap"><ThemeNavIcon name={NAV_ICON[k]} size={navIconSize} variant={iconVariant}/></span>:<Icon name={NAV_ICON[k]} size={21} />}
               <span>{navText(k,labelKey)}</span>
               {k === 'cart' && itemCount > 0 && <b className="mobile-cart-count">{itemCount}</b>}
             </button>
