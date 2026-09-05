@@ -10,6 +10,7 @@ import { Icon } from './icons.jsx';
 import { PHOSPHOR_NAV_ICON_KEYS, ThemeNavIcon } from './ThemeNavIcon.jsx';
 import { PwaExperience } from '../pwa/PwaExperience.jsx';
 import { useLocalization } from '../i18n/LocalizationContext.jsx';
+import { resolveThemeCommerceSurfaces } from '../theme-commerce-surfaces-a7.js';
 
 const NAV={home:['/','nav.home'],explore:['/explore','nav.explore'],cart:['/cart','nav.cart'],orders:['/orders','nav.orders'],profile:['/profile','nav.profile']};
 const NAV_ICON={home:'home',explore:'grid',cart:'bag',orders:'receipt',profile:'user'};
@@ -51,7 +52,7 @@ function StorefrontFooter({brand}){
       {(socials.length>0||footer.show_copyright!==false)&&<div className="footer-bottom">
         {footer.show_copyright!==false&&<span>{copyright}</span>}
         {socials.length>0&&<nav aria-label="Social links">{socials.map(item=><a key={item.network} href={item.url} target="_blank" rel="noopener noreferrer">{SOCIAL_LABEL[item.network]}</a>)}</nav>}
-      </div>}
+      </div>
     </div>
   </footer>;
 }
@@ -72,6 +73,8 @@ export function Shell({ children, path }) {
   const packageManifest=themePackage?.manifest||{};
   const packageIcons=packageManifest.icons||{};
   const packageActive=Boolean(themePackage?.key&&themePackage?.version);
+  const commerceSurfaces=resolveThemeCommerceSurfaces(themePackage,experience);
+  const surfaceClasses=packageActive?` theme-header-${commerceSurfaces.header_surface} theme-search-${commerceSurfaces.search_surface} theme-account-${commerceSurfaces.account_surface} theme-cart-${commerceSurfaces.cart_surface} theme-checkout-${commerceSurfaces.checkout_surface}`:'';
   const mobileNav=packageActive?safeChoice(themeNavigation?.mobile,NAV_VARIANTS,'standard'):(experience?.layout?.mobile_nav||'standard');
   const navLabels=safeChoice(themeNavigation?.labels,NAV_LABELS,'always');
   const navIndicator=safeChoice(themeNavigation?.indicator,NAV_INDICATORS,'filled_icon');
@@ -92,7 +95,7 @@ export function Shell({ children, path }) {
   const authOnly = path === '/login' || path === '/register';
   const navText=(key,labelKey)=>localePack?.navigation?.[key]?.title||t(labelKey);
   const libraryLabel=LIBRARY_LABEL[locale]||LIBRARY_LABEL.en;
-  const appClass=`app professional-storefront header-${header} mobile-nav-${mobileNav}${packageActive?' theme-package-active':''}`;
+  const appClass=`app professional-storefront header-${header} mobile-nav-${mobileNav}${packageActive?' theme-package-active':''}${surfaceClasses}`;
   const mobileNavClass=packageActive?`mobile-nav theme-system-nav theme-nav-${mobileNav} theme-nav-labels-${navLabels} theme-nav-indicator-${navIndicator} theme-nav-container-${navContainer}`:'mobile-nav';
 
   if (authOnly) return <div className={`${appClass} auth-only-shell`}><main className="auth-only-main">{children}</main></div>;
