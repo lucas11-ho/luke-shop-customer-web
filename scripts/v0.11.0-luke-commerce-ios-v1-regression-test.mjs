@@ -1,6 +1,6 @@
 import fs from'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
-const main=read('src/main.jsx'),css=read('src/luke-commerce-ios-v1.css'),store=read('src/store/StoreContext.jsx'),shell=read('src/components/Shell.jsx');
+const main=read('src/main.jsx'),css=read('src/luke-commerce-ios-v1.css'),themeCss=read('src/theme-system-v1.css'),foundation=read('src/store/ExperienceFoundation.jsx'),store=read('src/store/StoreContext.jsx'),shell=read('src/components/Shell.jsx');
 pass(main.includes("import './luke-commerce-ios-v1.css';"),'Luke Commerce renderer is loaded after Theme System foundations');
 pass(css.includes('html[data-theme-package^="LUKE_COMMERCE_IOS@"]'),'Commercial recipe is scoped to the immutable Luke Commerce package key');
 pass(css.includes('data-theme-button-primary="ios_filled"')&&css.includes('.btn-primary'),'ios_filled is a real rendered primary-button recipe');
@@ -12,5 +12,10 @@ pass(css.includes('.profile-card')&&css.includes('.account-section'),'Account su
 pass(css.includes('.cart-item')&&css.includes('.checkout-summary'),'Cart and checkout surfaces receive the commercial recipe');
 pass(css.includes('.theme-nav-indicator-filled_icon > button.active')&&css.includes('background: transparent'),'Default selected bottom tab has no colored background tile');
 pass(shell.includes("packageIcons.pack==='PHOSPHOR_NAV'")&&shell.includes('ThemeNavIcon'),'Theme keeps the professional Phosphor navigation renderer');
+pass(foundation.includes('themePackage')&&foundation.includes('themePackage?.manifest?.foundations'),'Experience Foundation consumes the resolved package foundations instead of blindly restoring legacy Store Designer colors');
+pass(foundation.includes('packageColors.primary||legacy.primary')&&foundation.includes('foundations.radius||legacy.radius')&&foundation.includes('foundations.density||legacy.density'),'Package colors, radius and density win with safe legacy fallback');
+pass(themeCss.includes('button>span:not(.theme-nav-icon-wrap)')&&themeCss.includes('background:transparent;color:inherit'),'Theme navigation labels explicitly neutralize the legacy accent-pill span rule');
+pass(themeCss.includes('.theme-system-nav .theme-nav-icon-wrap')&&themeCss.includes('min-width:0;height:29px')&&themeCss.includes('background:transparent;color:inherit'),'Theme icon wrapper explicitly neutralizes legacy span sizing/background while keeping indicator variants available');
+pass(themeCss.includes('color:var(--accent)')&&themeCss.includes('var(--ink)')&&!themeCss.includes('var(--primary)')&&!themeCss.includes('var(--text)'),'Theme System CSS uses the Customer runtime variable contract instead of undefined --primary/--text tokens');
 pass(!css.includes('url(javascript:')&&!css.includes('<script')&&!css.includes('expression('),'Bundled theme CSS contains no executable package content');
 console.log(`${n}/${n} Luke Commerce iOS v1 checks passed`);
