@@ -52,7 +52,7 @@ function StorefrontFooter({brand}){
       {(socials.length>0||footer.show_copyright!==false)&&<div className="footer-bottom">
         {footer.show_copyright!==false&&<span>{copyright}</span>}
         {socials.length>0&&<nav aria-label="Social links">{socials.map(item=><a key={item.network} href={item.url} target="_blank" rel="noopener noreferrer">{SOCIAL_LABEL[item.network]}</a>)}</nav>}
-      </div>
+      </div>}
     </div>
   </footer>;
 }
