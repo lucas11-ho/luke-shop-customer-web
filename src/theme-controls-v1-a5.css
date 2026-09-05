@@ -1,0 +1,197 @@
+/* Theme Controls v1 A5
+ * Renderer-owned Button Composer + Forms/Input Composer recipes.
+ * Activates only for the Luke Commerce iOS package family and only through
+ * Backend-resolved, package-advertised data attributes.
+ */
+
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active {
+  --luke-control-fill: color-mix(in srgb, var(--ink) 5%, var(--surface));
+  --luke-control-fill-strong: color-mix(in srgb, var(--ink) 8%, var(--surface));
+  --luke-control-line: color-mix(in srgb, var(--ink) 14%, transparent);
+  --luke-control-focus: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* Button size is shared by primary, secondary and destructive actions. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-size="compact"] :is(.btn,.checkout-submit,.place-order-button,.secondary-action,.btn-danger) {
+  min-height: 36px;
+  padding: 8px 13px;
+  font-size: 13px;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-size="standard"] :is(.btn,.checkout-submit,.place-order-button,.secondary-action,.btn-danger) {
+  min-height: 44px;
+  padding: 11px 17px;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-size="large"] :is(.btn,.checkout-submit,.place-order-button,.secondary-action,.btn-danger) {
+  min-height: 50px;
+  padding: 13px 20px;
+  font-size: 16px;
+}
+
+/* Primary button recipes. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_filled"] :is(.btn-primary,.checkout-submit,.place-order-button),
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_pill"] :is(.btn-primary,.checkout-submit,.place-order-button) {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_pill"] :is(.btn-primary,.checkout-submit,.place-order-button) { border-radius: 999px; }
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_tonal"] :is(.btn-primary,.checkout-submit,.place-order-button),
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_soft"] :is(.btn-primary,.checkout-submit,.place-order-button) {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent);
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_outline"] :is(.btn-primary,.checkout-submit,.place-order-button) {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  box-shadow: none;
+}
+
+/* Secondary / tertiary recipes. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-secondary="ios_tonal"] :is(.btn-secondary,.secondary-action),
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-secondary="ios_soft"] :is(.btn-secondary,.secondary-action) {
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--accent);
+  border-color: transparent;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-secondary="ios_outline"] :is(.btn-secondary,.secondary-action) {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--luke-control-line);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-secondary="ios_plain"] :is(.btn-secondary,.secondary-action),
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-tertiary="ios_plain"] :is(.link-btn,.tertiary-action) {
+  background: transparent;
+  color: var(--accent);
+  border-color: transparent;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-tertiary="ios_tonal"] :is(.link-btn,.tertiary-action) {
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  color: var(--accent);
+  border-radius: 10px;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-tertiary="ios_outline"] :is(.link-btn,.tertiary-action) {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 10px;
+}
+
+/* Destructive recipes. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-destructive="ios_destructive"] :is(.btn-danger,.danger-action) {
+  background: var(--danger);
+  color: #fff;
+  border-color: transparent;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-destructive="ios_destructive_soft"] :is(.btn-danger,.danger-action,.text-danger) {
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  color: var(--danger);
+  border-color: transparent;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-destructive="ios_destructive_outline"] :is(.btn-danger,.danger-action) {
+  background: var(--surface);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 38%, transparent);
+}
+
+/* Icon-only action recipes. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-icon="ios_circle"] :is(.icon-btn,.mobile-header-icon,.search-action) {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--luke-control-fill);
+  border: 0;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-icon="ios_square"] :is(.icon-btn,.mobile-header-icon,.search-action) {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 12px;
+  background: var(--luke-control-fill);
+  border: 0;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-icon="ios_plain"] :is(.icon-btn,.mobile-header-icon,.search-action) {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+/* Form control sizing. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-size="compact"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select) {
+  min-height: 38px;
+  padding: 8px 10px;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-size="standard"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select) {
+  min-height: 46px;
+  padding: 11px 12px;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-size="large"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select) {
+  min-height: 52px;
+  padding: 13px 14px;
+  font-size: 16px;
+}
+
+/* Input appearance recipes. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-control="ios_grouped"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select) {
+  background: var(--luke-control-fill);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-control="soft_filled"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select) {
+  background: var(--luke-control-fill-strong);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-control="outline"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select) {
+  background: var(--surface);
+  border: 1px solid var(--luke-control-line);
+  border-radius: 12px;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-control="minimal"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select) {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--luke-control-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-control] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),textarea,select):focus {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  outline: 3px solid var(--luke-control-focus);
+  box-shadow: none;
+}
+
+/* Group/container recipes. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-group="inset_grouped"] :is(.form-card,.auth-card,.checkout-card,.checkout-section) {
+  background: var(--surface);
+  border: 0;
+  border-radius: 16px;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-group="card"] :is(.form-card,.auth-card,.checkout-card,.checkout-section) {
+  background: var(--surface);
+  border: 1px solid var(--luke-control-line);
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 5%);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-form-group="flat"] :is(.form-card,.auth-card,.checkout-card,.checkout-section) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active :is(.btn,.btn-primary,.btn-secondary,.btn-danger,.icon-btn,input,textarea,select) {
+    transition: none;
+  }
+}
