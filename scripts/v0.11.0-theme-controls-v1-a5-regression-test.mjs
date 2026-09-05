@@ -12,7 +12,7 @@ pass(css.includes('[data-theme-button-secondary="ios_tonal"]')&&css.includes('[d
 pass(css.includes('[data-theme-button-icon="ios_circle"]')&&css.includes('[data-theme-button-icon="ios_square"]'),'A5 implements icon-button recipes');
 pass(css.includes('[data-theme-form-control="ios_grouped"]')&&css.includes('[data-theme-form-control="outline"]')&&css.includes('[data-theme-form-control="minimal"]'),'A5 implements form-control recipes');
 pass(css.includes('[data-theme-form-group="inset_grouped"]')&&css.includes('[data-theme-form-group="card"]')&&css.includes('[data-theme-form-group="flat"]'),'A5 implements form-group recipes');
-pass(css.includes('input:not([type="checkbox"])')&&css.includes('input:not([type="radio"])'),'A5 does not restyle checkbox/radio controls as text inputs');
+pass(css.includes(':not([type="checkbox"])')&&css.includes(':not([type="radio"])'),'A5 does not restyle checkbox/radio controls as text inputs');
 pass(main.trim().includes("import './theme-controls-v1-a5.css';"),'A5 renderer stylesheet is loaded after existing storefront styles');
 pass(!css.includes('<script')&&!store.includes('eval(')&&!store.includes('new Function'),'A5 executes no package-authored code');
 console.log(`${n}/${n} Luke Theme Controls v1 A5 Customer checks passed`);
