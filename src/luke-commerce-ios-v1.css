@@ -1,0 +1,224 @@
+/* Luke Commerce iOS v1
+ * Renderer-owned visual recipe for the immutable LUKE_COMMERCE_IOS package family.
+ * This file contains no tenant-authored CSS. It activates only when the Backend-resolved
+ * package key is present on <html data-theme-package="LUKE_COMMERCE_IOS@...">.
+ */
+
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] {
+  color-scheme: light;
+  --luke-ios-separator: color-mix(in srgb, var(--ink) 12%, transparent);
+  --luke-ios-fill: color-mix(in srgb, var(--ink) 5%, var(--surface));
+  --luke-ios-fill-strong: color-mix(in srgb, var(--ink) 8%, var(--surface));
+  --luke-ios-shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 10px 32px rgb(0 0 0 / 5%);
+  --luke-ios-radius: 16px;
+}
+
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Navigation / header */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .topbar {
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border-bottom: 1px solid var(--luke-ios-separator);
+  box-shadow: none;
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .brand,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .mobile-store-brand {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .search-action,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .mobile-header-icon,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .icon-btn {
+  background: var(--luke-ios-fill);
+  border: 0;
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .search-action:hover,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .mobile-header-icon:hover,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .icon-btn:hover {
+  background: var(--luke-ios-fill-strong);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .account-button,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .account-menu {
+  border-color: var(--luke-ios-separator);
+  box-shadow: var(--luke-ios-shadow);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .account-menu {
+  border-radius: var(--luke-ios-radius);
+  overflow: hidden;
+}
+
+/* Buttons */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .btn {
+  min-height: 44px;
+  border-radius: 13px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  box-shadow: none;
+  transition: transform 120ms ease, background-color 120ms ease, opacity 120ms ease;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_filled"] .btn-primary,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-submit,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .place-order-button {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid transparent;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active[data-theme-button-primary="ios_filled"] .btn-primary:hover,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-submit:hover,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .place-order-button:hover {
+  background: color-mix(in srgb, var(--accent) 90%, #000);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .btn-secondary,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .secondary-action {
+  background: color-mix(in srgb, var(--accent) 11%, var(--surface));
+  border-color: transparent;
+  color: var(--accent);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .btn:active,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active button:active:not(:disabled) {
+  transform: scale(.985);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .btn:disabled,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active button:disabled {
+  opacity: .45;
+}
+
+/* Inputs / grouped forms */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active input,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active textarea,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active select {
+  min-height: 46px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--luke-ios-fill);
+  color: var(--ink);
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active textarea {
+  min-height: 96px;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active input:focus,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active textarea:focus,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active select:focus {
+  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--accent) 16%, transparent);
+  background: var(--surface);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .form-card,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .auth-card,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .profile-card,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .summary-card,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-card,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-section {
+  background: var(--surface);
+  border: 1px solid var(--luke-ios-separator);
+  border-radius: var(--luke-ios-radius);
+  box-shadow: none;
+}
+
+/* Search */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .searchbar,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .search-overlay input,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .search-input {
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--luke-ios-fill);
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .search-overlay,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .search-panel {
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+}
+
+/* Product cards: package default is the existing validated `minimal` renderer. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .product-card-minimal {
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .product-card-minimal .product-media {
+  border-radius: 15px;
+  overflow: hidden;
+  background: var(--luke-ios-fill);
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .product-card-minimal .product-card-body {
+  padding: 12px 2px 2px;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .product-card-minimal h3 {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .product-card-minimal .price-row strong {
+  font-weight: 720;
+}
+
+/* Account / orders */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .profile-card,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .order-row,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .account-section,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .address-card {
+  background: var(--surface);
+  border: 1px solid var(--luke-ios-separator);
+  border-radius: var(--luke-ios-radius);
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .order-row + .order-row {
+  margin-top: 10px;
+}
+
+/* Cart / checkout */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .cart-item,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .cart-summary,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-summary,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-panel {
+  background: var(--surface);
+  border: 1px solid var(--luke-ios-separator);
+  border-radius: var(--luke-ios-radius);
+  box-shadow: none;
+}
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .quantity-control,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .qty-control {
+  border-radius: 12px;
+  border-color: var(--luke-ios-separator);
+  background: var(--luke-ios-fill);
+}
+
+/* Keep the professional tab bar flat by default: no per-tab background tile. */
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .theme-nav-indicator-filled_icon > button,
+html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .theme-nav-indicator-filled_icon > button.active {
+  background: transparent;
+}
+
+@media (max-width: 760px) {
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active main {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .topbar {
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
+  }
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .form-card,
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .profile-card,
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .summary-card,
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .cart-item,
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-card,
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .checkout-section {
+    border-radius: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active .btn,
+  html[data-theme-package^="LUKE_COMMERCE_IOS@"] .theme-package-active button {
+    transition: none;
+  }
+}
