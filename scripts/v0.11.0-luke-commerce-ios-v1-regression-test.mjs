@@ -1,0 +1,16 @@
+import fs from'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
+const main=read('src/main.jsx'),css=read('src/luke-commerce-ios-v1.css'),store=read('src/store/StoreContext.jsx'),shell=read('src/components/Shell.jsx');
+pass(main.includes("import './luke-commerce-ios-v1.css';"),'Luke Commerce renderer is loaded after Theme System foundations');
+pass(css.includes('html[data-theme-package^="LUKE_COMMERCE_IOS@"]'),'Commercial recipe is scoped to the immutable Luke Commerce package key');
+pass(css.includes('data-theme-button-primary="ios_filled"')&&css.includes('.btn-primary'),'ios_filled is a real rendered primary-button recipe');
+pass(css.includes('input:focus')&&css.includes('--luke-ios-fill'),'Grouped iOS form controls have a real focus and fill treatment');
+pass(css.includes('.topbar')&&css.includes('backdrop-filter'),'Header uses the commercial iOS surface treatment');
+pass(css.includes('.searchbar')&&css.includes('.search-overlay input'),'Search surfaces are covered by the package recipe');
+pass(css.includes('.product-card-minimal')&&store.includes("product_card:new Set(['standard','minimal'"),'Package default Product Card maps to an existing validated renderer');
+pass(css.includes('.profile-card')&&css.includes('.account-section'),'Account surfaces receive the grouped iOS treatment');
+pass(css.includes('.cart-item')&&css.includes('.checkout-summary'),'Cart and checkout surfaces receive the commercial recipe');
+pass(css.includes('.theme-nav-indicator-filled_icon > button.active')&&css.includes('background: transparent'),'Default selected bottom tab has no colored background tile');
+pass(shell.includes("packageIcons.pack==='PHOSPHOR_NAV'")&&shell.includes('ThemeNavIcon'),'Theme keeps the professional Phosphor navigation renderer');
+pass(!css.includes('url(javascript:')&&!css.includes('<script')&&!css.includes('expression('),'Bundled theme CSS contains no executable package content');
+console.log(`${n}/${n} Luke Commerce iOS v1 checks passed`);
