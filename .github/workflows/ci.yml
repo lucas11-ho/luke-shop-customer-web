@@ -32,6 +32,8 @@ jobs:
         run: node scripts/v0.11.0-theme-navigation-composer-v1-a4-regression-test.mjs
       - name: Theme Controls v1 A5 button/form renderer guard
         run: node scripts/v0.11.0-theme-controls-v1-a5-regression-test.mjs
+      - name: Theme Product + Typography Composer v1 A6 renderer guard
+        run: node scripts/v0.11.0-theme-product-typography-v1-a6-regression-test.mjs
       - name: Luke Commerce iOS v1 renderer guard
         run: node scripts/v0.11.0-luke-commerce-ios-v1-regression-test.mjs
       - name: Build production bundle
