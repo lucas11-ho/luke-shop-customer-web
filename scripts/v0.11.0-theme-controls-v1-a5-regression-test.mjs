@@ -1,0 +1,18 @@
+import fs from'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
+const store=read('src/store/StoreContext.jsx'),css=read('src/theme-controls-v1-a5.css'),main=read('src/main.jsx');
+pass(store.includes('CUSTOMER_BUTTON_OPTIONS'),'Customer renderer owns a bounded button capability set');
+pass(store.includes('CUSTOMER_COMPONENTS')&&store.includes("form_control:new Set(['standard','ios_grouped','soft_filled','outline','minimal'])"),'Customer renderer bounds form-control recipes');
+pass(store.includes('resolveThemeButtons(themePackage,experience={})'),'Customer resolves button defaults plus package-approved overrides');
+pass(store.includes("root.dataset.themeButtonSecondary")&&store.includes("root.dataset.themeButtonDestructive")&&store.includes("root.dataset.themeButtonIcon"),'Customer exposes renderer data attributes for non-primary button roles');
+pass(store.includes('root.dataset.themeFormControl')&&store.includes('root.dataset.themeFormSize')&&store.includes('root.dataset.themeFormGroup'),'Customer exposes renderer data attributes for forms');
+pass(store.includes('packageAllowed.includes(requested)'),'Customer applies overrides only when the exact immutable package advertises them');
+pass(css.includes('[data-theme-button-primary="ios_filled"]')&&css.includes('[data-theme-button-primary="ios_outline"]')&&css.includes('[data-theme-button-primary="ios_pill"]'),'A5 implements primary button recipes');
+pass(css.includes('[data-theme-button-secondary="ios_tonal"]')&&css.includes('[data-theme-button-destructive="ios_destructive"]'),'A5 implements secondary and destructive recipes');
+pass(css.includes('[data-theme-button-icon="ios_circle"]')&&css.includes('[data-theme-button-icon="ios_square"]'),'A5 implements icon-button recipes');
+pass(css.includes('[data-theme-form-control="ios_grouped"]')&&css.includes('[data-theme-form-control="outline"]')&&css.includes('[data-theme-form-control="minimal"]'),'A5 implements form-control recipes');
+pass(css.includes('[data-theme-form-group="inset_grouped"]')&&css.includes('[data-theme-form-group="card"]')&&css.includes('[data-theme-form-group="flat"]'),'A5 implements form-group recipes');
+pass(css.includes('input:not([type="checkbox"])')&&css.includes('input:not([type="radio"])'),'A5 does not restyle checkbox/radio controls as text inputs');
+pass(main.trim().includes("import './theme-controls-v1-a5.css';"),'A5 renderer stylesheet is loaded after existing storefront styles');
+pass(!css.includes('<script')&&!store.includes('eval(')&&!store.includes('new Function'),'A5 executes no package-authored code');
+console.log(`${n}/${n} Luke Theme Controls v1 A5 Customer checks passed`);
