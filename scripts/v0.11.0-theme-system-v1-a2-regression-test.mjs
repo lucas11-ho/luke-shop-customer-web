@@ -10,14 +10,14 @@ let count=0;
 const pass=(ok,message)=>{if(!ok)throw new Error(`FAIL ${message}`);count++;console.log(`PASS ${message}`);};
 
 pass(store.includes('config.theme_package')&&store.includes('manifest.foundations'), 'Customer runtime consumes resolved safe theme package manifest');
-pass(store.includes('themePackage:config?.theme_package||null'), 'Resolved package is exposed through StoreContext');
+pass(store.includes('const themePackage=config?.theme_package||null')&&store.includes('themePackage,themeComponents'), 'Resolved package remains exposed through StoreContext after A3 component derivation');
 pass(store.includes("m.theme_package===undefined?prev.theme_package:m.theme_package"), 'Designer preview can hot-swap resolved package without changing legacy config');
 pass(store.includes("root.dataset.themeSystem=themePackage?'v1':''"), 'Theme System runtime is explicitly scoped');
 pass(store.includes("packageNavigation.mobile||'standard'"), 'Package navigation variant controls renderer dataset');
 pass(shell.includes('ThemeNavIcon')&&shell.includes('theme-system-nav'), 'Shell uses Theme System navigation renderer when package is selected');
 pass(shell.includes("['standard','ios_tab','floating_tab','minimal_tab','commerce_tab']"), 'Customer renderer allow-lists all professional navigation variants');
 pass(shell.includes("packageIcons.active_style||'filled'"), 'Active navigation icon style follows package contract');
-pass(navIcon.includes("variant==='filled'||variant==='duotone'"), 'Filled active navigation glyph rendering exists');
+pass(navIcon.includes("variant==='filled'?'fill'")&&navIcon.includes("variant==='duotone'?'duotone'"), 'Filled and duotone active navigation glyph rendering exists');
 pass(css.includes('.theme-nav-ios_tab')&&css.includes('.theme-nav-floating_tab')&&css.includes('.theme-nav-minimal_tab')&&css.includes('.theme-nav-commerce_tab'), 'All professional mobile navigation variants have dedicated styles');
 pass(css.includes('env(safe-area-inset-bottom)'), 'Theme navigation preserves iOS safe-area spacing');
 pass(css.includes('@media(prefers-reduced-motion:reduce)'), 'Theme navigation respects reduced-motion preference');

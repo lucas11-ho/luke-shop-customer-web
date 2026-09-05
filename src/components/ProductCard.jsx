@@ -12,7 +12,7 @@ import { useLocalization } from '../i18n/LocalizationContext.jsx';
 function initials(name = '') { return String(name).trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || '•'; }
 
 export function ProductCard({ product }) {
-  const { tenant, experience } = useStore();
+  const { tenant, experience, themeComponents } = useStore();
   const { t, localizeProduct } = useLocalization();
   product = localizeProduct(product);
   const { isAuthenticated } = useAuth();
@@ -23,7 +23,7 @@ export function ProductCard({ product }) {
   const discount = compare > price && price >= 0 ? Math.round((1 - price / compare) * 100) : 0;
   const stockEnabled=experience?.features?.stock_status!==false;
   const stockLabel = product.in_stock === false ? t('common.out_of_stock') : product.available_quantity != null && Number(product.available_quantity) <= 5 ? t('common.only_left',{count:product.available_quantity}) : t('common.in_stock');
-  const style = experience?.layout?.product_card || 'standard';
+  const style = themeComponents?.product_card || experience?.layout?.product_card || 'standard';
   const quick = style === 'quick_add' || experience?.features?.quick_add === true;
   const mode = Array.isArray(product.fulfillment_modes) ? product.fulfillment_modes[0] : null;
   // Quick-add is allowed only when the list payload explicitly confirms there are no modifier groups.
@@ -42,7 +42,7 @@ export function ProductCard({ product }) {
     } catch { open(); } finally { setAdding(false); }
   };
   return (
-    <article className={`product-card product-card-v3 product-card-${style}`} onClick={open} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') open(); }} tabIndex="0" role="link" aria-label={`View ${product.name}`} data-testid="product-card">
+    <article className={`product-card product-card-v3 product-card-${style}`} onClick={open} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') open(); }} tabIndex="0" role="link" aria-label={`View ${product.name}`} data-testid="product-card" data-theme-product-card={themeComponents?.product_card || undefined}>
       <div className="product-media">
         {product.primary_media_url
           ? <SafeImage src={product.primary_media_url} alt={product.name} loading="lazy" fallback={<div className="media-placeholder">{initials(product.name)}</div>} />
