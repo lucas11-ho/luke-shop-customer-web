@@ -1,0 +1,17 @@
+import fs from'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
+const store=read('src/store/StoreContext.jsx'),shell=read('src/components/Shell.jsx');
+pass(store.includes("nav_mobile:new Set(['standard','ios_tab','floating_tab','minimal_tab','commerce_tab'])"),'Customer renderer bounds navigation layouts');
+pass(store.includes("nav_labels:new Set(['always','active_only','hidden'])")&&store.includes("nav_indicator:new Set(['filled_icon','pill','dot','underline','background'])"),'Customer renderer bounds labels and active indicators');
+pass(store.includes("nav_container:new Set(['edge','floating','glass'])")&&store.includes("nav_icon_size:new Set(['size_20','size_22','size_24','size_26'])"),'Customer renderer bounds containers and icon sizes');
+pass(store.includes("nav_active_style:new Set(['outline','filled','duotone'])")&&store.includes("nav_inactive_style:new Set(['outline','filled'])"),'Customer renderer bounds active and inactive icon weights');
+pass(store.includes('function resolveThemeNavigation(')&&store.includes('packageAllowed.includes(requested)'),'runtime applies a navigation override only when renderer and exact package both advertise it');
+pass(store.includes("root.style.setProperty('--theme-nav-icon-size',`${themeNavigation?.iconSize||24}px`)")||store.includes("root.style.setProperty('--theme-nav-icon-size'"),'resolved icon size drives the Customer CSS variable');
+pass(store.includes('root.dataset.themeNav=themePackage?(themeNavigation?.mobile')&&store.includes('root.dataset.themeNavContainer=themePackage?(themeNavigation?.container'),'resolved navigation choices drive scoped theme data attributes');
+pass(store.includes('themeNavigation=resolveThemeNavigation(themePackage,experience)')&&store.includes('themeComponents,themeNavigation,effectiveBranding'),'resolved Navigation Composer state is exposed through StoreContext');
+pass(shell.includes('effectiveBranding, experience, themePackage, themeNavigation'),'Shell consumes only resolved navigation state');
+pass(shell.includes("safeChoice(themeNavigation?.mobile,NAV_VARIANTS,'standard')")&&shell.includes("safeChoice(themeNavigation?.container,NAV_CONTAINERS,'edge')"),'Shell keeps local fail-closed allowlists');
+pass(shell.includes('PHOSPHOR_NAV_SET.has(requested)&&packageIconAllowed.has(requested)'),'stored icon overrides still require renderer support and exact package allowlist');
+pass(shell.includes("themeNavigation?.activeStyle||'filled'")&&shell.includes("themeNavigation?.inactiveStyle||'outline'"),'active and inactive icon weights render from resolved A4 state');
+pass(!store.includes('eval(')&&!store.includes('new Function')&&!shell.includes('dangerouslySetInnerHTML'),'Customer renderer never executes package or icon source');
+console.log(`${n}/${n} Luke Customer Navigation Composer v1 A4 checks passed`);

@@ -57,7 +57,7 @@ function StorefrontFooter({brand}){
 }
 
 export function Shell({ children, path }) {
-  const { effectiveBranding, experience, themePackage } = useStore();
+  const { effectiveBranding, experience, themePackage, themeNavigation } = useStore();
   const { t, localizedBranding, localePack, locale } = useLocalization();
   const { session, isAuthenticated, logout } = useAuth();
   const { itemCount } = useCart();
@@ -70,14 +70,13 @@ export function Shell({ children, path }) {
   const desktop = keys.filter((k) => !['cart', 'profile'].includes(k));
   const header = experience?.layout?.header || 'logo_left';
   const packageManifest=themePackage?.manifest||{};
-  const packageNav=packageManifest.navigation||{};
   const packageIcons=packageManifest.icons||{};
   const packageActive=Boolean(themePackage?.key&&themePackage?.version);
-  const mobileNav=packageActive?safeChoice(packageNav.mobile,NAV_VARIANTS,'standard'):(experience?.layout?.mobile_nav||'standard');
-  const navLabels=safeChoice(packageNav.labels,NAV_LABELS,'always');
-  const navIndicator=safeChoice(packageNav.active_indicator,NAV_INDICATORS,'filled_icon');
-  const navContainer=safeChoice(packageNav.container,NAV_CONTAINERS,'edge');
-  const requestedIconSize=Number(packageIcons.size);const navIconSize=[20,22,24,26].includes(requestedIconSize)?requestedIconSize:21;
+  const mobileNav=packageActive?safeChoice(themeNavigation?.mobile,NAV_VARIANTS,'standard'):(experience?.layout?.mobile_nav||'standard');
+  const navLabels=safeChoice(themeNavigation?.labels,NAV_LABELS,'always');
+  const navIndicator=safeChoice(themeNavigation?.indicator,NAV_INDICATORS,'filled_icon');
+  const navContainer=safeChoice(themeNavigation?.container,NAV_CONTAINERS,'edge');
+  const requestedIconSize=Number(themeNavigation?.iconSize);const navIconSize=[20,22,24,26].includes(requestedIconSize)?requestedIconSize:21;
   const iconPack=packageIcons.pack==='PHOSPHOR_NAV'?'PHOSPHOR_NAV':'LUKE_OUTLINE';
   const packageIconAllowed=new Set((Array.isArray(packageIcons.allowed)?packageIcons.allowed:[]).filter(icon=>PHOSPHOR_NAV_SET.has(icon)));
   const packageIconDefaults=packageIcons.navigation_defaults&&typeof packageIcons.navigation_defaults==='object'?packageIcons.navigation_defaults:{};
@@ -126,7 +125,7 @@ export function Shell({ children, path }) {
       <SupportLauncher placement="floating"/>
       {searchEnabled&&<SearchOverlay open={search} onClose={()=>setSearch(false)}/>} 
       <nav className={mobileNavClass} aria-label="Primary mobile" data-theme-package={packageActive?`${themePackage.key}@${themePackage.version}`:undefined}>
-        {keys.map((k)=>{const[to,labelKey]=NAV[k],active=path===to,iconVariant=packageActive?(active?(packageIcons.active_style||'filled'):(packageIcons.inactive_style||'outline')):'outline',iconName=packageActive?themeNavIcon(k):NAV_ICON[k];return <button key={k} className={`${active?'active':''}${k==='cart'?' theme-nav-cart':''}`} onClick={()=>go(to)} data-testid={`mobile-nav-${k}`} aria-current={active?'page':undefined}>{packageActive?<span className="theme-nav-icon-wrap"><ThemeNavIcon name={iconName} size={navIconSize} variant={iconVariant} pack={iconPack}/></span>:<Icon name={NAV_ICON[k]} size={21}/>}<span>{navText(k,labelKey)}</span>{k==='cart'&&itemCount>0&&<b className="mobile-cart-count">{itemCount}</b>}</button>})}
+        {keys.map((k)=>{const[to,labelKey]=NAV[k],active=path===to,iconVariant=packageActive?(active?(themeNavigation?.activeStyle||'filled'):(themeNavigation?.inactiveStyle||'outline')):'outline',iconName=packageActive?themeNavIcon(k):NAV_ICON[k];return <button key={k} className={`${active?'active':''}${k==='cart'?' theme-nav-cart':''}`} onClick={()=>go(to)} data-testid={`mobile-nav-${k}`} aria-current={active?'page':undefined}>{packageActive?<span className="theme-nav-icon-wrap"><ThemeNavIcon name={iconName} size={navIconSize} variant={iconVariant} pack={iconPack}/></span>:<Icon name={NAV_ICON[k]} size={21}/>}<span>{navText(k,labelKey)}</span>{k==='cart'&&itemCount>0&&<b className="mobile-cart-count">{itemCount}</b>}</button>})}
       </nav>
     </div>
   );
