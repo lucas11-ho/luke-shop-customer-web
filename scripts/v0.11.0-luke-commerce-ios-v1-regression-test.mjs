@@ -16,5 +16,6 @@ pass(foundation.includes('themePackage')&&foundation.includes('themePackage?.man
 pass(foundation.includes('packageColors.primary||legacy.primary')&&foundation.includes('foundations.radius||legacy.radius')&&foundation.includes('foundations.density||legacy.density'),'Package colors, radius and density win with safe legacy fallback');
 pass(themeCss.includes('button>span:not(.theme-nav-icon-wrap)')&&themeCss.includes('background:transparent;color:inherit'),'Theme navigation labels explicitly neutralize the legacy accent-pill span rule');
 pass(themeCss.includes('.theme-system-nav .theme-nav-icon-wrap')&&themeCss.includes('min-width:0;height:29px')&&themeCss.includes('background:transparent;color:inherit'),'Theme icon wrapper explicitly neutralizes legacy span sizing/background while keeping indicator variants available');
+pass(themeCss.includes('color:var(--accent)')&&themeCss.includes('var(--ink)')&&!themeCss.includes('var(--primary)')&&!themeCss.includes('var(--text)'),'Theme System CSS uses the Customer runtime variable contract instead of undefined --primary/--text tokens');
 pass(!css.includes('url(javascript:')&&!css.includes('<script')&&!css.includes('expression('),'Bundled theme CSS contains no executable package content');
 console.log(`${n}/${n} Luke Commerce iOS v1 checks passed`);
