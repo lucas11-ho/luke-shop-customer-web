@@ -1,0 +1,157 @@
+/* Theme System v1 A7 — governed commerce-surface recipes. Presentation only. */
+
+/* Header */
+.theme-package-active.theme-header-ios_clean .topbar,
+.theme-package-active.theme-header-glass .topbar{
+  border-bottom:1px solid color-mix(in srgb,var(--ink) 9%,transparent);
+  background:color-mix(in srgb,var(--surface) 86%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(18px);
+  backdrop-filter:saturate(180%) blur(18px);
+}
+.theme-package-active.theme-header-ios_clean .topbar-inner,
+.theme-package-active.theme-header-ios_clean .mobile-store-header{min-height:58px}
+.theme-package-active.theme-header-ios_clean .brand,
+.theme-package-active.theme-header-ios_clean .mobile-store-brand{font-weight:var(--theme-heading-weight,600);letter-spacing:-.015em}
+.theme-package-active.theme-header-ios_clean .search-action,
+.theme-package-active.theme-header-ios_clean .account-button,
+.theme-package-active.theme-header-ios_clean .icon-btn,
+.theme-package-active.theme-header-ios_clean .mobile-header-icon{
+  border-color:transparent;
+  background:color-mix(in srgb,var(--ink) 5%,var(--surface));
+  box-shadow:none;
+}
+.theme-package-active.theme-header-compact .topbar-inner,
+.theme-package-active.theme-header-compact .mobile-store-header{min-height:48px;padding-top:5px;padding-bottom:5px}
+.theme-package-active.theme-header-compact .brand-mark,
+.theme-package-active.theme-header-compact .brand img,
+.theme-package-active.theme-header-compact .mobile-store-brand .brand-mark,
+.theme-package-active.theme-header-compact .mobile-store-brand img{width:30px;height:30px}
+.theme-package-active.theme-header-compact .header-actions{gap:6px}
+.theme-package-active.theme-header-compact .search-action,
+.theme-package-active.theme-header-compact .account-button,
+.theme-package-active.theme-header-compact .icon-btn{min-height:36px}
+.theme-package-active.theme-header-glass .topbar{box-shadow:0 8px 30px color-mix(in srgb,var(--ink) 7%,transparent)}
+.theme-package-active.theme-header-glass .search-action,
+.theme-package-active.theme-header-glass .account-button,
+.theme-package-active.theme-header-glass .icon-btn,
+.theme-package-active.theme-header-glass .mobile-header-icon{
+  background:color-mix(in srgb,var(--surface) 62%,transparent);
+  border-color:color-mix(in srgb,var(--surface) 55%,var(--ink) 10%);
+}
+
+/* Search overlay */
+.theme-package-active.theme-search-ios_search .search-overlay{background:color-mix(in srgb,var(--ink) 24%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.theme-package-active.theme-search-ios_search .search-panel{
+  border:1px solid color-mix(in srgb,var(--ink) 9%,transparent);
+  border-radius:24px;
+  background:color-mix(in srgb,var(--surface) 96%,var(--bg));
+  box-shadow:0 24px 70px color-mix(in srgb,var(--ink) 18%,transparent);
+}
+.theme-package-active.theme-search-ios_search .search-panel-field{
+  border:0;
+  border-radius:13px;
+  background:color-mix(in srgb,var(--ink) 6%,var(--surface));
+}
+.theme-package-active.theme-search-ios_search .search-panel-field input{background:transparent}
+.theme-package-active.theme-search-ios_search .search-chip,
+.theme-package-active.theme-search-ios_search .search-category{border-color:transparent;background:color-mix(in srgb,var(--ink) 5%,var(--surface))}
+.theme-package-active.theme-search-pill .search-panel{max-width:760px;border-radius:28px}
+.theme-package-active.theme-search-pill .search-panel-field{border-radius:999px;padding-inline:16px}
+.theme-package-active.theme-search-pill .search-panel-close{border-radius:999px}
+.theme-package-active.theme-search-pill .search-chip{border-radius:999px}
+.theme-package-active.theme-search-sheet .search-overlay{align-items:flex-end;padding:0;background:color-mix(in srgb,var(--ink) 30%,transparent)}
+.theme-package-active.theme-search-sheet .search-panel{
+  width:min(100%,820px);
+  max-height:min(78dvh,720px);
+  margin-inline:auto;
+  border-radius:26px 26px 0 0;
+  border-bottom:0;
+  box-shadow:0 -18px 60px color-mix(in srgb,var(--ink) 16%,transparent);
+}
+
+/* Account */
+.theme-package-active.theme-account-ios_grouped .profile-hub-v08{max-width:760px}
+.theme-package-active.theme-account-ios_grouped .profile-hero-card,
+.theme-package-active.theme-account-ios_grouped .profile-menu-list,
+.theme-package-active.theme-account-ios_grouped .profile-meta-strip{
+  border:0;
+  background:var(--surface);
+  box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 5%,transparent);
+}
+.theme-package-active.theme-account-ios_grouped .profile-hero-card{border-radius:20px}
+.theme-package-active.theme-account-ios_grouped .profile-menu-list{overflow:hidden;border-radius:20px;padding:0}
+.theme-package-active.theme-account-ios_grouped .profile-menu-item{border:0;border-radius:0;margin:0;background:transparent}
+.theme-package-active.theme-account-ios_grouped .profile-menu-item+.profile-menu-item{border-top:1px solid color-mix(in srgb,var(--ink) 8%,transparent)}
+.theme-package-active.theme-account-ios_grouped .profile-menu-icon{background:color-mix(in srgb,var(--accent) 12%,var(--surface));color:var(--accent)}
+.theme-package-active.theme-account-ios_grouped .account-menu{border-radius:16px;border-color:color-mix(in srgb,var(--ink) 10%,transparent);box-shadow:0 18px 44px color-mix(in srgb,var(--ink) 15%,transparent)}
+.theme-package-active.theme-account-soft .profile-hero-card,
+.theme-package-active.theme-account-soft .profile-menu-item,
+.theme-package-active.theme-account-soft .profile-meta-strip{background:color-mix(in srgb,var(--accent) 5%,var(--surface));border-color:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.theme-package-active.theme-account-soft .profile-menu-icon{background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent)}
+.theme-package-active.theme-account-compact .profile-hub-v08{max-width:720px}
+.theme-package-active.theme-account-compact .profile-hero-card{padding:16px}
+.theme-package-active.theme-account-compact .profile-avatar-large{width:52px;height:52px}
+.theme-package-active.theme-account-compact .profile-menu-item{min-height:58px;padding-block:9px}
+.theme-package-active.theme-account-compact .profile-menu-item small{font-size:11px}
+.theme-package-active.theme-account-compact .profile-meta-strip{padding-block:10px}
+
+/* Cart — existing Store Designer layout/item settings remain authoritative. */
+.theme-package-active.theme-cart-ios_grouped .commerce-cart-item,
+.theme-package-active.theme-cart-ios_grouped .commerce-cart-summary,
+.theme-package-active.theme-cart-ios_grouped .commerce-cart-empty{
+  border-color:transparent;
+  border-radius:20px;
+  background:var(--surface);
+  box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 6%,transparent);
+}
+.theme-package-active.theme-cart-ios_grouped .commerce-cart-media{border-radius:14px;overflow:hidden;background:color-mix(in srgb,var(--ink) 4%,var(--surface))}
+.theme-package-active.theme-cart-ios_grouped .qty{border-radius:10px;background:color-mix(in srgb,var(--ink) 5%,var(--surface));border-color:transparent}
+.theme-package-active.theme-cart-soft .commerce-cart-item,
+.theme-package-active.theme-cart-soft .commerce-cart-summary,
+.theme-package-active.theme-cart-soft .commerce-cart-empty{background:color-mix(in srgb,var(--accent) 4%,var(--surface));border-color:color-mix(in srgb,var(--accent) 10%,var(--surface));box-shadow:none}
+.theme-package-active.theme-cart-compact .commerce-cart-hero{margin-bottom:16px}
+.theme-package-active.theme-cart-compact .commerce-cart-list{gap:10px}
+.theme-package-active.theme-cart-compact .commerce-cart-item{padding:12px;gap:12px}
+.theme-package-active.theme-cart-compact .commerce-cart-media{width:76px;height:76px}
+.theme-package-active.theme-cart-compact .commerce-cart-summary{padding:16px}
+
+/* Checkout — visual recipes never remove required address, delivery, payment or submit controls. */
+.theme-package-active.theme-checkout-ios_grouped .commerce-checkout-card,
+.theme-package-active.theme-checkout-ios_grouped .checkout-zone-quote,
+.theme-package-active.theme-checkout-ios_grouped .commerce-checkout-summary{
+  border-color:transparent;
+  border-radius:20px;
+  background:var(--surface);
+  box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 6%,transparent);
+}
+.theme-package-active.theme-checkout-ios_grouped .checkout-selector,
+.theme-package-active.theme-checkout-ios_grouped .checkout-address-option{border-radius:14px;background:color-mix(in srgb,var(--ink) 4%,var(--surface));border-color:transparent}
+.theme-package-active.theme-checkout-ios_grouped .checkout-address-option.selected{box-shadow:inset 0 0 0 1.5px var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.theme-package-active.theme-checkout-soft .commerce-checkout-card,
+.theme-package-active.theme-checkout-soft .checkout-zone-quote,
+.theme-package-active.theme-checkout-soft .commerce-checkout-summary{background:color-mix(in srgb,var(--accent) 4%,var(--surface));border-color:color-mix(in srgb,var(--accent) 10%,var(--surface));box-shadow:none}
+.theme-package-active.theme-checkout-compact .commerce-checkout-card,
+.theme-package-active.theme-checkout-compact .checkout-zone-quote,
+.theme-package-active.theme-checkout-compact .commerce-checkout-summary{padding:14px}
+.theme-package-active.theme-checkout-compact .form-grid{gap:10px}
+.theme-package-active.theme-checkout-compact .checkout-pro-disclosures{gap:6px}
+
+@media(max-width:720px){
+  .theme-package-active.theme-header-compact .mobile-store-header{min-height:46px}
+  .theme-package-active.theme-search-ios_search .search-overlay,
+  .theme-package-active.theme-search-pill .search-overlay{padding:12px;align-items:flex-start}
+  .theme-package-active.theme-search-ios_search .search-panel,
+  .theme-package-active.theme-search-pill .search-panel{width:100%;border-radius:20px}
+  .theme-package-active.theme-account-ios_grouped .profile-hub-v08,
+  .theme-package-active.theme-account-compact .profile-hub-v08{padding-inline:12px}
+  .theme-package-active.theme-cart-compact .commerce-cart-item{grid-template-columns:68px 1fr}
+  .theme-package-active.theme-cart-compact .commerce-cart-media{width:68px;height:68px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .theme-package-active[class*="theme-header-"] *,
+  .theme-package-active[class*="theme-search-"] *,
+  .theme-package-active[class*="theme-account-"] *,
+  .theme-package-active[class*="theme-cart-"] *,
+  .theme-package-active[class*="theme-checkout-"] *{transition:none!important;animation:none!important}
+}
