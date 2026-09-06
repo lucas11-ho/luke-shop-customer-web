@@ -1,0 +1,14 @@
+import fs from'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
+const home=read('src/pages/HomePage.jsx'),artwork=read('src/components/PlatformIconArtwork.jsx'),main=read('src/main.jsx'),css=read('src/menu-shortcuts-a9-2.css');
+pass(home.includes("publicApi.request('/v1/storefront/menu-shortcuts')")&&home.includes('setMenuShortcuts(results[3].data.menu_shortcuts||[])'),'Home loads the Backend-authoritative storefront shortcut feed');
+pass(home.includes("const MENU_DESTINATIONS=Object.freeze({HOME:'/',EXPLORE:'/explore',CART:'/cart',ORDERS:'/orders',PROFILE:'/profile'})"),'Customer maps shortcut destinations through a fixed internal route allowlist');
+pass(home.includes("filter(item=>MENU_DESTINATIONS[item?.destination])")&&home.includes("go(MENU_DESTINATIONS[item.destination])"),'unknown shortcut destinations fail closed and only allowlisted routes navigate');
+pass(home.includes('menuShortcuts.length>0&&<MenuShortcuts shortcuts={menuShortcuts}/>'),'existing stores with no shortcuts preserve the previous Home composition');
+pass(home.includes("item.icon?<PlatformIconArtwork icon={item.icon} size={32}/>")&&home.includes("String(item.title||'?').slice(0,2).toUpperCase()"),'Menu shortcuts render governed artwork with a safe text fallback');
+pass(artwork.includes("const KEY=/^[A-Z0-9][A-Z0-9._-]{2,79}$/")&&artwork.includes("/v1/icon-assets/${encodeURIComponent(safe)}"),'custom menu artwork is constructed only from validated Platform icon keys');
+pass(artwork.includes("icon.source_type==='LIBRARY'")&&artwork.includes("icon.library_pack==='PHOSPHOR'")&&artwork.includes('GLYPHS.has(glyph)'),'library menu icons remain fail-closed to supported Phosphor glyphs');
+pass(!home.includes('destination_url')&&!home.includes('external_url')&&!home.includes('window.location')&&!home.includes('dangerouslySetInnerHTML'),'Customer shortcuts cannot consume arbitrary URL or executable markup fields');
+pass(main.includes("import './menu-shortcuts-a9-2.css';")&&css.includes('.storefront-menu-shortcuts-grid'),'A9.2 storefront shortcut styles are loaded');
+pass(!artwork.includes('icon.asset_path')&&!artwork.includes('dangerouslySetInnerHTML')&&!artwork.includes('eval(')&&!artwork.includes('new Function'),'Customer icon renderer never trusts Backend-supplied asset URLs or executes icon markup');
+console.log(`${n}/${n} Menu Icon Integration v1 A9.2 Customer checks passed`);
