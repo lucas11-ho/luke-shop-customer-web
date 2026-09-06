@@ -28,6 +28,7 @@ import './theme-controls-v1-a5.css';
 import './theme-product-typography-a6.css';
 import './theme-commerce-surfaces-a7.css';
 import './category-icons-a9-1.css';
+import './menu-shortcuts-a9-2.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
