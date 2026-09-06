@@ -5,6 +5,7 @@ import { ProductCard } from '../components/ProductCard.jsx';
 import { ErrorState, Empty } from '../components/UI.jsx';
 import { ProductGridSkeleton } from '../components/Skeleton.jsx';
 import { SafeImage } from '../components/SafeMedia.jsx';
+import { PlatformIconArtwork, attachCategoryIcons } from '../components/PlatformIconArtwork.jsx';
 import { Icon } from '../components/icons.jsx';
 import { useLocalization } from '../i18n/LocalizationContext.jsx';
 
@@ -55,12 +56,13 @@ export function ExplorePage() {
   const load = async () => {
     setLoading(true); setError('');
     try {
-      const [categoryData, productData] = await Promise.all([
+      const [categoryData, iconData, productData] = await Promise.all([
         publicApi.request('/v1/storefront/categories'),
+        publicApi.request('/v1/storefront/category-icons'),
         publicApi.request('/v1/storefront/products', { query: productQuery(0) }),
       ]);
       const nextProducts = productData.data.products || [];
-      setCategories(categoryData.data.categories || []);
+      setCategories(attachCategoryIcons(categoryData.data.categories || [], iconData.data.category_icons || []));
       setProducts(nextProducts);
       setHasMore(nextProducts.length === config.pageSize);
     } catch (requestError) { setError(requestError); } finally { setLoading(false); }
@@ -119,7 +121,8 @@ export function ExplorePage() {
           </button>
           {localizedCategories.map((item) => (
             <button key={item.public_id} className={category === item.slug ? 'active' : ''} onClick={() => go('/explore', { q: q || undefined, category: item.slug })} data-testid={`filter-category-${item.slug}`}>
-              {config.categoryStyle === 'cards' && <span className="explore-category-image" aria-hidden="true">{config.showCategoryImages && item.image_url ? <SafeImage src={item.image_url} alt="" fallback={<span>{item.name.slice(0, 1).toUpperCase()}</span>} /> : <span>{item.name.slice(0, 1).toUpperCase()}</span>}</span>}
+              {config.categoryStyle === 'cards' && <span className={`explore-category-image ${item.icon?'with-platform-icon':''}`} aria-hidden="true">{item.icon ? <PlatformIconArtwork icon={item.icon} size={34}/> : config.showCategoryImages && item.image_url ? <SafeImage src={item.image_url} alt="" fallback={<span>{item.name.slice(0, 1).toUpperCase()}</span>} /> : <span>{item.name.slice(0, 1).toUpperCase()}</span>}</span>}
+              {config.categoryStyle !== 'cards' && item.icon && <span className="explore-category-inline-icon" aria-hidden="true"><PlatformIconArtwork icon={item.icon} size={18}/></span>}
               <span>{item.name}</span>
             </button>
           ))}
@@ -144,7 +147,7 @@ export function ExplorePage() {
                 action={config.categoriesEnabled && categories.length ? (
                   <div className="empty-suggestions">
                     {localizedCategories.slice(0, 6).map((item) => (
-                      <button key={item.public_id} className="search-chip" onClick={() => go('/explore', { category: item.slug })}><Icon name="grid" size={14} /> {item.name}</button>
+                      <button key={item.public_id} className="search-chip" onClick={() => go('/explore', { category: item.slug })}>{item.icon ? <PlatformIconArtwork icon={item.icon} size={14}/> : <Icon name="grid" size={14} />} {item.name}</button>
                     ))}
                   </div>
                 ) : null}
