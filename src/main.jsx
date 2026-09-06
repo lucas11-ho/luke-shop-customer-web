@@ -27,6 +27,7 @@ import './mobile-scroll-safety.css';
 import './theme-controls-v1-a5.css';
 import './theme-product-typography-a6.css';
 import './theme-commerce-surfaces-a7.css';
+import './category-icons-a9-1.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

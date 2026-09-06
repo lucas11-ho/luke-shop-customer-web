@@ -1,0 +1,15 @@
+import fs from'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
+const artwork=read('src/components/PlatformIconArtwork.jsx'),home=read('src/pages/HomePage.jsx'),explore=read('src/pages/ExplorePage.jsx'),main=read('src/main.jsx'),css=read('src/category-icons-a9-1.css');
+pass(artwork.includes("const KEY=/^[A-Z0-9][A-Z0-9._-]{2,79}$/")&&artwork.includes("/v1/icon-assets/${encodeURIComponent(safe)}"),'Customer constructs custom icon assets only from validated Platform keys');
+pass(artwork.includes("icon.source_type==='CUSTOM_IMAGE'")&&artwork.includes('<picture'),'Customer renders custom PNG/WebP artwork as static images');
+pass(artwork.includes("icon.source_type==='LIBRARY'")&&artwork.includes("icon.library_pack==='PHOSPHOR'")&&artwork.includes('GLYPHS.has(glyph)'),'Customer library icons are fail-closed to renderer-supported Phosphor glyphs');
+pass(artwork.includes("variant=icon.color_mode==='DUOTONE'?'duotone':'outline'"),'Category library icon color mode maps only to bounded renderer variants');
+pass(artwork.includes('attachCategoryIcons(categories=[],references=[])'),'Storefront category metadata is attached by category public id');
+pass(home.includes("publicApi.request('/v1/storefront/category-icons')")&&home.includes('attachCategoryIcons('),'Home loads governed category icon references');
+pass(home.includes("c.icon?<PlatformIconArtwork icon={c.icon} size={44}/>")&&home.includes("c.image_url?<SafeImage"),'Home prefers approved category icon and preserves product-image/initial fallback');
+pass(explore.includes("publicApi.request('/v1/storefront/category-icons')")&&explore.includes('attachCategoryIcons('),'Explore loads governed category icon references');
+pass(explore.includes('<PlatformIconArtwork icon={item.icon} size={34}/>')&&explore.includes('explore-category-inline-icon'),'Explore renders Category icons across card and compact filter styles');
+pass(!artwork.includes('icon.asset_path')&&!artwork.includes('dangerouslySetInnerHTML')&&!artwork.includes('eval(')&&!artwork.includes('new Function'),'Customer never trusts asset URLs or executes icon markup');
+pass(main.includes("import './category-icons-a9-1.css';")&&css.includes('.category-art.with-platform-icon'),'A9.1 category artwork styles are loaded');
+console.log(`${n}/${n} Category Icon Integration v1 A9.1 Customer checks passed`);
