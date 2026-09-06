@@ -1,0 +1,13 @@
+import fs from'node:fs';
+const read=p=>fs.readFileSync(p,'utf8');let n=0;const pass=(ok,msg)=>{if(!ok)throw new Error(`FAIL ${msg}`);n++;console.log(`PASS ${msg}`)};
+const shell=read('src/components/Shell.jsx'),css=read('src/theme-system-v1.css');
+pass(shell.includes("PLATFORM_ICON_TOKEN_PREFIX='platform:'")&&shell.includes('platformIconKeyFromToken'),'Customer renderer accepts only bounded Platform icon key tokens');
+pass(shell.includes("packageIcons.allow_custom_images===true")&&shell.includes('customImagesAllowed?platformIconKeyFromToken(raw)'), 'custom artwork requires the exact selected theme capability');
+pass(shell.includes("`${API_BASE}/v1/icon-assets/${encodeURIComponent(key)}${suffix}`"),'Customer constructs custom icon URLs from the trusted Backend base and encoded Platform key');
+pass(shell.includes('<picture className="theme-nav-custom-picture">')&&shell.includes("?variant=${encodeURIComponent(variant)}"),'Customer supports optional Light/Dark custom artwork through bounded Backend variants');
+pass(shell.includes("iconSpec.type==='custom'?<ThemeCustomNavIcon")&&shell.includes("{type:'custom',key:platformKey}"),'custom image selections render in the real bottom-navigation slots');
+pass(shell.includes('PHOSPHOR_NAV_SET.has(requested)&&packageIconAllowed.has(requested)'),'existing Phosphor package allowlist remains intact');
+pass(css.includes('.theme-nav-custom-picture')&&css.includes('.theme-nav-custom-image')&&css.includes('object-fit:contain'),'custom artwork stays size-bounded inside Theme System navigation');
+pass(!shell.includes('dangerouslySetInnerHTML')&&!shell.includes('eval(')&&!shell.includes('new Function'),'custom navigation renderer executes no icon markup or code');
+pass(!shell.includes('asset_path')&&!shell.includes('data_base64'),'Customer renderer never trusts merchant-provided asset paths or bytes');
+console.log(`${n}/${n} Platform custom navigation icon A8.1 Customer checks passed`);
