@@ -40,6 +40,8 @@ jobs:
         run: node scripts/v0.11.0-platform-custom-navigation-icons-v1-a8-1-regression-test.mjs
       - name: Category Icon Integration v1 A9.1 renderer guard
         run: node scripts/v0.11.0-category-icon-integration-v1-a9-1-regression-test.mjs
+      - name: Menu Icon Integration v1 A9.2 renderer guard
+        run: node scripts/v0.11.0-menu-icon-integration-v1-a9-2-regression-test.mjs
       - name: Luke Commerce iOS v1 renderer guard
         run: node scripts/v0.11.0-luke-commerce-ios-v1-regression-test.mjs
       - name: Build production bundle
