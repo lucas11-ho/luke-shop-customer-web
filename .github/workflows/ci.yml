@@ -36,6 +36,8 @@ jobs:
         run: node scripts/v0.11.0-theme-product-typography-v1-a6-regression-test.mjs
       - name: Theme Commerce Surfaces v1 A7 renderer guard
         run: node scripts/v0.11.0-theme-commerce-surfaces-v1-a7-regression-test.mjs
+      - name: Platform custom navigation icons v1 A8.1 renderer guard
+        run: node scripts/v0.11.0-platform-custom-navigation-icons-v1-a8-1-regression-test.mjs
       - name: Luke Commerce iOS v1 renderer guard
         run: node scripts/v0.11.0-luke-commerce-ios-v1-regression-test.mjs
       - name: Build production bundle

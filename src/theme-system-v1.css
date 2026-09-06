@@ -18,6 +18,8 @@
   /* Legacy storefront CSS painted every .mobile-nav span as an accent pill. Theme System owns its own icon/label presentation, so explicitly neutralize that old selector. */
   .theme-system-nav button>span:not(.theme-nav-icon-wrap){display:block;min-width:0;height:auto;margin-left:0;border-radius:0;background:transparent;color:inherit}
   .theme-system-nav .theme-nav-icon-wrap{position:relative;width:34px;min-width:0;height:29px;margin-left:0;display:grid;place-items:center;border-radius:12px;background:transparent;color:inherit;transition:background-color .16s ease,transform .16s ease}
+  .theme-system-nav .theme-nav-custom-picture{display:grid;place-items:center;width:var(--theme-nav-icon-size);height:var(--theme-nav-icon-size)}
+  .theme-system-nav .theme-nav-custom-image{display:block;width:var(--theme-nav-icon-size);height:var(--theme-nav-icon-size);max-width:100%;max-height:100%;object-fit:contain;pointer-events:none;user-select:none}
   .theme-system-nav button:active{transform:scale(.94)}
   .theme-system-nav button.active{color:var(--accent)}
   .theme-system-nav button.active .theme-nav-icon-wrap{transform:translateY(-1px)}
@@ -44,6 +46,7 @@
   .theme-system-nav.theme-nav-commerce_tab{min-height:74px;padding-inline:7px}
   .theme-system-nav.theme-nav-commerce_tab .theme-nav-cart .theme-nav-icon-wrap{width:43px;height:43px;margin-top:-15px;border-radius:16px;background:var(--accent);color:var(--surface);box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 28%,transparent)}
   .theme-system-nav.theme-nav-commerce_tab .theme-nav-cart.active .theme-nav-icon-wrap{color:var(--surface);background:var(--accent)}
+  .theme-system-nav.theme-nav-commerce_tab .theme-nav-cart .theme-nav-custom-image{width:calc(var(--theme-nav-icon-size) + 4px);height:calc(var(--theme-nav-icon-size) + 4px)}
   .theme-system-nav.theme-nav-commerce_tab .theme-nav-cart>span{margin-top:-2px}
   .theme-system-nav .mobile-cart-count{top:3px;right:calc(50% - 24px);min-width:17px;height:17px;padding:0 4px;border:2px solid var(--surface);font-size:9px;line-height:13px}
 

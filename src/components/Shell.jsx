@@ -23,8 +23,14 @@ const NAV_VARIANTS=new Set(['standard','ios_tab','floating_tab','minimal_tab','c
 const NAV_LABELS=new Set(['always','active_only','hidden']);
 const NAV_INDICATORS=new Set(['filled_icon','pill','dot','underline','background']);
 const NAV_CONTAINERS=new Set(['edge','floating','glass']);
+const API_BASE=String(import.meta.env.VITE_LUKE_SHOP_API_BASE_URL||'http://localhost:4100').replace(/\/$/,'');
+const PLATFORM_ICON_TOKEN_PREFIX='platform:';
+const PLATFORM_ICON_KEY=/^[A-Z0-9][A-Z0-9._-]{2,79}$/;
 function safeHttps(value){try{const url=new URL(String(value||''));return url.protocol==='https:'?url.toString():''}catch{return''}}
 function safeChoice(value,allowed,fallback){return allowed.has(value)?value:fallback}
+function platformIconKeyFromToken(value){const raw=String(value||'').trim();if(!raw.toLowerCase().startsWith(PLATFORM_ICON_TOKEN_PREFIX))return'';const key=raw.slice(PLATFORM_ICON_TOKEN_PREFIX.length).trim().toUpperCase();return PLATFORM_ICON_KEY.test(key)?key:''}
+function platformIconAssetUrl(key,variant='default'){if(!PLATFORM_ICON_KEY.test(String(key||'')))return'';const suffix=variant==='default'?'':`?variant=${encodeURIComponent(variant)}`;return `${API_BASE}/v1/icon-assets/${encodeURIComponent(key)}${suffix}`}
+function ThemeCustomNavIcon({iconKey,size}){const base=platformIconAssetUrl(iconKey);if(!base)return null;return <picture className="theme-nav-custom-picture"><source media="(prefers-color-scheme: dark)" srcSet={platformIconAssetUrl(iconKey,'dark')}/><source media="(prefers-color-scheme: light)" srcSet={platformIconAssetUrl(iconKey,'light')}/><img className="theme-nav-custom-image" src={base} width={size} height={size} alt="" loading="eager" decoding="async"/></picture>}
 
 function StorefrontFooter({brand}){
   const{experience}=useStore();
@@ -82,15 +88,19 @@ export function Shell({ children, path }) {
   const requestedIconSize=Number(themeNavigation?.iconSize);const navIconSize=[20,22,24,26].includes(requestedIconSize)?requestedIconSize:21;
   const iconPack=packageIcons.pack==='PHOSPHOR_NAV'?'PHOSPHOR_NAV':'LUKE_OUTLINE';
   const packageIconAllowed=new Set((Array.isArray(packageIcons.allowed)?packageIcons.allowed:[]).filter(icon=>PHOSPHOR_NAV_SET.has(icon)));
+  const customImagesAllowed=packageIcons.allow_custom_images===true;
   const packageIconDefaults=packageIcons.navigation_defaults&&typeof packageIcons.navigation_defaults==='object'?packageIcons.navigation_defaults:{};
   const iconOverrides=experience?.theme_component_overrides&&typeof experience.theme_component_overrides==='object'?experience.theme_component_overrides:{};
   const themeNavIcon=(slot)=>{
-    if(iconPack!=='PHOSPHOR_NAV')return NAV_ICON[slot];
-    const requested=String(iconOverrides[NAV_ICON_OVERRIDE[slot]]||'').toLowerCase();
-    if(PHOSPHOR_NAV_SET.has(requested)&&packageIconAllowed.has(requested))return requested;
+    if(iconPack!=='PHOSPHOR_NAV')return {type:'glyph',name:NAV_ICON[slot]};
+    const raw=String(iconOverrides[NAV_ICON_OVERRIDE[slot]]||'').trim();
+    const platformKey=customImagesAllowed?platformIconKeyFromToken(raw):'';
+    if(platformKey)return {type:'custom',key:platformKey};
+    const requested=raw.toLowerCase();
+    if(PHOSPHOR_NAV_SET.has(requested)&&packageIconAllowed.has(requested))return {type:'glyph',name:requested};
     const fallback=String(packageIconDefaults[slot]||'').toLowerCase();
-    if(PHOSPHOR_NAV_SET.has(fallback)&&packageIconAllowed.has(fallback))return fallback;
-    return slot==='home'?'house':slot==='explore'?'storefront':slot==='cart'?'shopping-bag':slot==='orders'?'receipt':'user-circle';
+    if(PHOSPHOR_NAV_SET.has(fallback)&&packageIconAllowed.has(fallback))return {type:'glyph',name:fallback};
+    return {type:'glyph',name:slot==='home'?'house':slot==='explore'?'storefront':slot==='cart'?'shopping-bag':slot==='orders'?'receipt':'user-circle'};
   };
   const authOnly = path === '/login' || path === '/register';
   const navText=(key,labelKey)=>localePack?.navigation?.[key]?.title||t(labelKey);
@@ -128,7 +138,7 @@ export function Shell({ children, path }) {
       <SupportLauncher placement="floating"/>
       {searchEnabled&&<SearchOverlay open={search} onClose={()=>setSearch(false)}/>} 
       <nav className={mobileNavClass} aria-label="Primary mobile" data-theme-package={packageActive?`${themePackage.key}@${themePackage.version}`:undefined}>
-        {keys.map((k)=>{const[to,labelKey]=NAV[k],active=path===to,iconVariant=packageActive?(active?(themeNavigation?.activeStyle||'filled'):(themeNavigation?.inactiveStyle||'outline')):'outline',iconName=packageActive?themeNavIcon(k):NAV_ICON[k];return <button key={k} className={`${active?'active':''}${k==='cart'?' theme-nav-cart':''}`} onClick={()=>go(to)} data-testid={`mobile-nav-${k}`} aria-current={active?'page':undefined}>{packageActive?<span className="theme-nav-icon-wrap"><ThemeNavIcon name={iconName} size={navIconSize} variant={iconVariant} pack={iconPack}/></span>:<Icon name={NAV_ICON[k]} size={21}/>}<span>{navText(k,labelKey)}</span>{k==='cart'&&itemCount>0&&<b className="mobile-cart-count">{itemCount}</b>}</button>})}
+        {keys.map((k)=>{const[to,labelKey]=NAV[k],active=path===to,iconVariant=packageActive?(active?(themeNavigation?.activeStyle||'filled'):(themeNavigation?.inactiveStyle||'outline')):'outline',iconSpec=packageActive?themeNavIcon(k):{type:'legacy',name:NAV_ICON[k]};return <button key={k} className={`${active?'active':''}${k==='cart'?' theme-nav-cart':''}`} onClick={()=>go(to)} data-testid={`mobile-nav-${k}`} aria-current={active?'page':undefined}>{packageActive?<span className="theme-nav-icon-wrap">{iconSpec.type==='custom'?<ThemeCustomNavIcon iconKey={iconSpec.key} size={navIconSize}/>:<ThemeNavIcon name={iconSpec.name} size={navIconSize} variant={iconVariant} pack={iconPack}/>}</span>:<Icon name={NAV_ICON[k]} size={21}/>}<span>{navText(k,labelKey)}</span>{k==='cart'&&itemCount>0&&<b className="mobile-cart-count">{itemCount}</b>}</button>})}
       </nav>
     </div>
   );
