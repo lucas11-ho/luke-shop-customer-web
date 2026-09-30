@@ -2,7 +2,7 @@ import fs from'node:fs';import assert from'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');
 const pkg=JSON.parse(read('package.json'));const home=read('src/pages/HomePage.jsx');const css=read('src/home-v4.css');const main=read('src/main.jsx');
 const tests=[];const test=(n,f)=>tests.push([n,f]);
-test('runtime versions remain locked',()=>{assert.equal(pkg.version,'0.11.0');assert.equal(pkg.dependencies.react,'19.1.1');assert.equal(pkg.dependencies['react-dom'],'19.1.1');assert.equal(pkg.devDependencies.vite,'7.3.6');assert.equal(pkg.devDependencies.wrangler,'4.126.0')});
+test('runtime versions remain locked',()=>{assert.equal(pkg.version,'0.11.0');assert.equal(pkg.dependencies.react,'19.1.1');assert.equal(pkg.dependencies['react-dom'],'19.1.1');assert.equal(pkg.devDependencies.vite,'7.3.6');assert.equal(pkg.devDependencies.wrangler,'4.144.0')});
 test('verify includes Home v4 renderer suite',()=>{assert.equal(pkg.scripts['test:cx-v4-home'],'node scripts/v0.11.0-cx-v4-home-renderer-regression-test.mjs');assert.match(pkg.scripts.verify,/test:cx-v4-home/)});
 test('renderer still uses schema-driven Home sections',()=>{assert.match(home,/experience\?\.home\?\.sections/);assert.match(home,/s\.enabled!==false/);assert.match(home,/data-home-schema/)});
 test('all seven backend-supported section types remain rendered',()=>{for(const type of ['hero','hero_slider','categories','featured_products','promotion_banner','new_arrivals','announcement_bar'])assert.ok(home.includes(`'${type}'`),`missing ${type}`)});
