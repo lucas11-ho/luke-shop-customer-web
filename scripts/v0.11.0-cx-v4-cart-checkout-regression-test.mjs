@@ -16,7 +16,7 @@ test('runtime versions remain the production baseline', () => {
   assert.equal(pkg.dependencies.react, '19.1.1');
   assert.equal(pkg.dependencies['react-dom'], '19.1.1');
   assert.equal(pkg.devDependencies.vite, '7.3.6');
-  assert.equal(pkg.devDependencies.wrangler, '4.126.0');
+  assert.equal(pkg.devDependencies.wrangler, '4.144.0');
 });
 
 test('verify permanently includes the 11F suite', () => {
