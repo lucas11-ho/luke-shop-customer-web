@@ -2,7 +2,7 @@ import fs from'node:fs';import assert from'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');
 const pkg=JSON.parse(read('package.json'));const explore=read('src/pages/ExplorePage.jsx');const product=read('src/pages/ProductPage.jsx');const card=read('src/components/ProductCard.jsx');const css=read('src/commerce-v4.css');const main=read('src/main.jsx');
 const tests=[];const test=(n,f)=>tests.push([n,f]);
-test('runtime versions remain production baseline',()=>{assert.equal(pkg.version,'0.11.0');assert.equal(pkg.dependencies.react,'19.1.1');assert.equal(pkg.dependencies['react-dom'],'19.1.1');assert.equal(pkg.devDependencies.vite,'7.3.6');assert.equal(pkg.devDependencies.wrangler,'4.126.0')});
+test('runtime versions remain production baseline',()=>{assert.equal(pkg.version,'0.11.0');assert.equal(pkg.dependencies.react,'19.1.1');assert.equal(pkg.dependencies['react-dom'],'19.1.1');assert.equal(pkg.devDependencies.vite,'7.3.6');assert.equal(pkg.devDependencies.wrangler,'4.144.0')});
 test('verify permanently includes Commerce v4 suite',()=>{assert.equal(pkg.scripts['test:cx-v4-commerce'],'node scripts/v0.11.0-cx-v4-commerce-experience-regression-test.mjs');assert.match(pkg.scripts.verify,/test:cx-v4-commerce/)});
 test('Explore keeps real storefront category and product endpoints',()=>{assert.match(explore,/\/v1\/storefront\/categories/);assert.match(explore,/\/v1\/storefront\/products/)});
 test('Explore preserves category and search only customer filtering',()=>{for(const field of ['q','category','limit','offset'])assert.ok(explore.includes(field),`missing ${field}`);assert.doesNotMatch(explore,/product_type\s*:/);assert.doesNotMatch(explore,/query:\s*\{[^}]*sort\s*:/s)});
