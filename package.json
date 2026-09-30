@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.11.0",
   "type": "module",
-  "engines": {"node": ">=24"},
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 4174",
     "build": "node scripts/build.mjs",
@@ -13,7 +15,7 @@
     "cf:types": "wrangler types",
     "check": "node scripts/check-source.mjs",
     "test:source": "node scripts/source-regression-test.mjs",
-    "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3 && npm run test:account-v06 && npm run test:renderer-reliability-v061 && npm run test:customer-ux-v07 && npm run test:identity-v08 && npm run test:commerce-connector-v2 && npm run test:auth-pro-v091 && npm run test:maps-delivery-v092 && npm run test:mobile-auth-v093 && npm run test:mobile-auth-v094 && npm run test:mobile-storefront-v095 && npm run test:pwa-v0100 && npm run test:commerce-r101 && npm run test:modifier-r1a && npm run test:localization-v0110 && npm run test:cx-v4-foundation && npm run test:cx-v4-home && npm run test:cx-v4-commerce && npm run test:cx-v4-product-detail && npm run test:cx-v4-cart-checkout && npm run test:cx-v4-explore-a3 && npm run test:cx-v4-cart-checkout-a4 && npm run test:payments-tokenpay-v1 && npm run test:mobile-scroll-checkout-diagnostics && npm run test:digital-library && npm run test:checkout-ux-pro && npm run test:vip-center && npm run test:zone-delivery-quote && npm run test:delivery-tracking-proof-chat-v1 && npm run test:vip-cashback-redemption-v1 && npm run test:vip-recurring-entitlements-v1",
+    "verify": "npm run check && npm run test:source && npm run test:design && npm run test:renderer-v3 && npm run test:account-v06 && npm run test:renderer-reliability-v061 && npm run test:customer-ux-v07 && npm run test:identity-v08 && npm run test:commerce-connector-v2 && npm run test:auth-pro-v091 && npm run test:maps-delivery-v092 && npm run test:mobile-auth-v093 && npm run test:mobile-auth-v094 && npm run test:mobile-storefront-v095 && npm run test:pwa-v0100 && npm run test:commerce-r101 && npm run test:modifier-r1a && npm run test:localization-v0110 && npm run test:cx-v4-foundation && npm run test:cx-v4-home && npm run test:cx-v4-commerce && npm run test:cx-v4-product-detail && npm run test:cx-v4-cart-checkout && npm run test:cx-v4-explore-a3 && npm run test:cx-v4-cart-checkout-a4 && npm run test:payments-tokenpay-v1 && npm run test:mobile-scroll-checkout-diagnostics && npm run test:digital-library && npm run test:checkout-ux-pro && npm run test:vip-center && npm run test:zone-delivery-quote && npm run test:delivery-tracking-proof-chat-v1 && npm run test:vip-cashback-redemption-v1 && npm run test:vip-recurring-entitlements-v1 && npm run test:botpilot-miniapp-auth",
     "test:design": "node scripts/design-regression-test.mjs",
     "test:renderer-v3": "node scripts/v0.5.0-renderer-v3-regression-test.mjs",
     "test:account-v06": "node scripts/v0.6.0-account-address-regression-test.mjs",
@@ -45,13 +47,18 @@
     "test:zone-delivery-quote": "node scripts/v0.11.0-zone-delivery-quote-ux-regression-test.mjs",
     "test:delivery-tracking-proof-chat-v1": "node scripts/v0.11.0-delivery-tracking-proof-chat-v1-regression-test.mjs",
     "test:vip-cashback-redemption-v1": "node scripts/v0.11.0-vip-cashback-redemption-v1-regression-test.mjs",
-    "test:vip-recurring-entitlements-v1": "node scripts/v0.11.0-vip-recurring-entitlements-v1-regression-test.mjs"
+    "test:vip-recurring-entitlements-v1": "node scripts/v0.11.0-vip-recurring-entitlements-v1-regression-test.mjs",
+    "test:botpilot-miniapp-auth": "node scripts/bot-pilot-miniapp-auth-v1-regression-test.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
     "react": "19.1.1",
     "react-dom": "19.1.1"
   },
-  "devDependencies": {"@vitejs/plugin-react": "4.7.0","vite": "7.3.6","wrangler": "4.126.0"},
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.7.0",
+    "vite": "7.3.6",
+    "wrangler": "4.126.0"
+  },
   "description": "Luke Shop Customer Web v0.10.0 — PWA Foundation Pro, mobile delivery map refinement, and tenant-controlled address field policy"
 }
