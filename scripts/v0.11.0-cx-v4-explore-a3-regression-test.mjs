@@ -2,7 +2,7 @@ import fs from'node:fs';import assert from'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');
 const pkg=JSON.parse(read('package.json')),page=read('src/pages/ExplorePage.jsx'),css=read('src/explore-a3.css'),main=read('src/main.jsx');
 const tests=[];const test=(name,fn)=>tests.push([name,fn]);
-test('runtime versions remain Customer Web baseline',()=>{assert.equal(pkg.version,'0.11.0');assert.equal(pkg.dependencies.react,'19.1.1');assert.equal(pkg.dependencies['react-dom'],'19.1.1');assert.equal(pkg.devDependencies.vite,'7.3.6');assert.equal(pkg.devDependencies.wrangler,'4.126.0')});
+test('runtime versions remain Customer Web baseline',()=>{assert.equal(pkg.version,'0.11.0');assert.equal(pkg.dependencies.react,'19.1.1');assert.equal(pkg.dependencies['react-dom'],'19.1.1');assert.equal(pkg.devDependencies.vite,'7.3.6');assert.equal(pkg.devDependencies.wrangler,'4.144.0')});
 test('verify permanently includes Explore A3 renderer suite',()=>{assert.equal(pkg.scripts['test:cx-v4-explore-a3'],'node scripts/v0.11.0-cx-v4-explore-a3-regression-test.mjs');assert.match(pkg.scripts.verify,/test:cx-v4-explore-a3/)});
 test('Explore reads the shared experience subtree with backwards-compatible defaults',()=>{for(const marker of ['experience?.explore','standard','show_result_count !== false','show_category_description === true','categories.enabled !== false','page_size','load_more_style'])assert.ok(page.includes(marker),`missing ${marker}`)});
 test('Explore page sizes match the Backend allowlist exactly',()=>{assert.match(page,/new Set\(\[12, 24, 36, 48\]\)/);assert.match(page,/limit: config\.pageSize/);assert.match(page,/nextProducts\.length === config\.pageSize/)});
